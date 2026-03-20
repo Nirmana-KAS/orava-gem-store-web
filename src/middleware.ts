@@ -1,7 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
-export default auth(async (req: NextRequest) => {
+export default auth(async (req) => {
   const { pathname } = req.nextUrl;
   const session = req.auth;
   const isAdmin = session?.user?.role === "ADMIN";
