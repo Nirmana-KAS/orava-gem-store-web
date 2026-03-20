@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { fail, ok, requireAdmin } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 import { sendMeetingConfirmationEmail } from "@/lib/resend";
-import { meetingSchema } from "@/lib/validations";
+import { meetingGuestSchema, meetingSchema } from "@/lib/validations";
 import { isValidEmail } from "@/lib/utils";
 import { rateLimit } from "@/lib/rateLimit";
 
@@ -43,7 +43,8 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     const session = await auth();
     const payload = await request.json();
-    const parsed = meetingSchema.safeParse(payload);
+    const schema = session?.user ? meetingSchema : meetingGuestSchema;
+    const parsed = schema.safeParse(payload);
     if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Invalid payload", 400);
     if (!session?.user && (!parsed.data.guestEmail || !isValidEmail(parsed.data.guestEmail))) {
       return fail("Guest email is required", 400);
