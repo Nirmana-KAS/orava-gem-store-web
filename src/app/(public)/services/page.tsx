@@ -48,6 +48,17 @@ export default function ServicesPage() {
         <h2 className="font-heading text-3xl">Our Workflow</h2>
         <p className="mt-2 text-zinc-300">Submit → Review → Confirm → Deliver</p>
       </section>
+      <section className="mt-10 rounded-xl border border-gold/30 bg-gradient-to-r from-dark to-gold/20 p-8 text-center">
+        <h2 className="font-heading text-4xl">Ready to discuss your precision requirements?</h2>
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          <Link href="/quotation?type=SERVICE">
+            <Button>Make Inquiry</Button>
+          </Link>
+          <Link href="/quotation?meeting=SERVICE">
+            <Button variant="outline">Request Meeting</Button>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

@@ -35,8 +35,14 @@ export default function CustomizedPage() {
         ))}
       </section>
       <section className="mt-8 rounded-xl border border-white/10 bg-dark-surface p-6">
+        <h2 className="font-heading text-3xl">Technology & Precision</h2>
+        <p className="mt-2 text-zinc-300">
+          We combine CNC micro-cutting, laser-guided shaping, and computer vision quality validation for repeatable luxury-grade results.
+        </p>
+      </section>
+      <section className="mt-8 rounded-xl border border-white/10 bg-dark-surface p-6">
         <h2 className="font-heading text-3xl">How Custom Orders Work</h2>
-        <p className="mt-2 text-zinc-300">Consultation → Specs → Sample → Production → Delivery</p>
+        <p className="mt-2 text-zinc-300">Consultation → Specs → CAD/Diagram Review → Sample → Production → Delivery</p>
       </section>
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/quotation?type=CUSTOMIZED">

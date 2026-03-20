@@ -17,6 +17,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function QuotationForm() {
   const { data: session } = useSession();
   const [file, setFile] = useState<File | null>(null);
+  const [submitted, setSubmitted] = useState(false);
   const { register, handleSubmit, setValue, formState } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
@@ -55,7 +56,19 @@ export default function QuotationForm() {
       return;
     }
     toast("Quotation request submitted");
+    setSubmitted(true);
   };
+
+  if (submitted) {
+    return (
+      <div className="rounded-xl border border-gold/40 bg-dark-surface p-6">
+        <h2 className="font-heading text-3xl text-gold">Quotation Request Received</h2>
+        <p className="mt-3 text-zinc-300">
+          Thank you. Your request has been submitted successfully. Our team will review your requirements and respond shortly.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-xl border border-white/10 bg-dark-surface p-6">
