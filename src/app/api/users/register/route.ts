@@ -3,9 +3,11 @@ import { NextRequest } from "next/server";
 import { fail, ok } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/lib/resend";
-import { signUpSchema } from "@/lib/validations";
+import { signUpSchemaBase } from "@/lib/validations";
 
-const registerSchema = signUpSchema;
+const registerSchema = signUpSchemaBase.extend({
+  confirmPassword: signUpSchemaBase.shape.confirmPassword,
+});
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {

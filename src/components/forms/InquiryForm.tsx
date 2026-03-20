@@ -12,9 +12,9 @@ import FileUpload from "@/components/ui/FileUpload";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import { toast } from "@/components/ui/Toast";
-import { inquirySchema } from "@/lib/validations";
+import { inquirySchemaBase } from "@/lib/validations";
 
-const formSchema = inquirySchema.extend({
+const formSchema = inquirySchemaBase.extend({
   terms: z.literal(true),
 });
 
