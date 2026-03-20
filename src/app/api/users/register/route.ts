@@ -1,14 +1,11 @@
 import bcrypt from "bcryptjs";
 import { NextRequest } from "next/server";
-import { z } from "zod";
 import { fail, ok } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/lib/resend";
 import { signUpSchema } from "@/lib/validations";
 
-const registerSchema = signUpSchema.extend({
-  password: z.string().min(8),
-});
+const registerSchema = signUpSchema;
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {
@@ -17,7 +14,9 @@ export async function POST(request: NextRequest): Promise<Response> {
     if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Invalid payload", 400);
     const exists = await prisma.user.findUnique({ where: { email: parsed.data.email } });
     if (exists) return fail("Email already exists", 400);
-    const password = payload.password.startsWith("$2") ? payload.password : await bcrypt.hash(payload.password, 10);
+    const password = parsed.data.password.startsWith("$2")
+      ? parsed.data.password
+      : await bcrypt.hash(parsed.data.password, 10);
     const user = await prisma.user.create({
       data: {
         email: parsed.data.email,
