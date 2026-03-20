@@ -8,9 +8,13 @@ import { logAudit } from "@/lib/audit";
 
 const paramsSchema = z.object({ id: z.string().uuid() });
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
-    const p = paramsSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = paramsSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid product ID", 400);
     const item = await prisma.product.findUnique({
       where: { id: p.data.id },
@@ -24,16 +28,24 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await requireAdmin();
     if (!session) return fail("Forbidden", 403);
-    const p = paramsSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = paramsSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid product ID", 400);
     const payload = await request.json();
     const parsed = adminProductSchema.safeParse(payload);
-    if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Invalid payload", 400);
-    const updated = await prisma.product.update({ where: { id: p.data.id }, data: parsed.data });
+    if (!parsed.success)
+      return fail(parsed.error.issues[0]?.message ?? "Invalid payload", 400);
+    const updated = await prisma.product.update({
+      where: { id: p.data.id },
+      data: parsed.data,
+    });
     await logAudit({
       adminId: session.user.id,
       adminEmail: session.user.email ?? "",
@@ -50,19 +62,28 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await requireAdmin();
     if (!session) return fail("Forbidden", 403);
-    const p = paramsSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = paramsSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid product ID", 400);
-    const existing = await prisma.product.findUnique({ where: { id: p.data.id } });
+    const existing = await prisma.product.findUnique({
+      where: { id: p.data.id },
+    });
     if (!existing) return fail("Product not found", 404);
     await Promise.all(
       existing.images.map(async (url) => {
         try {
           const segments = new URL(url).pathname.split("/");
-          const filename = segments.slice(-2).join("/").replace(/\.[a-z]+$/i, "");
+          const filename = segments
+            .slice(-2)
+            .join("/")
+            .replace(/\.[a-z]+$/i, "");
           await deleteImage(filename);
         } catch (error) {
           console.error("Cloudinary cleanup warning:", error);
@@ -85,4 +106,3 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     return fail("Failed to delete product", 500);
   }
 }
-

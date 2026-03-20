@@ -7,13 +7,14 @@ export const metadata: Metadata = {
 };
 
 interface SignInPageProps {
-  searchParams: {
+  searchParams?: Promise<{
     callbackUrl?: string;
-  };
+  }>;
 }
 
-export default function SignInPage({ searchParams }: SignInPageProps) {
-  const callbackUrl = searchParams.callbackUrl || "/";
+export default async function SignInPage({ searchParams }: SignInPageProps) {
+  const params = await searchParams;
+  const callbackUrl = params?.callbackUrl || "/";
   return (
     <section>
       <h1 className="mb-5 text-center font-heading text-4xl">Sign In</h1>
@@ -21,4 +22,3 @@ export default function SignInPage({ searchParams }: SignInPageProps) {
     </section>
   );
 }
-

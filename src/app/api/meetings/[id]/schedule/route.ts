@@ -11,17 +11,24 @@ const schema = z.object({
   adminReply: z.string().min(2),
 });
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await requireAdmin();
     if (!session) return fail("Forbidden", 403);
+    const resolvedParams = await params;
     const body = await request.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) return fail("Invalid payload", 400);
-    const meeting = await prisma.meeting.findUnique({ where: { id: params.id }, include: { user: true } });
+    const meeting = await prisma.meeting.findUnique({
+      where: { id: resolvedParams.id },
+      include: { user: true },
+    });
     if (!meeting) return fail("Meeting not found", 404);
     const updated = await prisma.meeting.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         scheduledAt: parsed.data.scheduledAt,
         adminReply: parsed.data.adminReply,
@@ -29,7 +36,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       },
     });
     const to = meeting.user?.email ?? meeting.guestEmail;
-    if (to) void sendMeetingScheduledEmail(to, meeting.id, parsed.data.scheduledAt, parsed.data.adminReply);
+    if (to)
+      void sendMeetingScheduledEmail(
+        to,
+        meeting.id,
+        parsed.data.scheduledAt,
+        parsed.data.adminReply,
+      );
     await logAudit({
       adminId: session.user.id,
       adminEmail: session.user.email ?? "",
@@ -45,4 +58,3 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     return fail("Failed to schedule meeting", 500);
   }
 }
-

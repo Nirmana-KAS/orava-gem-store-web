@@ -11,17 +11,24 @@ const updateSchema = z.object({
   adminNote: z.string().optional(),
 });
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await auth();
-    const p = idSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = idSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid inquiry ID", 400);
     const inquiry = await prisma.inquiry.findUnique({
       where: { id: p.data.id },
       include: { user: true, inquiredProducts: { include: { product: true } } },
     });
     if (!inquiry) return fail("Inquiry not found", 404);
-    const own = session?.user && (inquiry.userId === session.user.id || inquiry.guestEmail === session.user.email);
+    const own =
+      session?.user &&
+      (inquiry.userId === session.user.id ||
+        inquiry.guestEmail === session.user.email);
     const isAdmin = session?.user?.role === "ADMIN";
     if (!own && !isAdmin) return fail("Forbidden", 403);
     return ok(inquiry);
@@ -31,11 +38,15 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const admin = await requireAdmin();
     if (!admin) return fail("Forbidden", 403);
-    const p = idSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = idSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid inquiry ID", 400);
     const payload = await request.json();
     const parsed = updateSchema.safeParse(payload);
@@ -45,7 +56,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       data: {
         status: parsed.data.status,
         adminNote: parsed.data.adminNote,
-        acceptDate: parsed.data.status === InquiryStatus.IN_REVIEW ? new Date() : undefined,
+        acceptDate:
+          parsed.data.status === InquiryStatus.IN_REVIEW
+            ? new Date()
+            : undefined,
       },
     });
     await prisma.auditLog.create({
@@ -65,4 +79,3 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return fail("Failed to update inquiry", 500);
   }
 }
-

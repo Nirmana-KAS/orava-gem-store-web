@@ -8,19 +8,25 @@ import Button from "@/components/ui/Button";
 import { prisma } from "@/lib/prisma";
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const product = await prisma.product.findUnique({ where: { id: params.id } });
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const product = await prisma.product.findUnique({ where: { id } });
   return {
     title: product ? product.name : "Product",
-    description: product ? `${product.name} from ${product.origin}` : "Product details",
+    description: product
+      ? `${product.name} from ${product.origin}`
+      : "Product details",
   };
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  const product = await prisma.product.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const product = await prisma.product.findUnique({ where: { id } });
   if (!product) notFound();
   const related = await prisma.product.findMany({
     where: {
@@ -62,4 +68,3 @@ export default async function ProductDetailPage({ params }: PageProps) {
     </main>
   );
 }
-

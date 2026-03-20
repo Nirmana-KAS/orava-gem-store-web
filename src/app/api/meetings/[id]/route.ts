@@ -12,17 +12,24 @@ const updateSchema = z.object({
   adminReply: z.string().optional(),
 });
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await auth();
-    const p = idSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = idSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid meeting ID", 400);
     const meeting = await prisma.meeting.findUnique({
       where: { id: p.data.id },
       include: { user: true },
     });
     if (!meeting) return fail("Meeting not found", 404);
-    const own = session?.user && (meeting.userId === session.user.id || meeting.guestEmail === session.user.email);
+    const own =
+      session?.user &&
+      (meeting.userId === session.user.id ||
+        meeting.guestEmail === session.user.email);
     const isAdmin = session?.user?.role === "ADMIN";
     if (!own && !isAdmin) return fail("Forbidden", 403);
     return ok(meeting);
@@ -32,11 +39,15 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const admin = await requireAdmin();
     if (!admin) return fail("Forbidden", 403);
-    const p = idSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = idSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid meeting ID", 400);
     const body = await request.json();
     const parsed = updateSchema.safeParse(body);
@@ -62,4 +73,3 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return fail("Failed to update meeting", 500);
   }
 }
-

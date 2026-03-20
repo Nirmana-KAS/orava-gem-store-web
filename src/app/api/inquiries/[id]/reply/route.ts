@@ -10,21 +10,25 @@ const schema = z.object({
   reply: z.string().min(3).max(5000),
 });
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await requireAdmin();
     if (!session) return fail("Forbidden", 403);
+    const resolvedParams = await params;
     const body = await request.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) return fail("Invalid payload", 400);
 
     const inquiry = await prisma.inquiry.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       include: { user: true },
     });
     if (!inquiry) return fail("Inquiry not found", 404);
     const updated = await prisma.inquiry.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         adminReply: parsed.data.reply,
         repliedAt: new Date(),
@@ -51,4 +55,3 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     return fail("Failed to reply inquiry", 500);
   }
 }
-

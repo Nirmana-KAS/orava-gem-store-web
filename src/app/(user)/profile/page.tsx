@@ -17,7 +17,10 @@ export default async function ProfilePage() {
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     include: {
-      inquiries: { include: { inquiredProducts: { include: { product: true } } }, orderBy: { createdAt: "desc" } },
+      inquiries: {
+        include: { inquiredProducts: { include: { product: true } } },
+        orderBy: { createdAt: "desc" },
+      },
       meetings: { orderBy: { createdAt: "desc" } },
     },
   });
@@ -40,15 +43,26 @@ export default async function ProfilePage() {
       <Card>
         <h2 className="mb-3 text-xl font-semibold">Inquiry History</h2>
         <div className="space-y-3">
-          {user.inquiries.map((inquiry) => (
-            <div key={inquiry.id} className="rounded-md border border-white/10 p-3">
+          {user.inquiries.map((inquiry: (typeof user.inquiries)[number]) => (
+            <div
+              key={inquiry.id}
+              className="rounded-md border border-white/10 p-3"
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>{inquiry.inquiryType}</Badge>
                 <Badge>{inquiry.status}</Badge>
-                <span className="text-xs text-zinc-400">{formatDateTime(inquiry.createdAt)}</span>
+                <span className="text-xs text-zinc-400">
+                  {formatDateTime(inquiry.createdAt)}
+                </span>
               </div>
-              <p className="mt-2 text-sm text-zinc-300">{inquiry.description ?? "No description"}</p>
-              {inquiry.adminReply ? <p className="mt-2 text-sm text-gold">Reply: {inquiry.adminReply}</p> : null}
+              <p className="mt-2 text-sm text-zinc-300">
+                {inquiry.description ?? "No description"}
+              </p>
+              {inquiry.adminReply ? (
+                <p className="mt-2 text-sm text-gold">
+                  Reply: {inquiry.adminReply}
+                </p>
+              ) : null}
             </div>
           ))}
         </div>
@@ -56,15 +70,26 @@ export default async function ProfilePage() {
       <Card>
         <h2 className="mb-3 text-xl font-semibold">Meeting History</h2>
         <div className="space-y-3">
-          {user.meetings.map((meeting) => (
-            <div key={meeting.id} className="rounded-md border border-white/10 p-3">
+          {user.meetings.map((meeting: (typeof user.meetings)[number]) => (
+            <div
+              key={meeting.id}
+              className="rounded-md border border-white/10 p-3"
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>{meeting.meetingType}</Badge>
                 <Badge>{meeting.status}</Badge>
-                <span className="text-xs text-zinc-400">{formatDateTime(meeting.createdAt)}</span>
+                <span className="text-xs text-zinc-400">
+                  {formatDateTime(meeting.createdAt)}
+                </span>
               </div>
-              <p className="mt-2 text-sm text-zinc-300">{meeting.description ?? "No description"}</p>
-              {meeting.adminReply ? <p className="mt-2 text-sm text-gold">Reply: {meeting.adminReply}</p> : null}
+              <p className="mt-2 text-sm text-zinc-300">
+                {meeting.description ?? "No description"}
+              </p>
+              {meeting.adminReply ? (
+                <p className="mt-2 text-sm text-gold">
+                  Reply: {meeting.adminReply}
+                </p>
+              ) : null}
             </div>
           ))}
         </div>
@@ -72,4 +97,3 @@ export default async function ProfilePage() {
     </div>
   );
 }
-

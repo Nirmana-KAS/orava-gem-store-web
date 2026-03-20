@@ -8,14 +8,19 @@ import { userUpdateSchema } from "@/lib/validations";
 
 const idSchema = z.object({ id: z.string().uuid() });
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await auth();
     if (!session?.user) return fail("Unauthorized", 401);
-    const p = idSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = idSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid user ID", 400);
     const isAdmin = session.user.role === "ADMIN";
-    if (!isAdmin && session.user.id !== p.data.id) return fail("Forbidden", 403);
+    if (!isAdmin && session.user.id !== p.data.id)
+      return fail("Forbidden", 403);
     const user = await prisma.user.findUnique({
       where: { id: p.data.id },
       include: { inquiries: true, meetings: true },
@@ -28,14 +33,19 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await auth();
     if (!session?.user) return fail("Unauthorized", 401);
-    const p = idSchema.safeParse(params);
+    const resolvedParams = await params;
+    const p = idSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid user ID", 400);
     const isAdmin = session.user.role === "ADMIN";
-    if (!isAdmin && session.user.id !== p.data.id) return fail("Forbidden", 403);
+    if (!isAdmin && session.user.id !== p.data.id)
+      return fail("Forbidden", 403);
     const body = await request.json();
     const parsed = userUpdateSchema.safeParse(body);
     if (!parsed.success) return fail("Invalid payload", 400);
@@ -59,11 +69,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }): Promise<Response> {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== "ADMIN") return fail("Forbidden", 403);
-    const p = idSchema.safeParse(params);
+    if (!session?.user || session.user.role !== "ADMIN")
+      return fail("Forbidden", 403);
+    const resolvedParams = await params;
+    const p = idSchema.safeParse(resolvedParams);
     if (!p.success) return fail("Invalid user ID", 400);
     const user = await prisma.user.delete({ where: { id: p.data.id } });
     await logAudit({
@@ -81,4 +96,3 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     return fail("Failed to delete user", 500);
   }
 }
-

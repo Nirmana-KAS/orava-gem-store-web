@@ -10,29 +10,62 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  searchParams: Record<string, string | undefined>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }
 
 export default async function ProductsPage({ searchParams }: PageProps) {
-  const page = Number(searchParams.page ?? "1");
+  const resolvedSearchParams = await searchParams;
+  const page = Number(resolvedSearchParams.page ?? "1");
   const limit = 12;
-  const sortField = (searchParams.sortField ?? "createdAt") as "price" | "lotQuantity" | "weight" | "createdAt";
-  const sortOrder = (searchParams.sortOrder ?? "desc") as "asc" | "desc";
+  const sortField = (resolvedSearchParams.sortField ?? "createdAt") as
+    | "price"
+    | "lotQuantity"
+    | "weight"
+    | "createdAt";
+  const sortOrder = (resolvedSearchParams.sortOrder ?? "desc") as
+    | "asc"
+    | "desc";
   const where = {
-    name: searchParams.name ? { contains: searchParams.name, mode: "insensitive" as const } : undefined,
-    shape: searchParams.shape ? { contains: searchParams.shape, mode: "insensitive" as const } : undefined,
-    size: searchParams.size ? { contains: searchParams.size, mode: "insensitive" as const } : undefined,
-    colorName: searchParams.colorName ? { contains: searchParams.colorName, mode: "insensitive" as const } : undefined,
-    origin: searchParams.origin ? { contains: searchParams.origin, mode: "insensitive" as const } : undefined,
-    clarityType: searchParams.clarityType ? { contains: searchParams.clarityType, mode: "insensitive" as const } : undefined,
-    polishedType: searchParams.polishedType ? { contains: searchParams.polishedType, mode: "insensitive" as const } : undefined,
-    condition: (searchParams.condition as
-      | "NATURAL"
-      | "SEMI_PRESSURE"
-      | "HEATED"
-      | "SYNTHETIC"
-      | undefined) ?? undefined,
-    availability: searchParams.availability ? searchParams.availability === "true" : undefined,
+    name: resolvedSearchParams.name
+      ? { contains: resolvedSearchParams.name, mode: "insensitive" as const }
+      : undefined,
+    shape: resolvedSearchParams.shape
+      ? { contains: resolvedSearchParams.shape, mode: "insensitive" as const }
+      : undefined,
+    size: resolvedSearchParams.size
+      ? { contains: resolvedSearchParams.size, mode: "insensitive" as const }
+      : undefined,
+    colorName: resolvedSearchParams.colorName
+      ? {
+          contains: resolvedSearchParams.colorName,
+          mode: "insensitive" as const,
+        }
+      : undefined,
+    origin: resolvedSearchParams.origin
+      ? { contains: resolvedSearchParams.origin, mode: "insensitive" as const }
+      : undefined,
+    clarityType: resolvedSearchParams.clarityType
+      ? {
+          contains: resolvedSearchParams.clarityType,
+          mode: "insensitive" as const,
+        }
+      : undefined,
+    polishedType: resolvedSearchParams.polishedType
+      ? {
+          contains: resolvedSearchParams.polishedType,
+          mode: "insensitive" as const,
+        }
+      : undefined,
+    condition:
+      (resolvedSearchParams.condition as
+        | "NATURAL"
+        | "SEMI_PRESSURE"
+        | "HEATED"
+        | "SYNTHETIC"
+        | undefined) ?? undefined,
+    availability: resolvedSearchParams.availability
+      ? resolvedSearchParams.availability === "true"
+      : undefined,
   };
   const [products, total] = await Promise.all([
     prisma.product.findMany({
@@ -62,7 +95,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <a
                 key={p}
-                href={`/products?${new URLSearchParams({ ...searchParams, page: String(p) } as Record<string, string>).toString()}`}
+                href={`/products?${new URLSearchParams({ ...resolvedSearchParams, page: String(p) } as Record<string, string>).toString()}`}
                 className={`rounded px-3 py-1 text-sm ${p === page ? "bg-gold text-dark" : "border border-white/20 text-zinc-200"}`}
               >
                 {p}
@@ -74,4 +107,3 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     </main>
   );
 }
-

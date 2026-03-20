@@ -1,5 +1,4 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
@@ -24,7 +23,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { email, password } = parsed.data;
         const allowed = rateLimit(`auth:${email.toLowerCase()}`, 5, 60_000);
         if (!allowed) {
-          throw new Error("Too many sign-in attempts. Please try again in a minute.");
+          throw new Error(
+            "Too many sign-in attempts. Please try again in a minute.",
+          );
         }
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.password) throw new Error("Invalid credentials");
@@ -42,16 +43,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      allowDangerousEmailAccountLinking: true,
       profile(profile) {
-        const firstName = profile.given_name ?? profile.name?.split(" ")[0] ?? "User";
-        const lastName = profile.family_name ?? profile.name?.split(" ").slice(1).join(" ") ?? "";
+        const firstName =
+          profile.given_name ?? profile.name?.split(" ")[0] ?? "User";
+        const lastName =
+          profile.family_name ??
+          profile.name?.split(" ").slice(1).join(" ") ??
+          "";
         return {
           id: profile.sub,
           email: profile.email,
           firstName,
           lastName,
           image: profile.picture,
-          role: Role.USER,
+          role: "USER",
         };
       },
     }),
@@ -73,7 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             firstName,
             lastName,
             image: user.image ?? undefined,
-            role: Role.USER,
+            role: "USER",
             emailVerified: new Date(),
           },
         });
@@ -96,14 +102,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async jwt({ token, user }) {
-      if (user?.email) {
-        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
-        if (dbUser) {
-          token.id = dbUser.id;
-          token.role = dbUser.role;
-          token.firstName = dbUser.firstName;
-          token.lastName = dbUser.lastName;
-        }
+      if (user) {
+        if (user.id) token.id = user.id;
+
+        const enrichedUser = user as {
+          role?: typeof token.role;
+          firstName?: string;
+          lastName?: string;
+        };
+
+        if (enrichedUser.role) token.role = enrichedUser.role;
+        if (typeof enrichedUser.firstName === "string")
+          token.firstName = enrichedUser.firstName;
+        if (typeof enrichedUser.lastName === "string")
+          token.lastName = enrichedUser.lastName;
       }
       return token;
     },
@@ -122,4 +134,3 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
-
