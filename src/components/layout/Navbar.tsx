@@ -76,7 +76,7 @@ export default function Navbar() {
                 className="flex items-center gap-2 rounded-md border border-white/20 px-3 py-2 text-sm"
                 onClick={() => setMenuOpen((v) => !v)}
               >
-                <span className="text-zinc-200">{greeting}</span>
+                <span className="max-w-[20rem] truncate text-zinc-200">{greeting}</span>
                 <User2 size={16} />
               </button>
               <AnimatePresence>
@@ -132,6 +132,38 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <div className="mt-6 border-t border-white/10 pt-4">
+                {!session?.user ? (
+                  <div className="space-y-3">
+                    <Link href="/signin" onClick={() => setMobileOpen(false)} className="block">
+                      <Button variant="outline" className="w-full">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link href="/signup" onClick={() => setMobileOpen(false)} className="block">
+                      <Button className="w-full">Sign Up</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    <Link href="/profile" onClick={() => setMobileOpen(false)} className="block rounded px-3 py-2 hover:bg-white/10">
+                      Profile
+                    </Link>
+                    {session.user.role === "ADMIN" ? (
+                      <Link href="/admin" onClick={() => setMobileOpen(false)} className="block rounded px-3 py-2 hover:bg-white/10">
+                        Admin
+                      </Link>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="block w-full rounded px-3 py-2 text-left hover:bg-white/10"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         ) : null}
