@@ -64,7 +64,7 @@ export async function POST(request: NextRequest): Promise<Response> {
         attachmentName: parsed.data.attachmentName,
         inquiredProducts: parsed.data.productIds?.length
           ? {
-              create: parsed.data.productIds.map((productId) => ({
+              create: parsed.data.productIds.map((productId: string) => ({
                 productId,
               })),
             }
