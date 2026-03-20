@@ -44,6 +44,7 @@ export const inquirySchema = z
     inquiryType: z.nativeEnum(InquiryType),
     description: z.string().max(3000).optional(),
     guestEmail: emailSchema.optional(),
+    isAuthenticated: z.boolean().optional().default(false),
     productIds: z.array(z.string().uuid()).optional(),
     attachmentUrl: z.string().url().optional(),
     attachmentName: z.string().max(255).optional(),
@@ -56,6 +57,13 @@ export const inquirySchema = z
         message: "At least one product is required for product inquiry",
       });
     }
+    if (!val.isAuthenticated && !val.guestEmail) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["guestEmail"],
+        message: "Guest email is required when not signed in",
+      });
+    }
   });
 
 export const meetingSchema = z.object({
@@ -63,8 +71,19 @@ export const meetingSchema = z.object({
   description: z.string().max(3000).optional(),
   preferredDate: z.coerce.date().optional(),
   guestEmail: emailSchema.optional(),
+  isAuthenticated: z.boolean().optional().default(false),
   attachmentUrl: z.string().url().optional(),
   attachmentName: z.string().max(255).optional(),
+});
+
+export const meetingSchemaWithGuestRule = meetingSchema.superRefine((val, ctx) => {
+  if (!val.isAuthenticated && !val.guestEmail) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["guestEmail"],
+      message: "Guest email is required when not signed in",
+    });
+  }
 });
 
 export const quotationSchema = z.object({

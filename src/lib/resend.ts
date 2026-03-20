@@ -69,20 +69,36 @@ export async function sendPasswordResetEmail(to: string, resetLink: string): Pro
 }
 
 export async function sendInquiryConfirmationEmail(to: string, inquiryDetails: object): Promise<void> {
-  const details = JSON.stringify(inquiryDetails, null, 2);
+  const data = inquiryDetails as { id?: string; inquiryType?: string; description?: string; products?: string[] };
+  const products = data.products && data.products.length > 0 ? data.products.join(", ") : "N/A";
   await sendEmail(
     to,
-    `ORAVA Gems — Inquiry Received (#${(inquiryDetails as { id?: string }).id ?? "ID"})`,
-    shell("Inquiry Received", `<p>We received your inquiry.</p><pre style="white-space:pre-wrap">${details}</pre><p>Expected response time: 24 hours.</p>`),
+    `ORAVA Gems — Inquiry Received (#${data.id ?? "ID"})`,
+    shell(
+      "Inquiry Received",
+      `<p>Thank you for contacting ORAVA Gems.</p>
+       <p><strong>Inquiry ID:</strong> ${data.id ?? "N/A"}<br/>
+       <strong>Type:</strong> ${data.inquiryType ?? "N/A"}<br/>
+       <strong>Description:</strong> ${data.description ?? "N/A"}<br/>
+       <strong>Products:</strong> ${products}</p>
+       <p>Expected response time: within 24 hours.</p>`,
+    ),
   );
 }
 
 export async function sendMeetingConfirmationEmail(to: string, meetingDetails: object): Promise<void> {
-  const details = JSON.stringify(meetingDetails, null, 2);
+  const data = meetingDetails as { id?: string; meetingType?: string; description?: string };
   await sendEmail(
     to,
-    `ORAVA Gems — Meeting Request Received (#${(meetingDetails as { id?: string }).id ?? "ID"})`,
-    shell("Meeting Request Received", `<pre style="white-space:pre-wrap">${details}</pre><p>Our team will schedule promptly.</p>`),
+    `ORAVA Gems — Meeting Request Received (#${data.id ?? "ID"})`,
+    shell(
+      "Meeting Request Received",
+      `<p>We received your meeting request.</p>
+       <p><strong>Meeting ID:</strong> ${data.id ?? "N/A"}<br/>
+       <strong>Type:</strong> ${data.meetingType ?? "N/A"}<br/>
+       <strong>Description:</strong> ${data.description ?? "N/A"}</p>
+       <p>Our team will review and contact you with scheduling details shortly.</p>`,
+    ),
   );
 }
 
@@ -111,18 +127,37 @@ export async function sendMeetingScheduledEmail(
 }
 
 export async function sendDailySummaryReport(to: string[], reportData: object): Promise<void> {
+  const data = reportData as {
+    newInquiries?: number;
+    newMeetings?: number;
+    newUsers?: number;
+    topProducts?: string;
+  };
   await sendEmail(
     to,
     `ORAVA Gems — Daily Summary Report [${format(new Date(), "yyyy-MM-dd")}]`,
-    shell("Daily Summary", `<pre style="white-space:pre-wrap">${JSON.stringify(reportData, null, 2)}</pre>`),
+    shell(
+      "Daily Summary",
+      `<p><strong>New inquiries:</strong> ${data.newInquiries ?? 0}</p>
+       <p><strong>New meetings:</strong> ${data.newMeetings ?? 0}</p>
+       <p><strong>New users:</strong> ${data.newUsers ?? 0}</p>
+       <p><strong>Top products inquired:</strong> ${data.topProducts ?? "N/A"}</p>`,
+    ),
   );
 }
 
 export async function sendQuotationConfirmationEmail(to: string, quotationDetails: object): Promise<void> {
+  const data = quotationDetails as { id?: string; description?: string };
   await sendEmail(
     to,
-    `ORAVA Gems — Quotation Request Received (#${(quotationDetails as { id?: string }).id ?? "ID"})`,
-    shell("Quotation Request Received", `<pre style="white-space:pre-wrap">${JSON.stringify(quotationDetails, null, 2)}</pre>`),
+    `ORAVA Gems — Quotation Request Received (#${data.id ?? "ID"})`,
+    shell(
+      "Quotation Request Received",
+      `<p>Your quotation request has been received successfully.</p>
+       <p><strong>Reference ID:</strong> ${data.id ?? "N/A"}<br/>
+       <strong>Description:</strong> ${data.description ?? "N/A"}</p>
+       <p>Our team will share a response as soon as possible.</p>`,
+    ),
   );
 }
 

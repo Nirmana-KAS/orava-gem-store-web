@@ -4,14 +4,10 @@ import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rateLimit";
 import { sendSignInGreetingEmail } from "@/lib/resend";
-
-const credentialsSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
+import { signInSchema } from "@/lib/validations";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -21,11 +17,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: "Credentials",
       credentials: { email: {}, password: {} },
       async authorize(rawCredentials) {
-        const parsed = credentialsSchema.safeParse(rawCredentials);
+        const parsed = signInSchema.safeParse(rawCredentials);
         if (!parsed.success) {
           throw new Error("Invalid credentials");
         }
         const { email, password } = parsed.data;
+        const allowed = rateLimit(`auth:${email.toLowerCase()}`, 5, 60_000);
+        if (!allowed) {
+          throw new Error("Too many sign-in attempts. Please try again in a minute.");
+        }
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.password) throw new Error("Invalid credentials");
         const match = await bcrypt.compare(password, user.password);
@@ -58,37 +58,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async signIn({ user, account }) {
-      try {
-        if (!user.email) return true;
-        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+      if (!user.email) return true;
+      const email = user.email.toLowerCase();
 
-        if (account?.provider === "google" && !dbUser) {
-          const created = await prisma.user.create({
-            data: {
-              email: user.email,
-              firstName: (user as { firstName?: string }).firstName ?? "User",
-              lastName: (user as { lastName?: string }).lastName ?? "",
-              image: user.image,
-              role: Role.USER,
-              emailVerified: new Date(),
-            },
-          });
-          user.id = created.id;
-        } else if (dbUser) {
-          user.id = dbUser.id;
-          await prisma.inquiry.updateMany({
-            where: { guestEmail: dbUser.email, userId: null },
-            data: { userId: dbUser.id, guestEmail: null },
-          });
-          await prisma.meeting.updateMany({
-            where: { guestEmail: dbUser.email, userId: null },
-            data: { userId: dbUser.id, guestEmail: null },
-          });
-          void sendSignInGreetingEmail(dbUser.email, dbUser.firstName);
-        }
-      } catch (error) {
-        console.error("Sign in callback error:", error);
+      if (account?.provider === "google") {
+        const names = (user.name ?? "").trim().split(" ");
+        const firstName = names[0] || "User";
+        const lastName = names.slice(1).join(" ") || "";
+        const dbUser = await prisma.user.upsert({
+          where: { email },
+          update: { image: user.image ?? undefined },
+          create: {
+            email,
+            firstName,
+            lastName,
+            image: user.image ?? undefined,
+            role: Role.USER,
+            emailVerified: new Date(),
+          },
+        });
+        user.id = dbUser.id;
       }
+
+      const dbUser = await prisma.user.findUnique({ where: { email } });
+      if (!dbUser) return true;
+
+      user.id = dbUser.id;
+      await prisma.inquiry.updateMany({
+        where: { guestEmail: dbUser.email, userId: null },
+        data: { userId: dbUser.id, guestEmail: null },
+      });
+      await prisma.meeting.updateMany({
+        where: { guestEmail: dbUser.email, userId: null },
+        data: { userId: dbUser.id, guestEmail: null },
+      });
+      void sendSignInGreetingEmail(dbUser.email, dbUser.firstName);
       return true;
     },
     async jwt({ token, user }) {

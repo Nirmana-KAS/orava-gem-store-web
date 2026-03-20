@@ -38,10 +38,11 @@ export interface AdminDashboardStats {
 }
 
 export interface FilterOptions {
+  search?: string;
   name?: string;
   shape?: string[];
-  size?: string;
-  colorName?: string;
+  size?: string | string[];
+  colorName?: string | string[];
   origin?: string[];
   clarityType?: string[];
   polishedType?: string[];
