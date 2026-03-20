@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Button from "@/components/ui/Button";
@@ -13,10 +13,12 @@ import { signInSchema } from "@/lib/validations";
 
 type FormValues = z.infer<typeof signInSchema>;
 
-export default function SignInForm() {
+interface SignInFormProps {
+  callbackUrl?: string;
+}
+
+export default function SignInForm({ callbackUrl = "/" }: SignInFormProps) {
   const router = useRouter();
-  const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") ?? "/";
   const { register, handleSubmit, formState } = useForm<FormValues>({
     resolver: zodResolver(signInSchema),
   });

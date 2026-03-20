@@ -6,11 +6,18 @@ export const metadata: Metadata = {
   description: "Sign in to your ORAVA Gems account.",
 };
 
-export default function SignInPage() {
+interface SignInPageProps {
+  searchParams: {
+    callbackUrl?: string;
+  };
+}
+
+export default function SignInPage({ searchParams }: SignInPageProps) {
+  const callbackUrl = searchParams.callbackUrl || "/";
   return (
     <section>
       <h1 className="mb-5 text-center font-heading text-4xl">Sign In</h1>
-      <SignInForm />
+      <SignInForm callbackUrl={callbackUrl} />
     </section>
   );
 }
