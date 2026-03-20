@@ -45,6 +45,17 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       where: { id: p.data.id },
       data: parsed.data,
     });
+    await prisma.auditLog.create({
+      data: {
+        adminId: admin.user.id,
+        adminEmail: admin.user.email ?? "",
+        action: "MEETING_UPDATE",
+        target: "Meeting",
+        targetId: updated.id,
+        details: `status=${updated.status}`,
+        ipAddress: request.headers.get("x-forwarded-for") ?? undefined,
+      },
+    });
     return ok(updated, "Meeting updated");
   } catch (error) {
     console.error("Meeting PUT error:", error);

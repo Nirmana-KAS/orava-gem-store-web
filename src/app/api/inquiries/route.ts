@@ -4,7 +4,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { fail, ok, requireAdmin } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
-import { sendInquiryConfirmationEmail } from "@/lib/resend";
+import { sendAdminInquiryNotificationEmail, sendInquiryConfirmationEmail } from "@/lib/resend";
 import { inquiryGuestSchema, inquirySchema } from "@/lib/validations";
 import { isValidEmail } from "@/lib/utils";
 import { rateLimit } from "@/lib/rateLimit";
@@ -75,6 +75,11 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     const to = session?.user?.email ?? parsed.data.guestEmail;
     if (to) void sendInquiryConfirmationEmail(to, created);
+    const adminEmails = (process.env.ADMIN_EMAILS ?? "")
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean);
+    void sendAdminInquiryNotificationEmail(adminEmails, created.id, created.inquiryType, to ?? "unknown");
     return ok(created, "Inquiry submitted", 201);
   } catch (error) {
     console.error("Inquiries POST error:", error);

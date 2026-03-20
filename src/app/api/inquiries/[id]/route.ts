@@ -48,6 +48,17 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         acceptDate: parsed.data.status === InquiryStatus.IN_REVIEW ? new Date() : undefined,
       },
     });
+    await prisma.auditLog.create({
+      data: {
+        adminId: admin.user.id,
+        adminEmail: admin.user.email ?? "",
+        action: "INQUIRY_STATUS_UPDATE",
+        target: "Inquiry",
+        targetId: updated.id,
+        details: `status=${updated.status}`,
+        ipAddress: request.headers.get("x-forwarded-for") ?? undefined,
+      },
+    });
     return ok(updated, "Inquiry updated");
   } catch (error) {
     console.error("Inquiry PUT error:", error);

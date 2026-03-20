@@ -161,3 +161,43 @@ export async function sendQuotationConfirmationEmail(to: string, quotationDetail
   );
 }
 
+export async function sendAdminInquiryNotificationEmail(
+  recipients: string[],
+  inquiryId: string,
+  inquiryType: string,
+  requesterEmail: string,
+): Promise<void> {
+  if (recipients.length === 0) return;
+  await sendEmail(
+    recipients,
+    `ORAVA Gems — New Inquiry Alert (#${inquiryId})`,
+    shell(
+      "New Inquiry Received",
+      `<p>A new inquiry has been submitted.</p>
+       <p><strong>ID:</strong> ${inquiryId}<br/>
+       <strong>Type:</strong> ${inquiryType}<br/>
+       <strong>Requester:</strong> ${requesterEmail}</p>`,
+    ),
+  );
+}
+
+export async function sendAdminMeetingNotificationEmail(
+  recipients: string[],
+  meetingId: string,
+  meetingType: string,
+  requesterEmail: string,
+): Promise<void> {
+  if (recipients.length === 0) return;
+  await sendEmail(
+    recipients,
+    `ORAVA Gems — New Meeting Request (#${meetingId})`,
+    shell(
+      "New Meeting Request Received",
+      `<p>A new meeting request has been submitted.</p>
+       <p><strong>ID:</strong> ${meetingId}<br/>
+       <strong>Type:</strong> ${meetingType}<br/>
+       <strong>Requester:</strong> ${requesterEmail}</p>`,
+    ),
+  );
+}
+
