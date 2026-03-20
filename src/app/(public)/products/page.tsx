@@ -21,12 +21,18 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const where = {
     name: searchParams.name ? { contains: searchParams.name, mode: "insensitive" as const } : undefined,
     shape: searchParams.shape ? { contains: searchParams.shape, mode: "insensitive" as const } : undefined,
+    size: searchParams.size ? { contains: searchParams.size, mode: "insensitive" as const } : undefined,
+    colorName: searchParams.colorName ? { contains: searchParams.colorName, mode: "insensitive" as const } : undefined,
+    origin: searchParams.origin ? { contains: searchParams.origin, mode: "insensitive" as const } : undefined,
+    clarityType: searchParams.clarityType ? { contains: searchParams.clarityType, mode: "insensitive" as const } : undefined,
+    polishedType: searchParams.polishedType ? { contains: searchParams.polishedType, mode: "insensitive" as const } : undefined,
     condition: (searchParams.condition as
       | "NATURAL"
       | "SEMI_PRESSURE"
       | "HEATED"
       | "SYNTHETIC"
       | undefined) ?? undefined,
+    availability: searchParams.availability ? searchParams.availability === "true" : undefined,
   };
   const [products, total] = await Promise.all([
     prisma.product.findMany({
