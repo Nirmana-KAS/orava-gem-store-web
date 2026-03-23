@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Button from "@/components/ui/Button";
@@ -18,22 +17,30 @@ interface SignInFormProps {
 }
 
 export default function SignInForm({ callbackUrl = "/" }: SignInFormProps) {
-  const router = useRouter();
   const { register, handleSubmit, formState } = useForm<FormValues>({
     resolver: zodResolver(signInSchema),
   });
 
   const onSubmit = async (values: FormValues) => {
-    const result = await signIn("credentials", { ...values, redirect: false, callbackUrl });
+    const result = await signIn("credentials", {
+      ...values,
+      redirect: false,
+      callbackUrl,
+    });
     if (result?.error) {
       toast("Invalid credentials");
       return;
     }
-    router.push(callbackUrl);
+
+    const destination = result?.url ?? callbackUrl;
+    window.location.href = destination;
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-xl border border-white/10 bg-dark-surface p-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 rounded-xl border border-white/10 bg-dark-surface p-6"
+    >
       <label className="block text-sm">
         Email
         <Input type="email" {...register("email")} />
@@ -42,10 +49,19 @@ export default function SignInForm({ callbackUrl = "/" }: SignInFormProps) {
         Password
         <Input type="password" {...register("password")} />
       </label>
-      <Button type="submit" isLoading={formState.isSubmitting} className="w-full">
+      <Button
+        type="submit"
+        isLoading={formState.isSubmitting}
+        className="w-full"
+      >
         Sign In
       </Button>
-      <Button type="button" variant="outline" className="w-full" onClick={() => void signIn("google", { callbackUrl })}>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={() => void signIn("google", { callbackUrl })}
+      >
         Sign In with Google
       </Button>
       <div className="text-sm text-zinc-300">
@@ -56,4 +72,3 @@ export default function SignInForm({ callbackUrl = "/" }: SignInFormProps) {
     </form>
   );
 }
-

@@ -19,13 +19,27 @@ export default auth(async (req) => {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
 
+  if (
+    (pathname.startsWith("/signin") || pathname.startsWith("/signup")) &&
+    session?.user
+  ) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   if (pathname.startsWith("/api/admin") && !isAdmin) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
   }
 
   const response = NextResponse.next();
 
-  if (!pathname.startsWith("/api") && !pathname.startsWith("/_next") && !pathname.includes(".")) {
+  if (
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/_next") &&
+    !pathname.includes(".")
+  ) {
     const country = req.headers.get("x-vercel-ip-country") ?? "";
     const userAgent = req.headers.get("user-agent") ?? "";
     const url = new URL("/api/analytics/pageview", req.url);
@@ -44,4 +58,3 @@ export default auth(async (req) => {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
-

@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Button from "@/components/ui/Button";
@@ -14,8 +13,9 @@ import { signUpSchema } from "@/lib/validations";
 type FormValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpForm() {
-  const router = useRouter();
-  const { register, handleSubmit, formState } = useForm<FormValues>({ resolver: zodResolver(signUpSchema) });
+  const { register, handleSubmit, formState } = useForm<FormValues>({
+    resolver: zodResolver(signUpSchema),
+  });
 
   const onSubmit = async (values: FormValues) => {
     const response = await fetch("/api/users/register", {
@@ -23,17 +23,34 @@ export default function SignUpForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
     });
-    const json = (await response.json()) as { success: boolean; error?: string };
+    const json = (await response.json()) as {
+      success: boolean;
+      error?: string;
+    };
     if (!json.success) {
       toast(json.error ?? "Failed to create account");
       return;
     }
-    await signIn("credentials", { email: values.email, password: values.password, redirect: false });
-    router.push("/");
+    const signInResult = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+      callbackUrl: "/",
+    });
+
+    if (signInResult?.error) {
+      toast("Account created, but sign-in failed. Please sign in manually.");
+      return;
+    }
+
+    window.location.href = signInResult?.url ?? "/";
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-xl border border-white/10 bg-dark-surface p-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 rounded-xl border border-white/10 bg-dark-surface p-6"
+    >
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-sm">
           First Name
@@ -57,12 +74,22 @@ export default function SignUpForm() {
         <Input type="password" {...register("confirmPassword")} />
       </label>
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" {...register("terms")} /> I agree to Terms &amp; Conditions
+        <input type="checkbox" {...register("terms")} /> I agree to Terms &amp;
+        Conditions
       </label>
-      <Button type="submit" isLoading={formState.isSubmitting} className="w-full">
+      <Button
+        type="submit"
+        isLoading={formState.isSubmitting}
+        className="w-full"
+      >
         Sign Up
       </Button>
-      <Button type="button" variant="outline" className="w-full" onClick={() => void signIn("google", { callbackUrl: "/" })}>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={() => void signIn("google", { callbackUrl: "/" })}
+      >
         Sign Up with Google
       </Button>
       <p className="text-sm text-zinc-300">
@@ -74,4 +101,3 @@ export default function SignUpForm() {
     </form>
   );
 }
-

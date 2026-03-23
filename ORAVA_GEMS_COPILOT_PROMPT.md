@@ -1,6 +1,9 @@
 # ORAVA GEMS — FULL PROJECT BUILD PROMPT
+
 # For: GitHub Copilot Agent (Claude Opus 4.6)
+
 # Instruction: Read this entire file before writing a single line of code.
+
 # Build everything in the exact order specified. Do not skip any section.
 
 ---
@@ -60,7 +63,7 @@ Assume these exist in .env.local. Reference them exactly as written:
 DATABASE_URL=
 DIRECT_URL=
 NEXTAUTH_SECRET=
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=${process.env.NEXTAUTH_URL}
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 CLOUDINARY_CLOUD_NAME=
@@ -554,10 +557,13 @@ enum MeetingStatus {
 ## STEP 3 — CORE LIBRARY FILES
 
 ### `src/lib/prisma.ts`
+
 Singleton Prisma client. Handle dev hot-reload correctly with global instance.
 
 ### `src/lib/auth.ts`
+
 NextAuth v5 config with:
+
 - PrismaAdapter
 - Credentials provider (email + bcryptjs password compare)
 - Google provider
@@ -566,17 +572,20 @@ NextAuth v5 config with:
 - On sign-in: if guest inquiries/meetings exist under user email, link them to user ID
 
 ### `src/lib/cloudinary.ts`
+
 - uploadImage(file: File, folder: string): Promise<string>
 - deleteImage(publicId: string): Promise<void>
 - Use Cloudinary Node SDK server-side only
 
 ### `src/lib/supabase.ts`
+
 - Server client using service role key for file operations
 - uploadFile(file: File, bucket: string, path: string): Promise<string>
 - deleteFile(bucket: string, path: string): Promise<void>
 - Bucket name: "orava-attachments"
 
 ### `src/lib/resend.ts`
+
 Create these fully implemented email sending functions.
 Each returns Promise<void> and handles errors gracefully.
 All emails use professional HTML templates with ORAVA branding (dark luxury theme, gold accents #C9A84C):
@@ -617,6 +626,7 @@ All emails use professional HTML templates with ORAVA branding (dark luxury them
    Subject: "ORAVA Gems — Quotation Request Received (#ID)"
 
 ### `src/lib/utils.ts`
+
 - cn(...inputs): string — clsx + tailwind-merge
 - formatCurrency(amount: number): string — USD format
 - formatDate(date: Date): string
@@ -627,7 +637,9 @@ All emails use professional HTML templates with ORAVA branding (dark luxury them
 - isValidEmail(email: string): boolean
 
 ### `src/lib/validations.ts`
+
 Complete Zod schemas for:
+
 - signUpSchema (firstName, lastName, email, password min 8 chars, confirmPassword match, terms boolean)
 - signInSchema (email, password)
 - productSchema (all product fields with correct types and constraints)
@@ -638,20 +650,26 @@ Complete Zod schemas for:
 - adminProductSchema
 
 ### `src/lib/rateLimit.ts`
+
 Simple in-memory rate limiter for API routes:
+
 - rateLimit(identifier: string, limit: number, window: number): boolean
 - Use for inquiry submit, meeting submit, auth endpoints
 - limit: 5 requests per window: 60000ms (1 minute) for forms
 
 ### `src/types/index.ts`
+
 Export all TypeScript interfaces matching Prisma models:
+
 - ProductWithDetails, InquiryWithDetails, MeetingWithDetails
 - UserWithDetails, AdminDashboardStats
 - FilterOptions, SortOptions, PaginationOptions
 - ApiResponse<T> generic type
 
 ### `src/types/next-auth.d.ts`
+
 Extend Session and JWT types to include:
+
 - id, role, firstName, lastName on session.user
 
 ---
@@ -661,9 +679,10 @@ Extend Session and JWT types to include:
 File: `src/middleware.ts`
 
 Rules:
-- /admin/* → require ADMIN role, redirect to /signin if not authenticated, redirect to / if authenticated but not admin
-- /profile/* → require any authenticated user, redirect to /signin if not
-- /api/admin/* → same admin check, return 401 JSON if not admin
+
+- /admin/\* → require ADMIN role, redirect to /signin if not authenticated, redirect to / if authenticated but not admin
+- /profile/\* → require any authenticated user, redirect to /signin if not
+- /api/admin/\* → same admin check, return 401 JSON if not admin
 - Track pageview for analytics on every non-API, non-static route (fire and forget POST to /api/analytics/pageview)
 - Attach geo country from request headers if available (x-vercel-ip-country)
 
@@ -672,6 +691,7 @@ Rules:
 ## STEP 5 — API ROUTES
 
 Build all API routes with:
+
 - Full input validation using Zod
 - Rate limiting on public-facing endpoints
 - Proper HTTP status codes (200, 201, 400, 401, 403, 404, 500)
@@ -680,64 +700,80 @@ Build all API routes with:
 - All routes handle errors with try/catch
 
 ### `src/app/api/products/route.ts`
+
 GET: List products with filtering (name, shape, size, colorName, origin, clarityType, polishedType, condition, availability) and sorting (price, lotQuantity, weight, createdAt) and pagination (page, limit default 12)
 POST: Admin only — create product
 
 ### `src/app/api/products/[id]/route.ts`
+
 GET: Single product with related data
 PUT: Admin only — update product
 DELETE: Admin only — delete product, also delete images from Cloudinary
 
 ### `src/app/api/inquiries/route.ts`
+
 GET: Admin only — list all inquiries with filters
 POST: Public — submit inquiry (detect logged-in or guest by session, if guest validate email format, save guestEmail, send confirmation email, send admin notification)
 
 ### `src/app/api/inquiries/[id]/route.ts`
+
 GET: Admin only or own inquiry — get single inquiry
 PUT: Admin only — update inquiry status
 
 ### `src/app/api/inquiries/[id]/reply/route.ts`
+
 POST: Admin only — reply to inquiry, update status to REPLIED, send email to user/guest, log to AuditLog
 
 ### `src/app/api/meetings/route.ts`
+
 GET: Admin only — list all meetings
 POST: Public — submit meeting request (same guest/auth logic as inquiries)
 
 ### `src/app/api/meetings/[id]/route.ts`
+
 GET: Admin or own meeting
 PUT: Admin only — update meeting
 
 ### `src/app/api/meetings/[id]/schedule/route.ts`
+
 POST: Admin only — schedule meeting with date/time, send email to user/guest
 
 ### `src/app/api/users/route.ts`
+
 GET: Admin only — list all users with pagination and search
 
 ### `src/app/api/users/[id]/route.ts`
+
 GET: Admin or own profile
 PUT: Admin or own profile — update user details
 DELETE: Admin only — delete user
 
 ### `src/app/api/upload/image/route.ts`
+
 POST: Admin only — upload image to Cloudinary, return secure_url
 Accept multipart/form-data, validate file type (jpg, png, webp), max 10MB
 
 ### `src/app/api/upload/file/route.ts`
+
 POST: Authenticated or guest — upload attachment to Supabase Storage
 Accept multipart/form-data, validate file type (pdf, docx, jpg, png), max 10MB
 Return public URL
 
 ### `src/app/api/analytics/pageview/route.ts`
+
 POST: Public — save page view to PageView table (page, country from header)
 No auth required, fire and forget
 
 ### `src/app/api/reports/generate/route.ts`
+
 POST: Admin only — generate report for date range, return stats object
 
 ### `src/app/api/reports/send/route.ts`
+
 POST: Admin only — send daily summary email to specified emails
 
 ### `src/app/api/auth/[...nextauth]/route.ts`
+
 NextAuth handler. Export GET and POST.
 
 ---
@@ -747,23 +783,28 @@ NextAuth handler. Export GET and POST.
 In `src/lib/auth.ts` implement:
 
 Credentials provider:
+
 - Find user by email in DB
 - Compare password with bcrypt
 - Return user object with id, email, firstName, lastName, role
 - Throw error if invalid credentials
 
 Google provider:
+
 - On first Google sign in, check if user with that email exists
 - If exists (registered by email before), link accounts
 - If new, create user with firstName/lastName from Google profile
 
 JWT callback:
+
 - Add id, role, firstName, lastName to token
 
 Session callback:
+
 - Add id, role, firstName, lastName from token to session.user
 
 SignIn callback:
+
 - After successful sign in, find any inquiries/meetings with guestEmail matching user email
 - Update them to set userId = user.id and clear guestEmail
 - Send sign in greeting email (fire and forget, don't block sign in)
@@ -775,6 +816,7 @@ SignIn callback:
 ### Navbar (`src/components/layout/Navbar.tsx`)
 
 Full implementation:
+
 - Logo: "ORAVA" in elegant serif-style with gem icon from lucide
 - Links: Home, Products, Services, Customized, About, Contact — with active state
 - Right side:
@@ -789,6 +831,7 @@ Full implementation:
 ### Footer (`src/components/layout/Footer.tsx`)
 
 Full implementation:
+
 - Logo + tagline: "Beauty Crafted To An Exemplary Standard"
 - 24-hour worldwide delivery badge (highlighted)
 - Columns: Quick Links, Services, Contact Info
@@ -800,6 +843,7 @@ Full implementation:
 ### AdminSidebar (`src/components/layout/AdminSidebar.tsx`)
 
 Full implementation:
+
 - ORAVA Admin logo top
 - Navigation items with icons:
   - Dashboard (LayoutDashboard icon)
@@ -821,6 +865,7 @@ Full implementation:
 Build all these sections with Framer Motion animations. Use viewport-triggered animations (whileInView). All animations must be smooth and performance-optimized.
 
 ### Section 1: Hero
+
 - Full-viewport height
 - Background: dark with subtle geometric pattern or gradient overlay
 - Center content with staggered animation:
@@ -831,6 +876,7 @@ Build all these sections with Framer Motion animations. Use viewport-triggered a
 - Floating animated gem particles or subtle bokeh effect using CSS
 
 ### Section 2: Trust Badges
+
 - Horizontal strip with animated count-up numbers:
   - "18+" Years of Excellence
   - "500+" Satisfied Clients
@@ -839,6 +885,7 @@ Build all these sections with Framer Motion animations. Use viewport-triggered a
 - Dark card style with gold icon each
 
 ### Section 3: Services Overview
+
 - "Our Services" heading with gold underline accent
 - Grid of 4 service cards (animated on scroll):
   - Cutting & Calibration
@@ -848,22 +895,26 @@ Build all these sections with Framer Motion animations. Use viewport-triggered a
 - Each card: icon, title, short description, hover lift effect
 
 ### Section 4: Featured Products
+
 - "Latest Collection" heading
 - Horizontal scrollable carousel of latest 6 products from /api/products?limit=6&sort=createdAt
 - Each card: product image, name, origin, shape, availability badge
 - "View All Products" button at end
 
 ### Section 5: Why ORAVA
+
 - Two column: text left, animated visual right
 - Points: 24hr delivery, Computer Vision QA, Precision cutting, Trusted since 2006, SLEDB registered
 
 ### Section 6: CTA Banner
+
 - Full-width dark gold gradient banner
 - "Ready to Source Premium Gemstones?"
 - Two buttons: "Make an Inquiry" + "Request a Meeting"
 - Both link to quotation page
 
 ### Section 7: Certifications Strip
+
 - Logos/text strip: SLEDB, founded year badge, "Trusted by luxury watch & jewelry brands"
 
 ---
@@ -871,6 +922,7 @@ Build all these sections with Framer Motion animations. Use viewport-triggered a
 ## STEP 9 — PRODUCTS PAGE (`src/app/(public)/products/page.tsx`)
 
 Full implementation:
+
 - Page loads latest products first (sort by createdAt desc)
 - Left sidebar: Filter panel with all filter options
 - Main area: Product grid (3 columns desktop, 2 tablet, 1 mobile)
@@ -881,6 +933,7 @@ Full implementation:
 - Empty state when no results
 
 Filter panel options (each as proper UI control):
+
 - Gemstone Name (text search)
 - Shape (checkbox group: Round, Oval, Cushion, Emerald Cut, Pear, Marquise, Cabochon, Baguette, Bead)
 - Size (range slider or multi-select)
@@ -892,6 +945,7 @@ Filter panel options (each as proper UI control):
 - Availability (toggle: All / Available Only)
 
 Sort options:
+
 - Newest First (default)
 - Price: Low to High
 - Price: High to Low
@@ -900,6 +954,7 @@ Sort options:
 - Lot Quantity
 
 ProductCard component:
+
 - Image with hover zoom
 - Availability badge (green/red)
 - Name, origin, shape
@@ -914,6 +969,7 @@ ProductCard component:
 ## STEP 10 — PRODUCT DETAIL PAGE (`src/app/(public)/products/[id]/page.tsx`)
 
 Full implementation:
+
 - Image gallery (large main image + thumbnails row, click to switch)
 - All specifications in clean grid layout:
   - Origin, Shape, Size, Weight, Color (name + hex swatch)
@@ -930,6 +986,7 @@ Full implementation:
 ## STEP 11 — SERVICES PAGE (`src/app/(public)/services/page.tsx`)
 
 Full implementation:
+
 - Hero section: luxury dark background, "Our Services" heading, tagline about precision
 - Service cards in alternating layout (image left text right, then right left):
   - CNC Premium Cutting & Finishing
@@ -951,6 +1008,7 @@ Full implementation:
 ## STEP 12 — CUSTOMIZED PRODUCT PAGE (`src/app/(public)/customized/page.tsx`)
 
 Full implementation:
+
 - Hero: "Bespoke Gemstone Solutions" — luxury dark hero
 - Capability showcase:
   - Any custom diagram or shape
@@ -971,6 +1029,7 @@ Full implementation:
 Props: { type?: InquiryType, prefilledProductId?: string, isOpen: boolean, onClose: () => void }
 
 Full implementation:
+
 - Detect session: if logged in, use user data; if not logged in, show email field (validated as proper email format)
 - Fields:
   - Type selector (Product / Service / Customized / Quotation) — preselect from props
@@ -995,6 +1054,7 @@ Full implementation:
 Props: { type?: MeetingType, isOpen: boolean, onClose: () => void }
 
 Full implementation:
+
 - Same guest/logged-in detection as InquiryForm
 - Fields:
   - Meeting type (Service / Customized)
@@ -1009,6 +1069,7 @@ Full implementation:
 ## STEP 15 — QUOTATION PAGE (`src/app/(public)/quotation/page.tsx`)
 
 Full page (not modal) with:
+
 - Hero: "Request a Quotation"
 - Guest/auth detection
 - Fields: Product selection (optional), description, specifications, file attachment, contact email for guest
@@ -1020,6 +1081,7 @@ Full page (not modal) with:
 ## STEP 16 — ABOUT PAGE (`src/app/(public)/about/page.tsx`)
 
 Full implementation:
+
 - Hero section
 - Company story: Founded 2006, growth timeline with animated vertical line
 - Mission & Values (animated cards)
@@ -1034,6 +1096,7 @@ Full implementation:
 ## STEP 17 — CONTACT PAGE (`src/app/(public)/contact/page.tsx`)
 
 Full implementation:
+
 - Google Maps embed (iframe with Sri Lanka coordinates for Colombo)
 - Contact details card:
   - Full address
@@ -1050,17 +1113,20 @@ Full implementation:
 ## STEP 18 — AUTH PAGES
 
 ### Sign Up (`src/app/(auth)/signup/page.tsx`)
+
 - Fields: First Name, Last Name, Email, Password, Confirm Password, Google Sign Up button, Terms & Conditions checkbox (required)
 - Validation: Zod signUpSchema
 - On success: redirect to home, send welcome email
 - Link to Sign In
 
 ### Sign In (`src/app/(auth)/signin/page.tsx`)
+
 - Fields: Email, Password, Google Sign In button, Forgot Password link
 - On success: redirect to home or previous page
 - Link to Sign Up
 
 ### Forgot Password
+
 - Email field → send reset email with Resend
 - Store reset token in VerificationToken table
 
@@ -1069,6 +1135,7 @@ Full implementation:
 ## STEP 19 — USER PROFILE PAGE (`src/app/(user)/profile/page.tsx`)
 
 Full implementation (requires auth):
+
 - Avatar with edit option (Cloudinary upload)
 - Personal info form (editable): First Name, Last Name, Mobile, Country
 - Company info section (editable, optional): Company Name, Address, TP
@@ -1099,28 +1166,34 @@ Full implementation (requires auth):
 Full dashboard with Recharts:
 
 Chart 1: Daily Website Visitors (last 30 days)
+
 - Line chart
 - X-axis: dates, Y-axis: count
 - Data from PageView table grouped by day
 
 Chart 2: Country-wise Users
+
 - Bar chart horizontal
 - Top 10 countries
 - Data from User.country field
 
 Chart 3: Inquiries by Type
+
 - Pie chart / donut chart
 - PRODUCT, SERVICE, CUSTOMIZED, QUOTATION segments
 - With legend
 
 Chart 4: Meetings by Status
+
 - Bar chart
 - PENDING, SCHEDULED, COMPLETED, CANCELLED
 
 Chart 5: Monthly Inquiry Trend
+
 - Area chart (last 6 months)
 
 Summary cards row at top:
+
 - Total Users (with growth % vs last month)
 - Pending Inquiries (with urgent badge if >10)
 - Pending Meetings
@@ -1133,6 +1206,7 @@ Recent activity feed: last 10 inquiries and meetings
 ## STEP 22 — ADMIN PRODUCTS (`src/app/admin/products/page.tsx`)
 
 Full CRUD table:
+
 - DataTable with @tanstack/react-table
 - Columns: Image thumbnail, Name, Origin, Shape, Color (swatch), Condition, Price, Availability toggle, Actions
 - Search bar (by name, origin)
@@ -1140,6 +1214,7 @@ Full CRUD table:
 - Pagination
 
 Add/Edit Product Modal:
+
 - All product fields
 - Image upload (multiple, drag-drop, Cloudinary)
 - Color picker for hex value
@@ -1156,6 +1231,7 @@ Bulk actions: select multiple → bulk delete, bulk toggle availability
 ## STEP 23 — ADMIN USERS (`src/app/admin/users/page.tsx`)
 
 Full user management:
+
 - DataTable: Name, Email, Country, Company, Role, Joined Date, Actions
 - Search by name or email
 - Filter by role, country
@@ -1169,6 +1245,7 @@ Full user management:
 ## STEP 24 — ADMIN INQUIRIES (`src/app/admin/inquiries/page.tsx`)
 
 Kanban board view:
+
 - Four columns: Pending | In Review | Replied | Closed
 - Each card: Inquiry ID, type badge, guest/user email, date, description preview, product count
 - Drag between columns to change status (or dropdown in card)
@@ -1187,6 +1264,7 @@ Kanban board view:
 ## STEP 25 — ADMIN MEETINGS (`src/app/admin/meetings/page.tsx`)
 
 DataTable view:
+
 - Columns: ID, Type, User/Guest email, Preferred Date, Status, Actions
 - Filter by status, type, date
 - Click row → detail modal:
@@ -1201,6 +1279,7 @@ DataTable view:
 ## STEP 26 — ADMIN REPORTS (`src/app/admin/reports/page.tsx`)
 
 Full implementation:
+
 - Date range picker (from/to)
 - "Generate Report" button → calls /api/reports/generate → shows stats
 - Report output shows:
@@ -1251,10 +1330,12 @@ Full implementation:
 ## STEP 30 — SEO SETUP
 
 `next.config.js`:
+
 - Images: allow cloudinary domain, supabase domain
 - Headers: security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
 
 Root layout.tsx metadata:
+
 ```typescript
 export const metadata = {
   title: { default: "ORAVA Gems — Premium Gemstone Export | Sri Lanka", template: "%s | ORAVA Gems" },
@@ -1276,23 +1357,28 @@ Add `next-sitemap` for auto sitemap generation on build.
 ```css
 /* Custom properties */
 :root {
-  --gold: #C9A84C;
-  --gold-light: #E8C97A;
-  --dark: #0A0A0A;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --dark: #0a0a0a;
   --dark-surface: #111111;
-  --dark-elevated: #1A1A1A;
-  --text-primary: #F5F5F5;
-  --text-secondary: #A0A0A0;
+  --dark-elevated: #1a1a1a;
+  --text-primary: #f5f5f5;
+  --text-secondary: #a0a0a0;
 }
 
 /* Smooth scrolling */
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 /* Custom scrollbar */
 /* Font imports: use next/font with Cormorant Garamond (headings) + Inter (body) */
 
 /* Luxury selection color */
-::selection { background: var(--gold); color: var(--dark); }
+::selection {
+  background: var(--gold);
+  color: var(--dark);
+}
 ```
 
 ---
@@ -1300,11 +1386,12 @@ html { scroll-behavior: smooth; }
 ## STEP 32 — TAILWIND CONFIG (`tailwind.config.ts`)
 
 Extend theme with:
+
 - Colors: gold (#C9A84C), gold-light (#E8C97A), dark (#0A0A0A), dark-surface (#111111), dark-elevated (#1A1A1A)
 - Font families: heading (Cormorant Garamond), body (Inter)
 - Custom animations: shimmer, float, pulse-gold
 - Custom keyframes for those animations
-- Content paths including src/**
+- Content paths including src/\*\*
 
 ---
 
@@ -1314,25 +1401,28 @@ Extend theme with:
 const nextConfig = {
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'res.cloudinary.com' },
-      { protocol: 'https', hostname: '*.supabase.co' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' }, // Google avatars
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "*.supabase.co" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" }, // Google avatars
     ],
   },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
         ],
       },
-    ]
+    ];
   },
-}
+};
 ```
 
 ---
@@ -1340,12 +1430,15 @@ const nextConfig = {
 ## STEP 34 — ADDITIONAL PAGES
 
 ### Terms & Conditions (`src/app/(public)/terms/page.tsx`)
+
 Full placeholder terms page for ORAVA Gems covering: service usage, inquiry terms, privacy, delivery terms.
 
 ### Privacy Policy (`src/app/(public)/privacy/page.tsx`)
+
 Full placeholder privacy policy covering: data collection (email, usage analytics), how it's used, GDPR rights, cookie usage.
 
 ### 404 Page (`src/app/not-found.tsx`)
+
 Luxury styled 404 with ORAVA branding, "Page Not Found" message, back to home button, animated gem icon.
 
 ---
@@ -1353,6 +1446,7 @@ Luxury styled 404 with ORAVA branding, "Page Not Found" message, back to home bu
 ## STEP 35 — COOKIE CONSENT
 
 Create `src/components/ui/CookieConsent.tsx`:
+
 - Bottom bar appearing on first visit (stored in localStorage)
 - "This site uses cookies for analytics. Accept or Decline."
 - Accept → set GA cookie consent
@@ -1374,7 +1468,7 @@ Add to root layout.
 7. ALL admin actions must be logged to AuditLog table
 8. ALL Framer Motion animations must use `will-change: transform` and avoid layout-triggering properties for performance
 9. ALL images must use next/image component with proper width/height or fill + sizes
-10. NEVER expose sensitive env variables to client (no NEXT_PUBLIC_ prefix on secrets)
+10. NEVER expose sensitive env variables to client (no NEXT*PUBLIC* prefix on secrets)
 11. Guest inquiry email merging must happen on EVERY sign-in (credentials + Google), not just sign-up
 12. Rate limiting must be applied to: /api/inquiries POST, /api/meetings POST, /api/auth sign-in
 13. The admin dashboard route /admin must be completely inaccessible to non-admin users at middleware level
@@ -1463,7 +1557,7 @@ These are external service configurations you must complete manually:
 
 1. SUPABASE: Create project → get DATABASE_URL (pooling mode) and DIRECT_URL (transaction mode) → create storage bucket named "orava-attachments" → set bucket policy to allow authenticated and anon reads, authenticated writes
 2. CLOUDINARY: Create account → get Cloud Name, API Key, API Secret from dashboard
-3. GOOGLE OAUTH: console.cloud.google.com → Create project → Enable Google+ API → Create OAuth credentials → Add http://localhost:3000/api/auth/callback/google as authorized redirect URI
+3. GOOGLE OAUTH: console.cloud.google.com → Create project → Enable Google+ API → Create OAuth credentials → Add ${process.env.NEXTAUTH_URL}/api/auth/callback/google as authorized redirect URI
 4. RESEND: Create account → verify domain (or use sandbox for testing) → get API key
 5. VERCEL: Connect GitHub repo after development is complete
 6. Run these after filling .env.local:
@@ -1475,6 +1569,7 @@ These are external service configurations you must complete manually:
 ## FINAL CHECKLIST BEFORE DELIVERING CODE
 
 Before you finish writing any file, verify:
+
 - [ ] All imports are correct and files being imported actually exist
 - [ ] All TypeScript types are properly defined
 - [ ] All Prisma relations match the schema
@@ -1495,4 +1590,7 @@ Before you finish writing any file, verify:
 
 START BUILDING NOW. Begin with Step 1 (package.json) and proceed in exact order.
 Do not summarize or plan. Write complete, working code for every file.
+
+```
+
 ```
