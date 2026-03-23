@@ -1,59 +1,23 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 
-export default auth(async (req) => {
+function hasSessionCookie(req: NextRequest): boolean {
+  return Boolean(
+    req.cookies.get("authjs.session-token")?.value ||
+    req.cookies.get("__Secure-authjs.session-token")?.value,
+  );
+}
+
+export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const session = req.auth;
-  const isAdmin = session?.user?.role === "ADMIN";
+  const isProtectedRoute =
+    pathname.startsWith("/admin") || pathname.startsWith("/profile");
 
-  if (pathname.startsWith("/admin")) {
-    if (!session?.user) {
-      return NextResponse.redirect(new URL("/signin", req.url));
-    }
-    if (!isAdmin) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-  }
-
-  if (pathname.startsWith("/profile") && !session?.user) {
+  if (isProtectedRoute && !hasSessionCookie(req)) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
 
-  if (
-    (pathname.startsWith("/signin") || pathname.startsWith("/signup")) &&
-    session?.user
-  ) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  if (pathname.startsWith("/api/admin") && !isAdmin) {
-    return NextResponse.json(
-      { success: false, error: "Unauthorized" },
-      { status: 401 },
-    );
-  }
-
-  const response = NextResponse.next();
-
-  if (
-    !pathname.startsWith("/api") &&
-    !pathname.startsWith("/_next") &&
-    !pathname.includes(".")
-  ) {
-    const country = req.headers.get("x-vercel-ip-country") ?? "";
-    const userAgent = req.headers.get("user-agent") ?? "";
-    const url = new URL("/api/analytics/pageview", req.url);
-    void fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ page: pathname, country, userAgent }),
-    }).catch((error: unknown) => {
-      console.error("Pageview tracking failed:", error);
-    });
-  }
-
-  return response;
-});
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
