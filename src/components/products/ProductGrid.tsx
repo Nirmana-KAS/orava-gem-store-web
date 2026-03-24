@@ -6,16 +6,26 @@ interface ProductGridProps {
   onQuickInquiry?: (productId: string) => void;
 }
 
-export default function ProductGrid({ products, onQuickInquiry }: ProductGridProps) {
+export default function ProductGrid({
+  products,
+  onQuickInquiry,
+}: ProductGridProps) {
   if (products.length === 0) {
-    return <p className="rounded-md border border-white/10 bg-dark-surface p-6 text-center text-zinc-300">No products found.</p>;
+    return (
+      <p className="rounded-md border border-[#dde2e8] bg-[#f5f7fa] p-6 text-center text-[#4a4a6a]">
+        No products found.
+      </p>
+    );
   }
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} onQuickInquiry={onQuickInquiry} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          onQuickInquiry={onQuickInquiry}
+        />
       ))}
     </div>
   );
 }
-

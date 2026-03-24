@@ -80,14 +80,14 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="mb-6 font-heading text-5xl">Products</h1>
+      <h1 className="mb-6 font-heading text-5xl text-[#1a1a2e]">Products</h1>
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         <aside>
           <ProductFilters />
         </aside>
         <section>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-zinc-300">{total} results</p>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-[#4a4a6a]">{total} results</p>
             <ProductSort />
           </div>
           <ProductGrid products={products} />
@@ -96,7 +96,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
               <a
                 key={p}
                 href={`/products?${new URLSearchParams({ ...resolvedSearchParams, page: String(p) } as Record<string, string>).toString()}`}
-                className={`rounded px-3 py-1 text-sm ${p === page ? "bg-gold text-dark" : "border border-white/20 text-zinc-200"}`}
+                className={`rounded-full px-3 py-1 text-sm ${p === page ? "bg-brand-blue text-white" : "border border-[#c9d9ec] text-brand-blue"}`}
               >
                 {p}
               </a>

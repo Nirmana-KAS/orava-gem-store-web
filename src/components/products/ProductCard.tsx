@@ -55,19 +55,26 @@ export default function ProductCard({
       </div>
       <div className="space-y-2 p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold">{product.name}</h3>
-          <Badge tone={product.availability ? "success" : "danger"}>
+          <h3 className="font-semibold text-[#1a1a2e]">{product.name}</h3>
+          <Badge
+            className={
+              product.availability
+                ? "bg-brand-blue-light text-brand-blue"
+                : undefined
+            }
+            tone={product.availability ? "success" : "danger"}
+          >
             {product.availability ? "Available" : "Unavailable"}
           </Badge>
         </div>
-        <p className="text-sm text-zinc-300">
+        <p className="text-sm text-[#4a4a6a]">
           {product.origin} • {product.shape}
         </p>
         <ColorSwatch hex={product.colorHex} label={product.colorName} />
-        <p className="text-sm text-zinc-300">
+        <p className="text-sm text-[#4a4a6a]">
           {product.weight}ct • {product.size}
         </p>
-        <p className="text-gold">
+        <p className="font-semibold text-brand-blue">
           {typeof product.price === "number"
             ? formatCurrency(product.price)
             : "Contact for Price"}

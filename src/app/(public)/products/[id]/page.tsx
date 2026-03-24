@@ -38,14 +38,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
   });
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
-      <Link href="/products" className="text-sm text-gold underline">
+      <Link href="/products" className="text-sm text-brand-blue underline">
         Back to Products
       </Link>
       <div className="mt-4 grid gap-8 lg:grid-cols-2">
         <ProductImageGallery images={product.images} alt={product.name} />
         <div>
-          <h1 className="font-heading text-4xl">{product.name}</h1>
-          <p className="mt-2 text-zinc-300">
+          <h1 className="font-heading text-4xl text-[#1a1a2e]">
+            {product.name}
+          </h1>
+          <p className="mt-2 text-[#4a4a6a]">
             {product.origin} • {product.shape}
           </p>
           <div className="mt-4">
@@ -62,7 +64,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
       </div>
       <section className="mt-12">
-        <h2 className="mb-4 font-heading text-3xl">Related Products</h2>
+        <h2 className="mb-4 font-heading text-3xl text-[#1a1a2e]">
+          Related Products
+        </h2>
         <ProductGrid products={related} />
       </section>
     </main>

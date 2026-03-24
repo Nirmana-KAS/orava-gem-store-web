@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import { Gem } from "lucide-react";
 import { Condition, Product } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import ProductForm from "@/components/admin/ProductForm";
@@ -17,14 +19,62 @@ type SortField =
   | "lotQuantity"
   | "name";
 
+type SortOptionKey =
+  | "latestCreated"
+  | "oldestCreated"
+  | "latestUpdated"
+  | "priceLowHigh"
+  | "priceHighLow"
+  | "weightLowHigh"
+  | "weightHighLow"
+  | "nameAZ"
+  | "nameZA"
+  | "lotQtyHighLow";
+
+type MultiFilterOption =
+  | "Facet"
+  | "Brilliant"
+  | "Mixed"
+  | "IF"
+  | "VVS"
+  | "VS"
+  | "SI";
+
+const sortOptionMap: Record<
+  SortOptionKey,
+  { sortField: SortField; sortOrder: "asc" | "desc" }
+> = {
+  latestCreated: { sortField: "createdAt", sortOrder: "desc" },
+  oldestCreated: { sortField: "createdAt", sortOrder: "asc" },
+  latestUpdated: { sortField: "updatedAt", sortOrder: "desc" },
+  priceLowHigh: { sortField: "price", sortOrder: "asc" },
+  priceHighLow: { sortField: "price", sortOrder: "desc" },
+  weightLowHigh: { sortField: "weight", sortOrder: "asc" },
+  weightHighLow: { sortField: "weight", sortOrder: "desc" },
+  nameAZ: { sortField: "name", sortOrder: "asc" },
+  nameZA: { sortField: "name", sortOrder: "desc" },
+  lotQtyHighLow: { sortField: "lotQuantity", sortOrder: "desc" },
+};
+
 interface ProductQueryState {
   page: number;
   limit: number;
   name: string;
   origin: string;
   shape: string;
+  colorName: string;
+  size: string;
   condition: string;
   availability: "all" | "true" | "false";
+  weightMin: string;
+  weightMax: string;
+  polishedType: MultiFilterOption[];
+  clarityType: MultiFilterOption[];
+  createdFrom: string;
+  createdTo: string;
+  updatedFrom: string;
+  updatedTo: string;
+  sortOption: SortOptionKey;
   sortField: SortField;
   sortOrder: "asc" | "desc";
 }
@@ -35,9 +85,20 @@ const defaultQuery: ProductQueryState = {
   name: "",
   origin: "",
   shape: "",
+  colorName: "",
+  size: "",
   condition: "",
   availability: "all",
-  sortField: "updatedAt",
+  weightMin: "",
+  weightMax: "",
+  polishedType: [],
+  clarityType: [],
+  createdFrom: "",
+  createdTo: "",
+  updatedFrom: "",
+  updatedTo: "",
+  sortOption: "latestCreated",
+  sortField: "createdAt",
   sortOrder: "desc",
 };
 
@@ -45,6 +106,29 @@ const conditionOptions = Object.values(Condition).map((c) => ({
   value: c,
   label: c.replace("_", " "),
 }));
+
+const multiOptions: MultiFilterOption[] = [
+  "Facet",
+  "Brilliant",
+  "Mixed",
+  "IF",
+  "VVS",
+  "VS",
+  "SI",
+];
+
+const FALLBACK_IMAGE =
+  "https://res.cloudinary.com/demo/image/upload/sample.jpg";
+
+function isAllowedImageUrl(value: string | undefined): value is string {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -65,9 +149,22 @@ export default function AdminProductsPage() {
     if (current.name.trim()) params.set("name", current.name.trim());
     if (current.origin.trim()) params.set("origin", current.origin.trim());
     if (current.shape.trim()) params.set("shape", current.shape.trim());
+    if (current.colorName.trim())
+      params.set("colorName", current.colorName.trim());
+    if (current.size.trim()) params.set("size", current.size.trim());
     if (current.condition) params.set("condition", current.condition);
     if (current.availability !== "all")
       params.set("availability", current.availability);
+    if (current.weightMin) params.set("weightMin", current.weightMin);
+    if (current.weightMax) params.set("weightMax", current.weightMax);
+    if (current.polishedType.length)
+      params.set("polishedType", current.polishedType.join(","));
+    if (current.clarityType.length)
+      params.set("clarityType", current.clarityType.join(","));
+    if (current.createdFrom) params.set("createdFrom", current.createdFrom);
+    if (current.createdTo) params.set("createdTo", current.createdTo);
+    if (current.updatedFrom) params.set("updatedFrom", current.updatedFrom);
+    if (current.updatedTo) params.set("updatedTo", current.updatedTo);
 
     const res = await fetch(`/api/products?${params.toString()}`, {
       cache: "no-store",
@@ -171,6 +268,29 @@ export default function AdminProductsPage() {
     void fetchProducts(next);
   };
 
+  const toggleMulti = (
+    key: "polishedType" | "clarityType",
+    value: MultiFilterOption,
+  ) => {
+    setQuery((prev) => {
+      const list = prev[key];
+      const nextList = list.includes(value)
+        ? list.filter((item) => item !== value)
+        : [...list, value];
+      return { ...prev, [key]: nextList };
+    });
+  };
+
+  const setSortOption = (value: SortOptionKey) => {
+    const mapped = sortOptionMap[value];
+    setQuery((prev) => ({
+      ...prev,
+      sortOption: value,
+      sortField: mapped.sortField,
+      sortOrder: mapped.sortOrder,
+    }));
+  };
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-[#dbe3f2] bg-white p-5 shadow-sm">
@@ -231,6 +351,20 @@ export default function AdminProductsPage() {
               setQuery((prev) => ({ ...prev, shape: e.target.value }))
             }
           />
+          <Input
+            placeholder="Color Name"
+            value={query.colorName}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, colorName: e.target.value }))
+            }
+          />
+          <Input
+            placeholder="Size Range"
+            value={query.size}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, size: e.target.value }))
+            }
+          />
           <Select
             value={query.condition}
             onChange={(value) =>
@@ -257,32 +391,105 @@ export default function AdminProductsPage() {
           />
           <div className="flex gap-2">
             <Select
-              value={query.sortField}
-              onChange={(value) =>
-                setQuery((prev) => ({ ...prev, sortField: value as SortField }))
-              }
+              value={query.sortOption}
+              onChange={(value) => setSortOption(value as SortOptionKey)}
               options={[
-                { value: "updatedAt", label: "Updated" },
-                { value: "createdAt", label: "Created" },
-                { value: "name", label: "Name" },
-                { value: "weight", label: "Weight" },
-                { value: "price", label: "Price" },
-                { value: "lotQuantity", label: "Quantity" },
+                { value: "latestCreated", label: "Latest Created" },
+                { value: "oldestCreated", label: "Oldest Created" },
+                { value: "latestUpdated", label: "Latest Updated" },
+                { value: "priceLowHigh", label: "Price Low-High" },
+                { value: "priceHighLow", label: "Price High-Low" },
+                { value: "weightLowHigh", label: "Weight Low-High" },
+                { value: "weightHighLow", label: "Weight High-Low" },
+                { value: "nameAZ", label: "Name A-Z" },
+                { value: "nameZA", label: "Name Z-A" },
+                { value: "lotQtyHighLow", label: "Lot Quantity High-Low" },
               ]}
             />
-            <Select
-              value={query.sortOrder}
-              onChange={(value) =>
-                setQuery((prev) => ({
-                  ...prev,
-                  sortOrder: value as "asc" | "desc",
-                }))
-              }
-              options={[
-                { value: "desc", label: "Desc" },
-                { value: "asc", label: "Asc" },
-              ]}
-            />
+          </div>
+          <Input
+            type="number"
+            placeholder="Weight Min"
+            value={query.weightMin}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, weightMin: e.target.value }))
+            }
+          />
+          <Input
+            type="number"
+            placeholder="Weight Max"
+            value={query.weightMax}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, weightMax: e.target.value }))
+            }
+          />
+          <Input
+            type="date"
+            value={query.createdFrom}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, createdFrom: e.target.value }))
+            }
+          />
+          <Input
+            type="date"
+            value={query.createdTo}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, createdTo: e.target.value }))
+            }
+          />
+          <Input
+            type="date"
+            value={query.updatedFrom}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, updatedFrom: e.target.value }))
+            }
+          />
+          <Input
+            type="date"
+            value={query.updatedTo}
+            onChange={(e) =>
+              setQuery((prev) => ({ ...prev, updatedTo: e.target.value }))
+            }
+          />
+          <div className="rounded-md border border-[#dbe3f2] bg-[#f8fafc] p-2">
+            <p className="mb-2 text-xs font-semibold text-[#334155]">
+              Polish Type
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {multiOptions.map((option) => (
+                <label
+                  key={`p-${option}`}
+                  className="flex items-center gap-2 text-xs text-[#475569]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={query.polishedType.includes(option)}
+                    onChange={() => toggleMulti("polishedType", option)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-md border border-[#dbe3f2] bg-[#f8fafc] p-2">
+            <p className="mb-2 text-xs font-semibold text-[#334155]">
+              Clarity Type
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {multiOptions.map((option) => (
+                <label
+                  key={`c-${option}`}
+                  className="flex items-center gap-2 text-xs text-[#475569]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={query.clarityType.includes(option)}
+                    onChange={() => toggleMulti("clarityType", option)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -300,6 +507,7 @@ export default function AdminProductsPage() {
             <thead className="bg-[#f8fafc] text-[#334155]">
               <tr>
                 <th className="px-3 py-3 text-left">Select</th>
+                <th className="px-3 py-3 text-left">Image</th>
                 <th className="px-3 py-3 text-left">Name</th>
                 <th className="px-3 py-3 text-left">Origin</th>
                 <th className="px-3 py-3 text-left">Shape</th>
@@ -325,6 +533,21 @@ export default function AdminProductsPage() {
                         onChange={() => toggleSelected(product.id)}
                         className="h-4 w-4 rounded border-[#cbd5e1]"
                       />
+                    </td>
+                    <td className="px-3 py-3">
+                      {isAllowedImageUrl(product.images[0]) ? (
+                        <Image
+                          src={product.images[0] ?? FALLBACK_IMAGE}
+                          alt={product.name}
+                          width={40}
+                          height={40}
+                          className="rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue-light text-brand-blue">
+                          <Gem size={16} />
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-3 font-medium">{product.name}</td>
                     <td className="px-3 py-3">{product.origin}</td>
@@ -366,7 +589,7 @@ export default function AdminProductsPage() {
               {!products.length ? (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={10}
                     className="px-3 py-10 text-center text-[#64748b]"
                   >
                     {loading

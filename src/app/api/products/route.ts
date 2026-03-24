@@ -23,8 +23,8 @@ const querySchema = z.object({
   size: z.string().optional(),
   colorName: z.string().optional(),
   origin: z.union([z.string(), z.array(z.string())]).optional(),
-  clarityType: z.string().optional(),
-  polishedType: z.string().optional(),
+  clarityType: z.union([z.string(), z.array(z.string())]).optional(),
+  polishedType: z.union([z.string(), z.array(z.string())]).optional(),
   condition: z
     .union([z.nativeEnum(Condition), z.array(z.nativeEnum(Condition))])
     .optional(),
@@ -33,6 +33,8 @@ const querySchema = z.object({
   weightMax: z.coerce.number().optional(),
   createdFrom: z.string().optional(),
   createdTo: z.string().optional(),
+  updatedFrom: z.string().optional(),
+  updatedTo: z.string().optional(),
   sortField: sortFieldSchema.optional(),
   sortBy: sortFieldSchema.optional(),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
@@ -80,6 +82,8 @@ export async function GET(request: NextRequest): Promise<Response> {
       weightMax: request.nextUrl.searchParams.get("weightMax") ?? undefined,
       createdFrom: request.nextUrl.searchParams.get("createdFrom") ?? undefined,
       createdTo: request.nextUrl.searchParams.get("createdTo") ?? undefined,
+      updatedFrom: request.nextUrl.searchParams.get("updatedFrom") ?? undefined,
+      updatedTo: request.nextUrl.searchParams.get("updatedTo") ?? undefined,
       sortField: request.nextUrl.searchParams.get("sortField") ?? undefined,
       sortBy: request.nextUrl.searchParams.get("sortBy") ?? undefined,
       sortOrder: request.nextUrl.searchParams.get("sortOrder") ?? undefined,
@@ -99,6 +103,8 @@ export async function GET(request: NextRequest): Promise<Response> {
       weightMax,
       createdFrom,
       createdTo,
+      updatedFrom,
+      updatedTo,
       availability,
       ...filters
     } = parsed.data;
@@ -106,6 +112,8 @@ export async function GET(request: NextRequest): Promise<Response> {
     const shapeValues = toArray(filters.shape);
     const originValues = toArray(filters.origin);
     const conditionValues = toConditionArray(filters.condition);
+    const clarityValues = toArray(filters.clarityType);
+    const polishedValues = toArray(filters.polishedType);
 
     const createdAtFilter: Prisma.DateTimeFilter | undefined =
       createdFrom || createdTo
@@ -120,6 +128,14 @@ export async function GET(request: NextRequest): Promise<Response> {
         ? {
             gte: weightMin,
             lte: weightMax,
+          }
+        : undefined;
+
+    const updatedAtFilter: Prisma.DateTimeFilter | undefined =
+      updatedFrom || updatedTo
+        ? {
+            gte: updatedFrom ? new Date(updatedFrom) : undefined,
+            lte: updatedTo ? new Date(updatedTo) : undefined,
           }
         : undefined;
 
@@ -143,15 +159,20 @@ export async function GET(request: NextRequest): Promise<Response> {
         : undefined,
       origin: originValues.length ? { in: originValues } : undefined,
       clarityType: filters.clarityType
-        ? { contains: filters.clarityType, mode: "insensitive" }
+        ? clarityValues.length
+          ? { in: clarityValues }
+          : { contains: filters.clarityType as string, mode: "insensitive" }
         : undefined,
       polishedType: filters.polishedType
-        ? { contains: filters.polishedType, mode: "insensitive" }
+        ? polishedValues.length
+          ? { in: polishedValues }
+          : { contains: filters.polishedType as string, mode: "insensitive" }
         : undefined,
       condition: conditionValues.length ? { in: conditionValues } : undefined,
       availability: availabilityFilter,
       weight: weightFilter,
       createdAt: createdAtFilter,
+      updatedAt: updatedAtFilter,
     };
 
     const [items, total] = await Promise.all([

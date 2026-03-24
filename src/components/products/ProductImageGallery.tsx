@@ -37,7 +37,7 @@ export default function ProductImageGallery({
 
   return (
     <div>
-      <div className="relative mb-3 h-80 overflow-hidden rounded-xl border border-white/10">
+      <div className="relative mb-3 h-80 overflow-hidden rounded-xl border border-[#dde2e8] bg-white">
         <Image
           src={selected}
           alt={alt}
@@ -51,7 +51,7 @@ export default function ProductImageGallery({
           <button
             key={image}
             onClick={() => setSelected(image)}
-            className="relative h-20 overflow-hidden rounded border border-white/10"
+            className="relative h-20 overflow-hidden rounded border border-[#dde2e8]"
           >
             <Image
               src={image}

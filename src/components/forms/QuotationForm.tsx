@@ -28,8 +28,14 @@ export default function QuotationForm() {
     if (file) {
       const fd = new FormData();
       fd.append("file", file);
-      const uploadRes = await fetch("/api/upload/file", { method: "POST", body: fd });
-      const uploadJson = (await uploadRes.json()) as { success: boolean; data?: { url: string } };
+      const uploadRes = await fetch("/api/upload/file", {
+        method: "POST",
+        body: fd,
+      });
+      const uploadJson = (await uploadRes.json()) as {
+        success: boolean;
+        data?: { url: string };
+      };
       if (!uploadJson.success || !uploadJson.data?.url) {
         toast("Attachment upload failed");
         return;
@@ -61,17 +67,23 @@ export default function QuotationForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-gold/40 bg-dark-surface p-6">
-        <h2 className="font-heading text-3xl text-gold">Quotation Request Received</h2>
-        <p className="mt-3 text-zinc-300">
-          Thank you. Your request has been submitted successfully. Our team will review your requirements and respond shortly.
+      <div className="rounded-xl border border-[#c9d9ec] bg-white p-6">
+        <h2 className="font-heading text-3xl text-brand-blue">
+          Quotation Request Received
+        </h2>
+        <p className="mt-3 text-[#4a4a6a]">
+          Thank you. Your request has been submitted successfully. Our team will
+          review your requirements and respond shortly.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-xl border border-white/10 bg-dark-surface p-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 rounded-xl border border-[#dde2e8] bg-white p-6"
+    >
       {!session?.user ? (
         <label className="block text-sm">
           Contact Email
@@ -80,11 +92,17 @@ export default function QuotationForm() {
       ) : null}
       <label className="block text-sm">
         Description
-        <textarea {...register("description")} className="mt-1 h-28 w-full rounded-md border border-white/20 bg-dark-elevated p-3" />
+        <textarea
+          {...register("description")}
+          className="mt-1 h-28 w-full rounded-md border border-[#dde2e8] bg-white p-3"
+        />
       </label>
       <label className="block text-sm">
         Specifications
-        <textarea {...register("specifications")} className="mt-1 h-28 w-full rounded-md border border-white/20 bg-dark-elevated p-3" />
+        <textarea
+          {...register("specifications")}
+          className="mt-1 h-28 w-full rounded-md border border-[#dde2e8] bg-white p-3"
+        />
       </label>
       <label className="block text-sm">
         Product IDs (optional)
@@ -103,8 +121,7 @@ export default function QuotationForm() {
         <FileUpload accept=".pdf,.docx,.jpg,.png" onChange={setFile} />
       </label>
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" {...register("terms")} />
-        I agree to the terms
+        <input type="checkbox" {...register("terms")} />I agree to the terms
       </label>
       <Button type="submit" isLoading={formState.isSubmitting}>
         Submit Quotation Request
@@ -112,4 +129,3 @@ export default function QuotationForm() {
     </form>
   );
 }
-
