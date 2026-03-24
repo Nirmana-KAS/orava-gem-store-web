@@ -1,17 +1,43 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { getGreeting } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
-export function useGreeting(firstName?: string): { greeting: string; timezone: string } {
-  const timezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC", []);
-  const [greeting, setGreeting] = useState("Good Evening");
+export function useGreeting(firstName?: string | null) {
+  const [greeting, setGreeting] = useState("");
+  const [timeOfDay, setTimeOfDay] = useState("");
 
   useEffect(() => {
-    setGreeting(getGreeting(timezone));
-  }, [timezone]);
+    const updateGreeting = () => {
+      const hour = new Date().getHours();
+      let timeGreeting = "";
+      let period = "";
 
-  const honorificName = firstName ? `Mr./Ms. ${firstName}` : "Guest";
-  return { greeting: `${greeting}! ${honorificName}`, timezone };
+      if (hour >= 5 && hour < 12) {
+        timeGreeting = "Good Morning";
+        period = "morning";
+      } else if (hour >= 12 && hour < 17) {
+        timeGreeting = "Good Afternoon";
+        period = "afternoon";
+      } else if (hour >= 17 && hour < 21) {
+        timeGreeting = "Good Evening";
+        period = "evening";
+      } else {
+        timeGreeting = "Good Night";
+        period = "night";
+      }
+
+      setTimeOfDay(period);
+      if (firstName) {
+        setGreeting(`${timeGreeting}, ${firstName}`);
+      } else {
+        setGreeting(timeGreeting);
+      }
+    };
+
+    updateGreeting();
+    const interval = setInterval(updateGreeting, 60000);
+    return () => clearInterval(interval);
+  }, [firstName]);
+
+  return { greeting, timeOfDay };
 }
-

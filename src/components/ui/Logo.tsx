@@ -1,42 +1,40 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
-  src?: string;
-  alt?: string;
+  variant?: "full" | "icon";
   className?: string;
-  width?: number;
   height?: number;
 }
 
-export default function Logo({
-  src,
-  alt = "ORAVA GEMS",
-  className,
-  width = 140,
-  height = 40,
-}: LogoProps) {
-  if (src) {
-    return (
-      <Image
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        className={cn("h-auto w-auto object-contain", className)}
-        priority
-      />
-    );
-  }
+export function Logo({ variant = "full", className, height = 40 }: LogoProps) {
+  const [failed, setFailed] = useState(false);
 
   return (
-    <span
-      className={cn(
-        "font-heading text-2xl font-semibold tracking-[0.2em] text-brand-blue",
-        className,
-      )}
-    >
-      ORAVA
-    </span>
+    <Link href="/" className={cn("flex items-center gap-2", className)}>
+      {!failed ? (
+        <Image
+          src="/logo.png"
+          alt="ORAVA Gems"
+          width={variant === "icon" ? 40 : 140}
+          height={height}
+          className="object-contain"
+          priority
+          onError={() => setFailed(true)}
+        />
+      ) : null}
+      {failed ? (
+        <span className="font-heading text-2xl font-bold text-[#3c74ae]">
+          ORAVA
+          <span className="text-lg font-normal text-[#8f8b8f]"> GEMS</span>
+        </span>
+      ) : null}
+    </Link>
   );
 }
+
+export default Logo;

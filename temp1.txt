@@ -1,0 +1,1232 @@
+You are doing a complete rebuild of the ORAVA Gems landing page (home page) 
+and navbar. Read every requirement carefully and implement ALL of them completely.
+Do NOT skip any section. Do NOT leave placeholders or TODOs.
+Run npm run build after all changes and fix every error before finishing.
+
+═══════════════════════════════════════════════════════════
+IMPORTANT BEFORE STARTING
+═══════════════════════════════════════════════════════════
+
+Install these additional packages first:
+npm install zustand @tanem/react-nprogress --legacy-peer-deps
+
+Then install Aceternity UI dependencies (already have framer-motion and tailwind):
+npm install clsx tailwind-merge --legacy-peer-deps
+
+All Aceternity UI components must be hand-coded inline — 
+do NOT use any CLI or external registry. 
+Copy the component logic directly into the files.
+
+═══════════════════════════════════════════════════════════
+PART 1 — GLOBAL SETUP
+═══════════════════════════════════════════════════════════
+
+1. UPDATE src/app/globals.css completely:
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --brand-blue: #3c74ae;
+  --brand-blue-dark: #2d5f96;
+  --brand-blue-light: #e8f0f9;
+  --brand-ash: #8f8b8f;
+  --bg: #ffffff;
+  --surface: #f5f7fa;
+  --surface-elevated: #eef1f5;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-muted: #8f8b8f;
+  --border: #dde2e8;
+}
+
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #1a1a2e;
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+::selection {
+  background: #3c74ae;
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f7fa;
+}
+::-webkit-scrollbar-thumb {
+  background: #3c74ae;
+  border-radius: 3px;
+}
+
+2. UPDATE tailwind.config.ts — extend theme:
+
+colors: {
+  brand: {
+    blue: '#3c74ae',
+    'blue-dark': '#2d5f96',
+    'blue-light': '#e8f0f9',
+    ash: '#8f8b8f',
+  },
+  surface: {
+    DEFAULT: '#f5f7fa',
+    elevated: '#eef1f5',
+  },
+  text: {
+    primary: '#1a1a2e',
+    secondary: '#4a4a6a',
+    muted: '#8f8b8f',
+  },
+  border: {
+    DEFAULT: '#dde2e8',
+  }
+},
+fontFamily: {
+  heading: ['Cormorant Garamond', 'serif'],
+  body: ['Inter', 'sans-serif'],
+},
+animation: {
+  'float': 'float 6s ease-in-out infinite',
+  'float-delayed': 'float 6s ease-in-out 2s infinite',
+  'pulse-blue': 'pulse-blue 2s ease-in-out infinite',
+  'marquee': 'marquee 30s linear infinite',
+  'shimmer': 'shimmer 2s linear infinite',
+},
+keyframes: {
+  float: {
+    '0%, 100%': { transform: 'translateY(0px)' },
+    '50%': { transform: 'translateY(-20px)' },
+  },
+  'pulse-blue': {
+    '0%, 100%': { opacity: '1' },
+    '50%': { opacity: '0.5' },
+  },
+  marquee: {
+    '0%': { transform: 'translateX(0%)' },
+    '100%': { transform: 'translateX(-50%)' },
+  },
+  shimmer: {
+    '0%': { backgroundPosition: '-200% 0' },
+    '100%': { backgroundPosition: '200% 0' },
+  },
+},
+
+═══════════════════════════════════════════════════════════
+PART 2 — QUOTATION CART STATE (ZUSTAND)
+═══════════════════════════════════════════════════════════
+
+3. CREATE src/store/quotationStore.ts:
+
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+export interface QuotationItem {
+  id: string
+  name: string
+  origin: string
+  shape: string
+  colorName: string
+  colorHex: string
+  size: string
+  weight: number
+  price?: number | null
+  image?: string
+}
+
+interface QuotationStore {
+  items: QuotationItem[]
+  addItem: (item: QuotationItem) => void
+  removeItem: (id: string) => void
+  clearCart: () => void
+  isInCart: (id: string) => boolean
+  count: number
+}
+
+export const useQuotationStore = create<QuotationStore>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      count: 0,
+      addItem: (item) => {
+        const existing = get().items.find(i => i.id === item.id)
+        if (!existing) {
+          set(state => ({ 
+            items: [...state.items, item],
+            count: state.items.length + 1
+          }))
+        }
+      },
+      removeItem: (id) => set(state => ({
+        items: state.items.filter(i => i.id !== id),
+        count: state.items.filter(i => i.id !== id).length
+      })),
+      clearCart: () => set({ items: [], count: 0 }),
+      isInCart: (id) => get().items.some(i => i.id === id),
+    }),
+    {
+      name: 'orava-quotation-cart',
+    }
+  )
+)
+
+═══════════════════════════════════════════════════════════
+PART 3 — ACETERNITY UI UTILITY COMPONENTS
+═══════════════════════════════════════════════════════════
+
+4. CREATE src/components/ui/aceternity/SpotlightEffect.tsx:
+Implement the Spotlight component from Aceternity UI.
+Two blue spotlight beams that move slightly on mouse movement.
+Color: #3c74ae at 15% opacity.
+Full implementation — no placeholder.
+
+export function Spotlight({ className }: { className?: string }) {
+  return (
+    <div className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}>
+      <div
+        className="absolute -top-40 left-[10%] h-[600px] w-[600px] rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(60,116,174,0.15) 0%, transparent 70%)',
+          animation: 'float 8s ease-in-out infinite',
+        }}
+      />
+      <div
+        className="absolute -top-20 right-[10%] h-[500px] w-[500px] rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(60,116,174,0.10) 0%, transparent 70%)',
+          animation: 'float 10s ease-in-out 2s infinite',
+        }}
+      />
+    </div>
+  )
+}
+
+5. CREATE src/components/ui/aceternity/TextGenerateEffect.tsx:
+Implement text generate effect — words appear one by one with fade+blur animation.
+Props: words (string), className (string optional)
+Use Framer Motion stagger animation.
+Each word fades in from blur(10px) opacity(0) to blur(0) opacity(1).
+Delay between words: 0.08s stagger.
+Full implementation.
+
+6. CREATE src/components/ui/aceternity/NumberTicker.tsx:
+Animated number counter that counts from 0 to target value.
+Triggers when scrolled into view using Framer Motion whileInView.
+Props: value (number), suffix (string optional), duration (number default 2)
+Uses Framer Motion useMotionValue and useTransform.
+Full implementation.
+
+7. CREATE src/components/ui/aceternity/InfiniteMovingCards.tsx:
+Horizontal auto-scrolling testimonial cards — infinite loop.
+Props: items (array of { quote, author, company })
+Uses CSS animation marquee defined in tailwind.
+Two rows of cards moving at slightly different speeds.
+Pause on hover.
+Full implementation.
+
+8. CREATE src/components/ui/aceternity/Card3D.tsx:
+3D tilt card effect on mouse hover.
+Props: children, className
+Uses Framer Motion useMotionValue, useTransform, useSpring.
+Card tilts max 15 degrees on X and Y axis following mouse.
+Subtle blue shine overlay on hover.
+Full implementation.
+
+9. CREATE src/components/ui/aceternity/BentoGrid.tsx:
+Asymmetric grid layout component.
+BentoGrid wrapper + BentoGridItem component.
+Props for BentoGridItem: title, description, icon, className, header
+Full implementation matching Aceternity UI design.
+
+10. CREATE src/components/ui/aceternity/TracingBeam.tsx:
+Vertical beam that traces down the page as user scrolls.
+Blue color #3c74ae.
+Uses Framer Motion useScroll and useTransform.
+Full implementation.
+
+11. CREATE src/components/ui/aceternity/BackgroundGradientAnimation.tsx:
+Animated moving gradient background.
+Colors: #3c74ae, #2d5f96, #1a4a7a cycling smoothly.
+Uses CSS animation with keyframes.
+Full implementation.
+
+═══════════════════════════════════════════════════════════
+PART 4 — LOGO COMPONENT
+═══════════════════════════════════════════════════════════
+
+12. CREATE src/components/ui/Logo.tsx:
+
+'use client'
+import Image from 'next/image'
+import Link from 'next/link'
+
+interface LogoProps {
+  variant?: 'full' | 'icon'
+  className?: string
+  height?: number
+}
+
+export function Logo({ variant = 'full', className, height = 40 }: LogoProps) {
+  return (
+    <Link href="/" className={cn("flex items-center gap-2", className)}>
+      <Image
+        src="/logo.png"
+        alt="ORAVA Gems"
+        width={variant === 'icon' ? 40 : 140}
+        height={height}
+        className="object-contain"
+        priority
+        onError={(e) => {
+          // fallback to text if logo.png not found
+          e.currentTarget.style.display = 'none'
+        }}
+      />
+      {/* Fallback text logo shown if image fails */}
+      <span className="font-heading text-2xl font-bold" style={{ color: '#3c74ae' }}>
+        ORAVA
+        <span style={{ color: '#8f8b8f' }} className="text-lg font-normal"> GEMS</span>
+      </span>
+    </Link>
+  )
+}
+
+═══════════════════════════════════════════════════════════
+PART 5 — GREETING HOOK
+═══════════════════════════════════════════════════════════
+
+13. UPDATE src/hooks/useGreeting.ts:
+
+'use client'
+import { useState, useEffect } from 'react'
+
+export function useGreeting(firstName?: string | null) {
+  const [greeting, setGreeting] = useState('')
+  const [timeOfDay, setTimeOfDay] = useState('')
+
+  useEffect(() => {
+    const updateGreeting = () => {
+      const hour = new Date().getHours()
+      let timeGreeting = ''
+      let period = ''
+      
+      if (hour >= 5 && hour < 12) {
+        timeGreeting = 'Good Morning'
+        period = 'morning'
+      } else if (hour >= 12 && hour < 17) {
+        timeGreeting = 'Good Afternoon'
+        period = 'afternoon'
+      } else if (hour >= 17 && hour < 21) {
+        timeGreeting = 'Good Evening'
+        period = 'evening'
+      } else {
+        timeGreeting = 'Good Night'
+        period = 'night'
+      }
+      
+      setTimeOfDay(period)
+      if (firstName) {
+        setGreeting(`${timeGreeting}, ${firstName}`)
+      } else {
+        setGreeting(timeGreeting)
+      }
+    }
+    
+    updateGreeting()
+    const interval = setInterval(updateGreeting, 60000)
+    return () => clearInterval(interval)
+  }, [firstName])
+
+  return { greeting, timeOfDay }
+}
+
+═══════════════════════════════════════════════════════════
+PART 6 — QUOTATION CART DROPDOWN COMPONENT
+═══════════════════════════════════════════════════════════
+
+14. CREATE src/components/ui/QuotationCartDropdown.tsx:
+
+'use client'
+import { useState, useRef, useEffect } from 'react'
+import { ShoppingBag, X, ArrowRight, Package } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useQuotationStore } from '@/store/quotationStore'
+
+export function QuotationCartDropdown() {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const { items, removeItem, count } = useQuotationStore()
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      {/* Cart Icon Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        onMouseEnter={() => setIsOpen(true)}
+        className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#e8f0f9] transition-colors duration-200"
+        aria-label="Quotation Cart"
+      >
+        <ShoppingBag size={20} className="text-[#3c74ae]" />
+        {count > 0 && (
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="absolute -top-1 -right-1 w-5 h-5 bg-[#3c74ae] text-white text-xs font-bold rounded-full flex items-center justify-center"
+          >
+            {count > 9 ? '9+' : count}
+          </motion.span>
+        )}
+      </button>
+
+      {/* Dropdown Panel */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            onMouseLeave={() => setIsOpen(false)}
+            className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-[#dde2e8] z-50 overflow-hidden"
+          >
+            {/* Header */}
+            <div className="px-4 py-3 border-b border-[#dde2e8] flex items-center justify-between">
+              <h3 className="font-semibold text-[#1a1a2e] text-sm">
+                Quotation Cart ({count} {count === 1 ? 'item' : 'items'})
+              </h3>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-[#8f8b8f] hover:text-[#1a1a2e] transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Items List */}
+            <div className="max-h-72 overflow-y-auto">
+              {items.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+                  <Package size={32} className="text-[#dde2e8] mb-3" />
+                  <p className="text-[#8f8b8f] text-sm">Your quotation cart is empty</p>
+                  <p className="text-[#8f8b8f] text-xs mt-1">Browse products and add items</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-[#dde2e8]">
+                  {items.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#f5f7fa] transition-colors"
+                    >
+                      {/* Product image or color circle */}
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-[#dde2e8]">
+                        {item.image ? (
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="w-full h-full"
+                            style={{ backgroundColor: item.colorHex || '#3c74ae' }}
+                          />
+                        )}
+                      </div>
+
+                      {/* Product info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[#1a1a2e] text-sm font-medium truncate">
+                          {item.name}
+                        </p>
+                        <p className="text-[#8f8b8f] text-xs">
+                          {item.origin} • {item.shape}
+                        </p>
+                        {item.price && (
+                          <p className="text-[#3c74ae] text-xs font-semibold">
+                            ${item.price.toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Remove button */}
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="flex-shrink-0 w-7 h-7 rounded-full hover:bg-red-50 hover:text-red-500 text-[#8f8b8f] flex items-center justify-center transition-colors"
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        <X size={14} />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            {items.length > 0 && (
+              <div className="px-4 py-3 border-t border-[#dde2e8] bg-[#f5f7fa]">
+                <Link
+                  href="/quotation"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#3c74ae] hover:bg-[#2d5f96] text-white text-sm font-semibold rounded-xl transition-colors duration-200"
+                >
+                  Submit Quotation
+                  <ArrowRight size={16} />
+                </Link>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+═══════════════════════════════════════════════════════════
+PART 7 — COMPLETE NAVBAR REBUILD
+═══════════════════════════════════════════════════════════
+
+15. COMPLETELY REBUILD src/components/layout/Navbar.tsx:
+
+'use client'
+import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Search, Menu, X, User, Shield, ChevronDown, 
+  LogOut, Settings, LayoutDashboard, UserCircle
+} from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
+import { QuotationCartDropdown } from '@/components/ui/QuotationCartDropdown'
+import { useGreeting } from '@/hooks/useGreeting'
+
+const NAV_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/products', label: 'Products' },
+  { href: '/services', label: 'Services' },
+  { href: '/customized', label: 'Customized' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+]
+
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
+  const { data: session } = useSession()
+  const searchRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+  
+  const firstName = session?.user?.firstName as string | undefined
+  const { greeting } = useGreeting(firstName)
+  const isAdmin = session?.user?.role === 'ADMIN'
+
+  // Scroll effect
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false)
+        setSearchResults([])
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Search functionality — debounced
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([])
+      return
+    }
+    const timer = setTimeout(async () => {
+      setSearchLoading(true)
+      try {
+        const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery)}&limit=5`)
+        const data = await res.json()
+        setSearchResults(data.data?.products || [])
+      } catch {
+        setSearchResults([])
+      } finally {
+        setSearchLoading(false)
+      }
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  return (
+    <>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white shadow-md border-b border-[#dde2e8]' 
+          : 'bg-white/95 backdrop-blur-sm border-b border-[#dde2e8]'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            
+            {/* LEFT — Logo */}
+            <div className="flex-shrink-0">
+              <Logo height={38} />
+            </div>
+
+            {/* CENTER — Nav Links (desktop) */}
+            <div className="hidden lg:flex items-center gap-1">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    pathname === link.href
+                      ? 'text-[#3c74ae] bg-[#e8f0f9]'
+                      : 'text-[#4a4a6a] hover:text-[#3c74ae] hover:bg-[#f5f7fa]'
+                  }`}
+                >
+                  {link.label}
+                  {pathname === link.href && (
+                    <motion.div
+                      layoutId="activeNav"
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-[#3c74ae] rounded-full"
+                    />
+                  )}
+                </Link>
+              ))}
+            </div>
+
+            {/* RIGHT — Search + Cart + Auth */}
+            <div className="flex items-center gap-2">
+              
+              {/* Search */}
+              <div className="relative" ref={searchRef}>
+                <button
+                  onClick={() => setSearchOpen(!searchOpen)}
+                  className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#e8f0f9] transition-colors text-[#4a4a6a] hover:text-[#3c74ae]"
+                  aria-label="Search"
+                >
+                  <Search size={18} />
+                </button>
+
+                <AnimatePresence>
+                  {searchOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-[#dde2e8] z-50 overflow-hidden"
+                    >
+                      <div className="p-3">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-[#f5f7fa] rounded-xl border border-[#dde2e8]">
+                          <Search size={16} className="text-[#8f8b8f]" />
+                          <input
+                            autoFocus
+                            type="text"
+                            placeholder="Search gemstones..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="flex-1 bg-transparent text-sm text-[#1a1a2e] placeholder-[#8f8b8f] outline-none"
+                          />
+                          {searchQuery && (
+                            <button onClick={() => setSearchQuery('')}>
+                              <X size={14} className="text-[#8f8b8f]" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Search Results */}
+                      {searchLoading && (
+                        <div className="px-4 py-3 text-center text-[#8f8b8f] text-sm">
+                          Searching...
+                        </div>
+                      )}
+                      
+                      {!searchLoading && searchResults.length > 0 && (
+                        <div className="border-t border-[#dde2e8]">
+                          {searchResults.map((product: any) => (
+                            <Link
+                              key={product.id}
+                              href={`/products/${product.id}`}
+                              onClick={() => {
+                                setSearchOpen(false)
+                                setSearchQuery('')
+                              }}
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-[#f5f7fa] transition-colors"
+                            >
+                              <div
+                                className="w-8 h-8 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: product.colorHex || '#3c74ae' }}
+                              />
+                              <div>
+                                <p className="text-sm font-medium text-[#1a1a2e]">{product.name}</p>
+                                <p className="text-xs text-[#8f8b8f]">{product.origin} · {product.shape}</p>
+                              </div>
+                            </Link>
+                          ))}
+                          <div className="px-4 py-2 border-t border-[#dde2e8]">
+                            <Link
+                              href={`/products?search=${searchQuery}`}
+                              onClick={() => setSearchOpen(false)}
+                              className="text-xs text-[#3c74ae] hover:underline"
+                            >
+                              View all results for "{searchQuery}"
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {!searchLoading && searchQuery && searchResults.length === 0 && (
+                        <div className="px-4 py-4 text-center text-[#8f8b8f] text-sm border-t border-[#dde2e8]">
+                          No products found for "{searchQuery}"
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Quotation Cart */}
+              <QuotationCartDropdown />
+
+              {/* Auth Section */}
+              {!session ? (
+                <div className="hidden sm:flex items-center gap-2">
+                  <Link
+                    href="/signin"
+                    className="px-4 py-2 text-sm font-medium text-[#3c74ae] border border-[#3c74ae] rounded-lg hover:bg-[#e8f0f9] transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#3c74ae] rounded-lg hover:bg-[#2d5f96] transition-colors shadow-sm"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              ) : (
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#e8f0f9] transition-colors group"
+                  >
+                    {/* Icon — admin shield or user circle */}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      isAdmin 
+                        ? 'bg-[#3c74ae] text-white' 
+                        : 'bg-[#e8f0f9] text-[#3c74ae]'
+                    }`}>
+                      {isAdmin ? (
+                        <Shield size={16} />
+                      ) : (
+                        <User size={16} />
+                      )}
+                    </div>
+                    
+                    {/* Greeting + Name */}
+                    <div className="hidden md:block text-left">
+                      <p className="text-xs text-[#8f8b8f] leading-none">{
+                        greeting.split(',')[0]
+                      }</p>
+                      <p className="text-sm font-semibold text-[#1a1a2e] leading-tight">
+                        {firstName || session.user?.email?.split('@')[0]}
+                      </p>
+                    </div>
+                    
+                    <ChevronDown 
+                      size={14} 
+                      className={`text-[#8f8b8f] transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} 
+                    />
+                  </button>
+
+                  {/* User Dropdown */}
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-12 w-56 bg-white rounded-2xl shadow-2xl border border-[#dde2e8] z-50 overflow-hidden"
+                      >
+                        {/* User info header */}
+                        <div className="px-4 py-3 border-b border-[#dde2e8] bg-[#f5f7fa]">
+                          <p className="text-sm font-semibold text-[#1a1a2e]">
+                            {firstName} {(session.user as any)?.lastName || ''}
+                          </p>
+                          <p className="text-xs text-[#8f8b8f] truncate">{session.user?.email}</p>
+                        </div>
+
+                        {/* Menu items */}
+                        <div className="p-2">
+                          <Link
+                            href="/profile"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#f5f7fa] text-[#4a4a6a] hover:text-[#3c74ae] transition-colors text-sm"
+                          >
+                            <UserCircle size={16} />
+                            My Profile
+                          </Link>
+
+                          {isAdmin && (
+                            <Link
+                              href="/admin"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#e8f0f9] text-[#3c74ae] font-medium transition-colors text-sm"
+                            >
+                              <LayoutDashboard size={16} />
+                              Admin Dashboard
+                            </Link>
+                          )}
+
+                          <hr className="my-1 border-[#dde2e8]" />
+
+                          <button
+                            onClick={() => {
+                              setUserMenuOpen(false)
+                              signOut({ callbackUrl: '/' })
+                            }}
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 text-[#8f8b8f] hover:text-red-500 transition-colors text-sm w-full"
+                          >
+                            <LogOut size={16} />
+                            Sign Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Mobile hamburger */}
+              <button
+                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#e8f0f9] transition-colors text-[#4a4a6a]"
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden bg-white border-t border-[#dde2e8] overflow-hidden"
+            >
+              <div className="px-4 py-4 space-y-1">
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                      pathname === link.href
+                        ? 'bg-[#e8f0f9] text-[#3c74ae]'
+                        : 'text-[#4a4a6a] hover:bg-[#f5f7fa]'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                {!session && (
+                  <div className="flex gap-2 pt-2">
+                    <Link
+                      href="/signin"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex-1 text-center py-2.5 text-sm font-medium text-[#3c74ae] border border-[#3c74ae] rounded-xl"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex-1 text-center py-2.5 text-sm font-medium text-white bg-[#3c74ae] rounded-xl"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+      {/* Spacer for fixed navbar */}
+      <div className="h-16" />
+    </>
+  )
+}
+
+═══════════════════════════════════════════════════════════
+PART 8 — COMPLETE HOME PAGE REBUILD
+═══════════════════════════════════════════════════════════
+
+16. COMPLETELY REBUILD src/app/(public)/page.tsx and all 
+    src/components/home/* files:
+
+HERO SECTION (src/components/home/HeroSection.tsx):
+Full implementation with:
+- Full viewport height min-h-screen
+- White background with subtle blue dot grid pattern:
+  backgroundImage: 'radial-gradient(#3c74ae22 1px, transparent 1px)'
+  backgroundSize: '32px 32px'
+- SpotlightEffect component behind content
+- Center-aligned content with Framer Motion stagger:
+  - Animated pill badge: "Sri Lanka's Premier Gemstone Exporter Since 2006"
+    Style: bg-[#e8f0f9] text-[#3c74ae] border border-[#3c74ae]/20 rounded-full px-4 py-1.5 text-sm
+    Fade in from bottom with 0.2s delay
+  - H1 using TextGenerateEffect component:
+    "Beauty Crafted To An Exemplary Standard"
+    font-heading text-5xl md:text-7xl font-bold text-[#1a1a2e] leading-tight
+    Delay 0.4s
+  - Subtext paragraph: 
+    "Precision-cut coloured gemstones on demand for global luxury watch and jewelry brands. 
+    Founded in 2006, trusted by the world's most discerning clients."
+    text-[#4a4a6a] text-lg md:text-xl max-w-2xl mx-auto leading-relaxed
+    Fade in delay 0.8s
+  - Two CTA buttons with delay 1s:
+    Primary: "Explore Collection" bg-[#3c74ae] text-white px-8 py-4 rounded-xl font-semibold
+             hover:bg-[#2d5f96] shadow-lg shadow-[#3c74ae]/25 transition-all hover:scale-105
+    Secondary: "Request Inquiry" border-2 border-[#3c74ae] text-[#3c74ae] px-8 py-4 rounded-xl font-semibold
+              hover:bg-[#e8f0f9] transition-all
+- Floating blue geometric shapes (decorative):
+  Three div elements with position absolute, different sizes and opacities
+  Using animate-float and animate-float-delayed CSS animations
+  Colors: #3c74ae at 8-15% opacity, rounded circles with blur
+- Scroll indicator at bottom center: animated chevron down bouncing
+
+TRUST STATS STRIP (src/components/home/TrustBadges.tsx):
+Full implementation:
+- bg-white border-y border-[#dde2e8] py-12
+- 4 stats in a responsive grid
+- Each stat uses NumberTicker component for count-up animation
+- Stats:
+  1. Icon: Award — Number: 18 — Suffix: "+" — Label: "Years of Excellence"
+  2. Icon: Users — Number: 500 — Suffix: "+" — Label: "Satisfied Clients"  
+  3. Icon: Globe — Number: 50 — Suffix: "+" — Label: "Countries Served"
+  4. Icon: Clock — Number: 24 — Suffix: "h" — Label: "Worldwide Delivery"
+- Each stat card: flex-col items-center, icon in blue circle, large blue number, grey label
+- Smooth fade-in-up animation when scrolled into view using Framer Motion whileInView
+
+SERVICES SECTION (src/components/home/ServicesOverview.tsx):
+Full implementation using BentoGrid:
+- White background section py-20
+- Section heading: "Our Services" centered
+  font-heading text-4xl font-bold text-[#1a1a2e]
+  Blue underline accent: div with w-16 h-1 bg-[#3c74ae] mx-auto mt-3
+- Subtext: "Delivering precision and excellence in every stone we cut"
+  text-[#8f8b8f] text-center mt-3
+- BentoGrid layout with 4 services:
+  Card 1 — LARGE (col-span-2): "Cutting & Calibration"
+    Icon: Scissors
+    Description: "Our experienced team cuts Rounds, Cabochons, Baguettes and Beads to 
+    your exact specifications using the latest cutting techniques."
+    bg-[#f5f7fa] hover:bg-[#e8f0f9] transition-colors rounded-2xl p-8
+    Blue left border accent: border-l-4 border-[#3c74ae]
+  Card 2 — REGULAR: "Stone Sourcing"
+    Icon: Gem
+    Description: "Sapphire, ruby, emeralds and semi-precious materials sourced from 
+    reliable industry suppliers worldwide."
+  Card 3 — REGULAR: "Colour Grading & Matching"
+    Icon: Palette
+    Description: "Expert blending and matching of coloured stones to create 
+    perfectly consistent sets for your requirements."
+  Card 4 — LARGE (col-span-2): "Quality Assurance"
+    Icon: ShieldCheck
+    Description: "Computer Vision technology and precision measuring equipment 
+    ensure every stone meets our exacting standards before delivery."
+- Each card: Framer Motion whileInView fade-up with stagger delay
+- Hover: scale-[1.02] transition shadow-md
+
+FEATURED PRODUCTS (src/components/home/FeaturedProducts.tsx):
+Full implementation:
+- White background py-20
+- Header row: "Latest Collection" left h2 + "View All Products →" right link
+- Fetch latest 6 products from /api/products?limit=6&sortBy=createdAt&sortOrder=desc
+- If no products: show placeholder cards with blue gem icon
+- Horizontal scrollable container with custom scrollbar hidden on mobile
+- Each product uses Card3D component:
+  - White card rounded-2xl border border-[#dde2e8] overflow-hidden
+  - Top: product image (full width, 200px height) or color gradient placeholder
+  - Bottom padding: name, origin + shape row, color swatch + name row, price/contact
+  - Two buttons: "View Details" (blue filled small) + "Add to Quote" (outlined small)
+  - "Add to Quote" calls useQuotationStore addItem function
+- Framer Motion scroll-triggered stagger animation
+
+WHY ORAVA SECTION (src/components/home/WhyOrava.tsx):
+Full implementation:
+- bg-[#f5f7fa] py-20
+- Two column layout: left text + right quote card
+- Left column heading: "Why Choose ORAVA?"
+  font-heading text-4xl font-bold text-[#1a1a2e]
+- Subtext: "We operate as a precision partner, not just a supplier."
+  text-[#8f8b8f]
+- Animated list with TracingBeam alongside:
+  Item 1: Package icon — "24-Hour Worldwide Delivery — Gem parcels delivered within 24 hours after order completion to anywhere in the world"
+  Item 2: Eye icon — "Computer Vision Quality Assurance — Advanced technology ensures precision in size and shape"
+  Item 3: Scissors icon — "Precision Cutting 0.5mm–10mm — Any custom diagram or shape with expert finishing"
+  Item 4: Calendar icon — "Trusted Since 2006 — Nearly two decades serving luxury watch and jewelry brands"
+  Item 5: Award icon — "SLEDB Registered — Sri Lanka Export Development Board certified exporter"
+  
+  Each item: flex gap-4, icon in small blue circle, title bold + description muted
+  Framer Motion: stagger 0.15s delay per item, slide-in-left animation
+  
+- Right column: blue gradient card
+  bg-gradient-to-br from-[#3c74ae] to-[#2d5f96]
+  White text italic quote:
+  "With a passion for excellence, Orava (Private) Limited is committed to creating 
+  timeless pieces that resonate with the discerning tastes of our clients."
+  — ORAVA (Pvt) Ltd., Founded 2006
+  Rounded-2xl p-8, subtle shadow
+
+CTA BANNER (src/components/home/CTASection.tsx):
+Full implementation using BackgroundGradientAnimation:
+- Full width py-20
+- Animated gradient background: #3c74ae → #2d5f96 → #1a4a7a
+- Center content white text:
+  Badge: "Premium Gemstone Partner"
+  H2: "Ready to Source Premium Gemstones?"
+  font-heading text-4xl font-bold text-white
+  Subtext: "Delivering gem parcels within 24 hours worldwide after order completion. 
+  The world's most demanding clients trust ORAVA."
+  text-white/80 text-lg max-w-xl mx-auto
+- Two outlined white buttons:
+  "Make an Inquiry" — border-2 border-white text-white hover:bg-white hover:text-[#3c74ae]
+  "Request a Meeting" — same style
+  Both link to /quotation and /services respectively
+
+TESTIMONIALS (src/components/home/Testimonials.tsx):
+Full implementation using InfiniteMovingCards:
+- White background py-16
+- Heading: "Trusted by Luxury Brands Worldwide" centered
+- InfiniteMovingCards with these items:
+  1. "ORAVA consistently delivers color-matched calibrated stones with remarkable precision." — European Watch Brand
+  2. "Their 24-hour dispatch capability has transformed our production planning." — Luxury Jewelry House
+  3. "Excellent bespoke cutting and highly responsive communication." — Custom Atelier
+  4. "The quality assurance process gives us complete confidence in every parcel." — Swiss Watch Manufacturer
+  5. "Reliable partner for sourcing the finest Sri Lankan sapphires." — Fine Jewelry Designer
+- Cards: white bg, rounded-2xl, border border-[#dde2e8], shadow-sm
+- Quote in text-[#4a4a6a], author in text-[#3c74ae] font-semibold
+
+CERTIFICATIONS STRIP (src/components/home/CertificationsStrip.tsx):
+- bg-[#f5f7fa] border-t border-[#dde2e8] py-8
+- Flex row centered with gap:
+  Badge 1: Award icon — "SLEDB Registered Exporter"
+  Badge 2: Calendar icon — "Est. 2006"
+  Badge 3: Globe icon — "Worldwide Delivery"
+  Badge 4: Shield icon — "Quality Certified"
+- Each badge: flex items-center gap-2 text-[#8f8b8f] text-sm
+  Icon in [#3c74ae]
+
+═══════════════════════════════════════════════════════════
+PART 9 — FOOTER COMPLETE REBUILD
+═══════════════════════════════════════════════════════════
+
+17. COMPLETELY REBUILD src/components/layout/Footer.tsx:
+
+Use these EXACT real company details — no placeholder data:
+
+Address: No. 24, Carlwil Place, Colombo 03, Sri Lanka
+Phone: +94 11 257 4062
+Email: orava@eureka.lk
+LinkedIn: https://www.linkedin.com/company/orava-private-limited/
+Google Maps: https://maps.app.goo.gl/SXjNNqZzYhqV8qHR7
+
+Footer layout:
+- bg-[#f5f7fa] border-t border-[#dde2e8]
+- Top section py-16:
+  - Logo centered top using Logo component
+  - Tagline centered: "Beauty Crafted To An Exemplary Standard"
+    font-heading text-xl text-[#8f8b8f] italic mt-2
+  - Horizontal divider mt-10 border-[#dde2e8]
+  - 4-column grid mt-10:
+    Col 1 — About:
+      Heading: "About ORAVA" font-semibold text-[#1a1a2e] mb-4
+      Text: "Precision-cut coloured gemstones from Sri Lanka for 
+      premium global brands since 2006."
+      text-[#8f8b8f] text-sm leading-relaxed
+      "24-Hour Worldwide Delivery" blue badge below
+    Col 2 — Quick Links:
+      Heading: "Quick Links"
+      Links: Home, Products, Services, Customized, About, Contact
+      Each: text-[#4a4a6a] hover:text-[#3c74ae] text-sm py-1 transition-colors
+    Col 3 — Services:
+      Heading: "Our Services"  
+      Items: Cutting & Calibration, Stone Sourcing, Colour Grading, 
+             Quality Assurance, Custom Cutting
+      Same link style
+    Col 4 — Contact:
+      Heading: "Contact Us"
+      Items with Lucide icons:
+      - MapPin: "No. 24, Carlwil Place, Colombo 03, Sri Lanka"
+      - Phone: "+94 11 257 4062"
+      - Mail: "orava@eureka.lk" (mailto link)
+      - Linkedin: Link to https://www.linkedin.com/company/orava-private-limited/
+      - ExternalLink: "View on Google Maps" link to maps URL
+      All text-sm text-[#8f8b8f], icons text-[#3c74ae]
+- Bottom bar:
+  border-t border-[#dde2e8] py-4 px-8
+  Flex justify-between:
+  Left: "© 2025 ORAVA (Pvt) Ltd. All rights reserved."
+  Right: Links — "Terms & Conditions" | "Privacy Policy"
+  All text-xs text-[#8f8b8f]
+
+═══════════════════════════════════════════════════════════
+PART 10 — AUTH FIRST NAME/LAST NAME FROM GOOGLE
+═══════════════════════════════════════════════════════════
+
+18. UPDATE src/lib/auth.ts — ensure Google sign-in saves firstName and lastName:
+
+In the signIn callback or profile callback:
+When provider is 'google':
+- Split profile.name by space: firstName = parts[0], lastName = parts.slice(1).join(' ')
+- On user creation via Google: save firstName and lastName to User table
+- On existing user via Google who has no firstName: update with Google profile name
+- Make sure session callback includes firstName and lastName from user DB record
+
+In the JWT callback:
+- Fetch user from DB if not already in token
+- Add token.firstName = user.firstName
+- Add token.lastName = user.lastName
+- Add token.role = user.role
+
+In the session callback:
+- session.user.firstName = token.firstName
+- session.user.lastName = token.lastName
+- session.user.role = token.role
+- session.user.id = token.sub
+
+UPDATE src/types/next-auth.d.ts to include:
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string
+      email: string
+      firstName: string
+      lastName: string
+      role: string
+      image?: string
+    }
+  }
+  interface JWT {
+    firstName?: string
+    lastName?: string
+    role?: string
+  }
+}
+
+═══════════════════════════════════════════════════════════
+PART 11 — SEARCH API UPDATE
+═══════════════════════════════════════════════════════════
+
+19. UPDATE src/app/api/products/route.ts GET handler:
+Add 'search' query parameter support:
+- If search param exists, add to where clause:
+  OR: [
+    { name: { contains: search, mode: 'insensitive' } },
+    { origin: { contains: search, mode: 'insensitive' } },
+    { colorName: { contains: search, mode: 'insensitive' } },
+    { shape: { contains: search, mode: 'insensitive' } },
+  ]
+
+═══════════════════════════════════════════════════════════
+PART 12 — PUBLIC LAYOUT BACK-TO-DASHBOARD BUTTON
+═══════════════════════════════════════════════════════════
+
+20. CREATE src/components/ui/BackToDashboardButton.tsx:
+Show only when session.user.role === 'ADMIN'
+Fixed position: bottom-6 right-6 z-50
+Button style: bg-[#3c74ae] text-white rounded-full px-4 py-3 shadow-xl
+             hover:bg-[#2d5f96] transition-all flex items-center gap-2
+Icon: LayoutDashboard from lucide
+Text: "Admin Panel"
+onClick: router.push('/admin')
+Use useSession from next-auth/react — render null if not admin
+
+Add this component to src/app/(public)/layout.tsx
+
+═══════════════════════════════════════════════════════════
+PART 13 — FINAL CHECKLIST
+═══════════════════════════════════════════════════════════
+
+After all implementations:
+
+1. Run: npm run build
+2. Fix ALL TypeScript errors
+3. Fix ALL ESLint errors  
+4. Confirm middleware size stays under 1MB
+5. Verify no hardcoded localhost URLs
+6. Verify all real company details are used:
+   - Address: No. 24, Carlwil Place, Colombo 03, Sri Lanka
+   - Phone: +94 11 257 4062
+   - Email: orava@eureka.lk
+   - LinkedIn: https://www.linkedin.com/company/orava-private-limited/
+7. Verify quotation cart works with zustand persist
+8. Verify search debounce works
+9. Verify greeting shows firstName correctly
+10. Verify admin shows shield icon, user shows user icon
+
+List every file created or modified when done.
+State if build passed with zero errors.

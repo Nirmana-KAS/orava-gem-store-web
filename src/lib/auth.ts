@@ -1,6 +1,7 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
+import type { Adapter } from "next-auth/adapters";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
@@ -9,7 +10,7 @@ import { sendSignInGreetingEmail } from "@/lib/resend";
 import { signInSchema } from "@/lib/validations";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as Adapter,
   trustHost: true,
   session: { strategy: "jwt" },
   providers: [
@@ -69,12 +70,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const email = user.email.toLowerCase();
 
       if (account?.provider === "google") {
-        const names = (user.name ?? "").trim().split(" ");
-        const firstName = names[0] || "User";
-        const lastName = names.slice(1).join(" ") || "";
+        const nameParts = (user.name ?? "").trim().split(" ").filter(Boolean);
+        const firstName = nameParts[0] || user.firstName || "User";
+        const lastName = nameParts.slice(1).join(" ") || user.lastName || "";
         const dbUser = await prisma.user.upsert({
           where: { email },
-          update: { image: user.image ?? undefined },
+          update: {
+            image: user.image ?? undefined,
+            firstName,
+            lastName,
+          },
           create: {
             email,
             firstName,
@@ -85,12 +90,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
         });
         user.id = dbUser.id;
+        user.firstName = dbUser.firstName;
+        user.lastName = dbUser.lastName;
+        user.role = dbUser.role;
       }
 
-      const dbUser = await prisma.user.findUnique({ where: { email } });
+      let dbUser = await prisma.user.findUnique({ where: { email } });
       if (!dbUser) return true;
 
+      if (account?.provider === "google" && !dbUser.firstName) {
+        const nameParts = (user.name ?? "").trim().split(" ").filter(Boolean);
+        const firstName = nameParts[0] || "User";
+        const lastName = nameParts.slice(1).join(" ");
+        dbUser = await prisma.user.update({
+          where: { id: dbUser.id },
+          data: { firstName, lastName },
+        });
+      }
+
       user.id = dbUser.id;
+      user.firstName = dbUser.firstName;
+      user.lastName = dbUser.lastName;
+      user.role = dbUser.role;
       await prisma.inquiry.updateMany({
         where: { guestEmail: dbUser.email, userId: null },
         data: { userId: dbUser.id, guestEmail: null },
@@ -104,28 +125,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
-        if (user.id) token.id = user.id;
-
-        const enrichedUser = user as {
-          role?: typeof token.role;
-          firstName?: string;
-          lastName?: string;
-        };
-
-        if (enrichedUser.role) token.role = enrichedUser.role;
-        if (typeof enrichedUser.firstName === "string")
-          token.firstName = enrichedUser.firstName;
-        if (typeof enrichedUser.lastName === "string")
-          token.lastName = enrichedUser.lastName;
+        token.id = user.id;
+        token.sub = user.id;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.role = user.role;
       }
+
+      if ((!token.firstName || !token.lastName || !token.role) && token.sub) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+        });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.firstName = dbUser.firstName;
+          token.lastName = dbUser.lastName;
+          token.role = dbUser.role;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.firstName = token.firstName;
-        session.user.lastName = token.lastName;
+        const tokenId =
+          typeof token.sub === "string"
+            ? token.sub
+            : typeof token.id === "string"
+              ? token.id
+              : "";
+        const tokenRole = typeof token.role === "string" ? token.role : "USER";
+        const tokenFirstName =
+          typeof token.firstName === "string" ? token.firstName : "User";
+        const tokenLastName =
+          typeof token.lastName === "string" ? token.lastName : "";
+        session.user.id = tokenId;
+        session.user.role = tokenRole;
+        session.user.firstName = tokenFirstName;
+        session.user.lastName = tokenLastName;
       }
       return session;
     },

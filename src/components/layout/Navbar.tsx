@@ -1,17 +1,26 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Menu, User2, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import Button from "@/components/ui/Button";
-import Logo from "@/components/ui/Logo";
+import { useSession, signOut } from "next-auth/react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Search,
+  Menu,
+  X,
+  User,
+  Shield,
+  ChevronDown,
+  LogOut,
+  LayoutDashboard,
+  UserCircle,
+} from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+import { QuotationCartDropdown } from "@/components/ui/QuotationCartDropdown";
 import { useGreeting } from "@/hooks/useGreeting";
-import { cn } from "@/lib/utils";
 
-const links = [
+const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Products" },
   { href: "/services", label: "Services" },
@@ -20,193 +29,375 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function Navbar() {
+interface SearchProduct {
+  id: string;
+  name: string;
+  origin: string;
+  shape: string;
+  colorHex?: string;
+}
+
+export function Navbar() {
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchProduct[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { data: session } = useSession();
-  const { greeting } = useGreeting(session?.user?.firstName);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  const firstName = session?.user?.firstName as string | undefined;
+  const { greeting } = useGreeting(firstName);
+  const isAdmin = session?.user?.role === "ADMIN";
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 15);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+        setSearchResults([]);
+      }
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node)
+      ) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const res = await fetch(
+          `/api/products?search=${encodeURIComponent(searchQuery)}&limit=5`,
+        );
+        const data = await res.json();
+        setSearchResults(data.data?.products || []);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
-      style={{ willChange: "transform" }}
-      className={cn(
-        "sticky top-0 z-40 border-b bg-white transition-all",
-        isScrolled ? "border-[#dde2e8] shadow-sm" : "border-transparent",
-      )}
-    >
-      <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-3">
-        <Link href="/" className="justify-self-start">
-          {/* Replace /logo.png with your uploaded logo file in /public folder */}
-          <Logo src="/logo.png" />
-        </Link>
-        <div className="hidden items-center gap-6 md:flex md:justify-self-center">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "relative text-sm text-[#4a4a6a] transition hover:text-brand-blue",
-                pathname === link.href && "text-brand-blue",
-              )}
-            >
-              {link.label}
-              {pathname === link.href ? (
-                <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded bg-brand-blue" />
-              ) : null}
-            </Link>
-          ))}
-        </div>
-        <div className="hidden items-center justify-self-end gap-3 md:flex">
-          {!session?.user ? (
-            <>
-              <Link href="/signin">
-                <Button variant="outline">Sign In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Sign Up</Button>
-              </Link>
-            </>
-          ) : (
-            <div className="relative">
-              <button
-                className="flex items-center gap-2 rounded-lg border border-[#dde2e8] bg-white px-3 py-2 text-sm text-[#4a4a6a]"
-                onClick={() => setMenuOpen((v) => !v)}
-              >
-                <span className="max-w-[20rem] truncate">{greeting}</span>
-                <User2 size={16} />
-                <ChevronDown size={14} />
-              </button>
-              <AnimatePresence>
-                {menuOpen ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    style={{ willChange: "transform" }}
-                    className="absolute right-0 mt-2 w-48 rounded-lg border border-[#dde2e8] bg-white p-1 shadow-md"
-                  >
-                    <Link
-                      href="/profile"
-                      className="block rounded px-3 py-2 text-sm text-[#4a4a6a] hover:bg-brand-blue-light"
-                    >
-                      Profile
-                    </Link>
-                    {session.user.role === "ADMIN" ? (
-                      <Link
-                        href="/admin"
-                        className="block rounded px-3 py-2 text-sm text-[#4a4a6a] hover:bg-brand-blue-light"
-                      >
-                        Admin
-                      </Link>
-                    ) : null}
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="w-full rounded px-3 py-2 text-left text-sm text-[#4a4a6a] hover:bg-brand-blue-light"
-                    >
-                      Sign Out
-                    </button>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
+    <>
+      <nav
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "border-b border-[#dde2e8] bg-white shadow-md"
+            : "border-b border-[#dde2e8] bg-white/95 backdrop-blur-sm"
+        }`}
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex-shrink-0">
+              <Logo height={38} />
             </div>
-          )}
-        </div>
-        <button
-          className="justify-self-end text-[#1a1a2e] md:hidden"
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label="menu"
-        >
-          {mobileOpen ? <X /> : <Menu />}
-        </button>
-      </div>
-      <AnimatePresence>
-        {mobileOpen ? (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            style={{ willChange: "transform" }}
-            className="fixed right-0 top-0 z-50 h-screen w-72 border-l border-[#dde2e8] bg-white p-6 md:hidden"
-          >
-            <div className="mb-6 flex justify-end">
-              <button onClick={() => setMobileOpen(false)}>
-                <X />
-              </button>
-            </div>
-            <div className="space-y-4">
-              {links.map((link) => (
+
+            <div className="hidden items-center gap-1 lg:flex">
+              {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="block text-[#4a4a6a]"
+                  className={`relative rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    pathname === link.href
+                      ? "bg-[#e8f0f9] text-[#3c74ae]"
+                      : "text-[#4a4a6a] hover:bg-[#f5f7fa] hover:text-[#3c74ae]"
+                  }`}
                 >
                   {link.label}
+                  {pathname === link.href ? (
+                    <motion.div
+                      layoutId="activeNav"
+                      className="absolute bottom-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-[#3c74ae]"
+                    />
+                  ) : null}
                 </Link>
               ))}
-              <div className="mt-6 border-t border-[#dde2e8] pt-4">
-                {!session?.user ? (
-                  <div className="space-y-3">
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative" ref={searchRef}>
+                <button
+                  onClick={() => setSearchOpen(!searchOpen)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-[#4a4a6a] transition-colors hover:bg-[#e8f0f9] hover:text-[#3c74ae]"
+                  aria-label="Search"
+                >
+                  <Search size={18} />
+                </button>
+
+                <AnimatePresence>
+                  {searchOpen ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-[#dde2e8] bg-white shadow-2xl"
+                    >
+                      <div className="p-3">
+                        <div className="flex items-center gap-2 rounded-xl border border-[#dde2e8] bg-[#f5f7fa] px-3 py-2">
+                          <Search size={16} className="text-[#8f8b8f]" />
+                          <input
+                            autoFocus
+                            type="text"
+                            placeholder="Search gemstones..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="flex-1 bg-transparent text-sm text-[#1a1a2e] placeholder-[#8f8b8f] outline-none"
+                          />
+                          {searchQuery ? (
+                            <button onClick={() => setSearchQuery("")}>
+                              <X size={14} className="text-[#8f8b8f]" />
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      {searchLoading ? (
+                        <div className="px-4 py-3 text-center text-sm text-[#8f8b8f]">
+                          Searching...
+                        </div>
+                      ) : null}
+
+                      {!searchLoading && searchResults.length > 0 ? (
+                        <div className="border-t border-[#dde2e8]">
+                          {searchResults.map((product) => (
+                            <Link
+                              key={product.id}
+                              href={`/products/${product.id}`}
+                              onClick={() => {
+                                setSearchOpen(false);
+                                setSearchQuery("");
+                              }}
+                              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-[#f5f7fa]"
+                            >
+                              <div
+                                className="h-8 w-8 flex-shrink-0 rounded-full"
+                                style={{
+                                  backgroundColor:
+                                    product.colorHex || "#3c74ae",
+                                }}
+                              />
+                              <div>
+                                <p className="text-sm font-medium text-[#1a1a2e]">
+                                  {product.name}
+                                </p>
+                                <p className="text-xs text-[#8f8b8f]">
+                                  {product.origin} · {product.shape}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                          <div className="border-t border-[#dde2e8] px-4 py-2">
+                            <Link
+                              href={`/products?search=${searchQuery}`}
+                              onClick={() => setSearchOpen(false)}
+                              className="text-xs text-[#3c74ae] hover:underline"
+                            >
+                              View all results for &quot;{searchQuery}&quot;
+                            </Link>
+                          </div>
+                        </div>
+                      ) : null}
+
+                      {!searchLoading &&
+                      searchQuery &&
+                      searchResults.length === 0 ? (
+                        <div className="border-t border-[#dde2e8] px-4 py-4 text-center text-sm text-[#8f8b8f]">
+                          No products found for &quot;{searchQuery}&quot;
+                        </div>
+                      ) : null}
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </div>
+
+              <QuotationCartDropdown />
+
+              {!session ? (
+                <div className="hidden items-center gap-2 sm:flex">
+                  <Link
+                    href="/signin"
+                    className="rounded-lg border border-[#3c74ae] px-4 py-2 text-sm font-medium text-[#3c74ae] transition-colors hover:bg-[#e8f0f9]"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="rounded-lg bg-[#3c74ae] px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#2d5f96]"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              ) : (
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="group flex items-center gap-2 rounded-xl px-3 py-2 transition-colors hover:bg-[#e8f0f9]"
+                  >
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                        isAdmin
+                          ? "bg-[#3c74ae] text-white"
+                          : "bg-[#e8f0f9] text-[#3c74ae]"
+                      }`}
+                    >
+                      {isAdmin ? <Shield size={16} /> : <User size={16} />}
+                    </div>
+
+                    <div className="hidden text-left md:block">
+                      <p className="leading-none text-xs text-[#8f8b8f]">
+                        {greeting.split(",")[0]}
+                      </p>
+                      <p className="leading-tight text-sm font-semibold text-[#1a1a2e]">
+                        {firstName || session.user?.email?.split("@")[0]}
+                      </p>
+                    </div>
+
+                    <ChevronDown
+                      size={14}
+                      className={`text-[#8f8b8f] transition-transform ${userMenuOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {userMenuOpen ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-12 z-50 w-56 overflow-hidden rounded-2xl border border-[#dde2e8] bg-white shadow-2xl"
+                      >
+                        <div className="border-b border-[#dde2e8] bg-[#f5f7fa] px-4 py-3">
+                          <p className="text-sm font-semibold text-[#1a1a2e]">
+                            {firstName} {session.user?.lastName || ""}
+                          </p>
+                          <p className="truncate text-xs text-[#8f8b8f]">
+                            {session.user?.email}
+                          </p>
+                        </div>
+
+                        <div className="p-2">
+                          <Link
+                            href="/profile"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[#4a4a6a] transition-colors hover:bg-[#f5f7fa] hover:text-[#3c74ae]"
+                          >
+                            <UserCircle size={16} />
+                            My Profile
+                          </Link>
+
+                          {isAdmin ? (
+                            <Link
+                              href="/admin"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#3c74ae] transition-colors hover:bg-[#e8f0f9]"
+                            >
+                              <LayoutDashboard size={16} />
+                              Admin Dashboard
+                            </Link>
+                          ) : null}
+
+                          <hr className="my-1 border-[#dde2e8]" />
+
+                          <button
+                            onClick={() => {
+                              setUserMenuOpen(false);
+                              signOut({ callbackUrl: "/" });
+                            }}
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-[#8f8b8f] transition-colors hover:bg-red-50 hover:text-red-500"
+                          >
+                            <LogOut size={16} />
+                            Sign Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-full text-[#4a4a6a] transition-colors hover:bg-[#e8f0f9] lg:hidden"
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {mobileOpen ? (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden border-t border-[#dde2e8] bg-white lg:hidden"
+            >
+              <div className="space-y-1 px-4 py-4">
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                      pathname === link.href
+                        ? "bg-[#e8f0f9] text-[#3c74ae]"
+                        : "text-[#4a4a6a] hover:bg-[#f5f7fa]"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                {!session ? (
+                  <div className="flex gap-2 pt-2">
                     <Link
                       href="/signin"
                       onClick={() => setMobileOpen(false)}
-                      className="block"
+                      className="flex-1 rounded-xl border border-[#3c74ae] py-2.5 text-center text-sm font-medium text-[#3c74ae]"
                     >
-                      <Button variant="outline" className="w-full">
-                        Sign In
-                      </Button>
+                      Sign In
                     </Link>
                     <Link
                       href="/signup"
                       onClick={() => setMobileOpen(false)}
-                      className="block"
+                      className="flex-1 rounded-xl bg-[#3c74ae] py-2.5 text-center text-sm font-medium text-white"
                     >
-                      <Button className="w-full">Sign Up</Button>
+                      Sign Up
                     </Link>
                   </div>
-                ) : (
-                  <div className="space-y-2 text-sm">
-                    <Link
-                      href="/profile"
-                      onClick={() => setMobileOpen(false)}
-                      className="block rounded px-3 py-2 text-[#4a4a6a] hover:bg-brand-blue-light"
-                    >
-                      Profile
-                    </Link>
-                    {session.user.role === "ADMIN" ? (
-                      <Link
-                        href="/admin"
-                        onClick={() => setMobileOpen(false)}
-                        className="block rounded px-3 py-2 text-[#4a4a6a] hover:bg-brand-blue-light"
-                      >
-                        Admin
-                      </Link>
-                    ) : null}
-                    <button
-                      type="button"
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="block w-full rounded px-3 py-2 text-left text-[#4a4a6a] hover:bg-brand-blue-light"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                )}
+                ) : null}
               </div>
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </motion.nav>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </nav>
+      <div className="h-16" />
+    </>
   );
 }
+
+export default Navbar;

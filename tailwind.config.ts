@@ -15,35 +15,43 @@ const config: Config = {
           DEFAULT: "#f5f7fa",
           elevated: "#eef1f5",
         },
-        // Compatibility aliases for existing class names.
-        gold: "#3c74ae",
-        "gold-light": "#2d5f96",
-        dark: "#ffffff",
-        "dark-surface": "#f5f7fa",
-        "dark-elevated": "#eef1f5",
+        text: {
+          primary: "#1a1a2e",
+          secondary: "#4a4a6a",
+          muted: "#8f8b8f",
+        },
+        border: {
+          DEFAULT: "#dde2e8",
+        },
       },
       fontFamily: {
-        heading: ["var(--font-cormorant)", "serif"],
-        body: ["var(--font-inter)", "sans-serif"],
+        heading: ["Cormorant Garamond", "serif"],
+        body: ["Inter", "sans-serif"],
       },
       keyframes: {
-        shimmer: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(100%)" },
-        },
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-8px)" },
+          "50%": { transform: "translateY(-20px)" },
         },
-        "pulse-gold": {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(60,116,174,0.35)" },
-          "70%": { boxShadow: "0 0 0 10px rgba(60,116,174,0)" },
+        "pulse-blue": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
       animation: {
-        shimmer: "shimmer 1.8s linear infinite",
-        float: "float 4s ease-in-out infinite",
-        "pulse-gold": "pulse-gold 2s infinite",
+        float: "float 6s ease-in-out infinite",
+        "float-delayed": "float 6s ease-in-out 2s infinite",
+        "pulse-blue": "pulse-blue 2s ease-in-out infinite",
+        marquee: "marquee 30s linear infinite",
+        shimmer: "shimmer 2s linear infinite",
       },
     },
   },

@@ -19,6 +19,7 @@ const querySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(12),
   name: z.string().optional(),
+  search: z.string().optional(),
   shape: z.union([z.string(), z.array(z.string())]).optional(),
   size: z.string().optional(),
   colorName: z.string().optional(),
@@ -62,6 +63,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       page: request.nextUrl.searchParams.get("page") ?? undefined,
       limit: request.nextUrl.searchParams.get("limit") ?? undefined,
       name: request.nextUrl.searchParams.get("name") ?? undefined,
+      search: request.nextUrl.searchParams.get("search") ?? undefined,
       shape: request.nextUrl.searchParams.getAll("shape").length
         ? request.nextUrl.searchParams.getAll("shape")
         : (request.nextUrl.searchParams.get("shape") ?? undefined),
@@ -147,6 +149,14 @@ export async function GET(request: NextRequest): Promise<Response> {
     const orderByField = sortField ?? sortBy ?? "createdAt";
 
     const where: Prisma.ProductWhereInput = {
+      OR: filters.search
+        ? [
+            { name: { contains: filters.search, mode: "insensitive" } },
+            { origin: { contains: filters.search, mode: "insensitive" } },
+            { colorName: { contains: filters.search, mode: "insensitive" } },
+            { shape: { contains: filters.search, mode: "insensitive" } },
+          ]
+        : undefined,
       name: filters.name
         ? { contains: filters.name, mode: "insensitive" }
         : undefined,
@@ -187,10 +197,11 @@ export async function GET(request: NextRequest): Promise<Response> {
     ]);
     return ok<{
       items: ProductWithDetails[];
+      products: ProductWithDetails[];
       total: number;
       page: number;
       limit: number;
-    }>({ items, total, page, limit });
+    }>({ items, products: items, total, page, limit });
   } catch (error) {
     console.error("Products GET error:", error);
     return fail("Failed to fetch products", 500);

@@ -1,4 +1,4 @@
-import BackToDashboardButton from "@/components/layout/BackToDashboardButton";
+import BackToDashboardButton from "@/components/ui/BackToDashboardButton";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 
