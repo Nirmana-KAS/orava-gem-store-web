@@ -28,18 +28,18 @@ export default function Select({ value, onChange, options }: SelectProps) {
         onChange(nextValue === EMPTY_SENTINEL ? "" : nextValue)
       }
     >
-      <RadixSelect.Trigger className="inline-flex min-w-[160px] items-center justify-between rounded-md border border-white/20 bg-dark-elevated px-3 py-2 text-sm text-white">
+      <RadixSelect.Trigger className="inline-flex min-w-[160px] items-center justify-between rounded-md border border-[#dde2e8] bg-white px-3 py-2 text-sm text-[#1a1a2e]">
         <RadixSelect.Value placeholder={emptyOptionLabel} />
         <ChevronDown size={16} />
       </RadixSelect.Trigger>
       <RadixSelect.Portal>
-        <RadixSelect.Content className="z-50 rounded-md border border-white/10 bg-dark-surface p-1">
+        <RadixSelect.Content className="z-50 rounded-md border border-[#dde2e8] bg-white p-1 shadow-md">
           <RadixSelect.Viewport>
             {options.map((option) => (
               <RadixSelect.Item
                 key={option.value}
                 value={option.value === "" ? EMPTY_SENTINEL : option.value}
-                className="cursor-pointer rounded px-3 py-2 text-sm text-white outline-none hover:bg-white/10"
+                className="cursor-pointer rounded px-3 py-2 text-sm text-[#1a1a2e] outline-none hover:bg-brand-blue-light"
               >
                 <RadixSelect.ItemText>{option.label}</RadixSelect.ItemText>
               </RadixSelect.Item>

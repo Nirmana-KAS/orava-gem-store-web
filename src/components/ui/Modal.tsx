@@ -11,15 +11,22 @@ interface ModalProps {
   children: ReactNode;
 }
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: ModalProps) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={(v) => !v && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/70" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[95vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-white/10 bg-dark-surface p-6">
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[95vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[#dde2e8] bg-white p-6 shadow-xl">
           <div className="mb-4 flex items-center justify-between">
-            <Dialog.Title className="font-heading text-2xl text-gold">{title}</Dialog.Title>
-            <Dialog.Close className="text-zinc-400 hover:text-white">
+            <Dialog.Title className="font-heading text-2xl text-brand-blue">
+              {title}
+            </Dialog.Title>
+            <Dialog.Close className="text-[#8f8b8f] hover:text-[#1a1a2e]">
               <X size={18} />
             </Dialog.Close>
           </div>
@@ -29,4 +36,3 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
     </Dialog.Root>
   );
 }
-

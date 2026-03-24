@@ -3,13 +3,31 @@
 @tailwind utilities;
 
 :root {
-  --gold: #c9a84c;
-  --gold-light: #e8c97a;
-  --dark: #0a0a0a;
-  --dark-surface: #111111;
-  --dark-elevated: #1a1a1a;
-  --text-primary: #f5f5f5;
-  --text-secondary: #a0a0a0;
+  --brand-blue: #3c74ae;
+  --brand-blue-dark: #2d5f96;
+  --brand-blue-light: #e8f0f9;
+  --brand-ash: #8f8b8f;
+  --bg: #ffffff;
+  --surface: #f5f7fa;
+  --surface-elevated: #eef1f5;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-muted: #8f8b8f;
+  --border: #dde2e8;
+}
+
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
 }
 
 html {
@@ -17,7 +35,7 @@ html {
 }
 
 body {
-  background: var(--dark);
+  background: var(--bg);
   color: var(--text-primary);
 }
 
@@ -27,16 +45,15 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #bcc6d1;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #9ba8b5;
 }
 
 ::selection {
-  background: var(--gold);
-  color: var(--dark);
+  background: var(--brand-blue-light);
+  color: var(--text-primary);
 }
-

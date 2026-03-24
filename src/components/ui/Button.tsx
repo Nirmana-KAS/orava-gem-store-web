@@ -11,14 +11,24 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-gold text-dark hover:bg-gold-light",
-  outline: "border border-gold text-gold hover:bg-gold/10",
-  ghost: "text-white hover:bg-white/10",
+  primary: "bg-brand-blue text-white hover:bg-brand-blue-dark",
+  outline: "border border-brand-blue text-brand-blue hover:bg-brand-blue-light",
+  ghost: "text-[#4a4a6a] hover:bg-brand-blue-light",
   danger: "bg-red-600 text-white hover:bg-red-500",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", isLoading = false, children, disabled, ...props }, ref) => (
+  (
+    {
+      className,
+      variant = "primary",
+      isLoading = false,
+      children,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => (
     <button
       ref={ref}
       className={cn(
@@ -36,4 +46,3 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export default Button;
-

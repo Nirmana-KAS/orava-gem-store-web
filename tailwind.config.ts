@@ -5,11 +5,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        gold: "#C9A84C",
-        "gold-light": "#E8C97A",
-        dark: "#0A0A0A",
-        "dark-surface": "#111111",
-        "dark-elevated": "#1A1A1A",
+        brand: {
+          blue: "#3c74ae",
+          "blue-dark": "#2d5f96",
+          "blue-light": "#e8f0f9",
+          ash: "#8f8b8f",
+        },
+        surface: {
+          DEFAULT: "#f5f7fa",
+          elevated: "#eef1f5",
+        },
+        // Compatibility aliases for existing class names.
+        gold: "#3c74ae",
+        "gold-light": "#2d5f96",
+        dark: "#ffffff",
+        "dark-surface": "#f5f7fa",
+        "dark-elevated": "#eef1f5",
       },
       fontFamily: {
         heading: ["var(--font-cormorant)", "serif"],
@@ -25,8 +36,8 @@ const config: Config = {
           "50%": { transform: "translateY(-8px)" },
         },
         "pulse-gold": {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(201,168,76,0.4)" },
-          "70%": { boxShadow: "0 0 0 10px rgba(201,168,76,0)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(60,116,174,0.35)" },
+          "70%": { boxShadow: "0 0 0 10px rgba(60,116,174,0)" },
         },
       },
       animation: {
@@ -40,4 +51,3 @@ const config: Config = {
 };
 
 export default config;
-
