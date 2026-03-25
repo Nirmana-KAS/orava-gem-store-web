@@ -2,7 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Award, Calendar, Eye, Package, Scissors } from "lucide-react";
+import Image from "next/image";
 import { TracingBeam } from "@/components/ui/aceternity/TracingBeam";
+
+const TEAM_PHOTO_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774438471/Generated_Image_March_25_2026_-_2_49PM_cczvsu.jpg";
 
 const points = [
   {
@@ -86,6 +90,15 @@ export default function WhyOrava() {
           transition={{ duration: 0.5 }}
           className="rounded-2xl bg-gradient-to-br from-[#3c74ae] to-[#2d5f96] p-6 text-white shadow-lg sm:p-8"
         >
+          <div className="relative mb-5 h-52 overflow-hidden rounded-xl border border-white/25 sm:h-64">
+            <Image
+              src={TEAM_PHOTO_URL}
+              alt="ORAVA team"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
           <p className="font-heading text-xl italic leading-relaxed sm:text-2xl">
             &ldquo;With a passion for excellence, Orava (Private) Limited is
             committed to creating timeless pieces that resonate with the

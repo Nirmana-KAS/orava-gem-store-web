@@ -2,20 +2,79 @@
 
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Spotlight } from "@/components/ui/aceternity/SpotlightEffect";
 import { TextGenerateEffect } from "@/components/ui/aceternity/TextGenerateEffect";
 
+const HERO_VIDEO_URL =
+  "https://res.cloudinary.com/dzie1rnt3/video/upload/v1774438042/Generated_Video_March_24_2026_-_3_07PM_jcyvgy.mp4";
+const HERO_BACKGROUND_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436497/Gemini_Generated_Image_px2sudpx2sudpx2s_g9cntw.png";
+const HERO_GEM_RIGHT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436807/Gemini_Generated_Image_dlyzndlyzndlyznd_lttew9.png";
+const HERO_GEM_LEFT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436874/Gemini_Generated_Image_2cdybh2cdybh2cdy_ekcdbm.png";
+
 export default function HeroSection() {
   return (
     <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:[background-size:32px_32px]">
+      <div className="absolute inset-0">
+        <Image
+          src={HERO_BACKGROUND_URL}
+          alt="Gemstone texture background"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-45"
+        />
+        <video
+          className="h-full w-full object-cover opacity-35"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster={HERO_BACKGROUND_URL}
+          aria-hidden="true"
+        >
+          <source src={HERO_VIDEO_URL} type="video/mp4" />
+        </video>
+      </div>
+
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/70 via-white/78 to-white/85" />
+
       <div className="opacity-55 sm:opacity-100">
         <Spotlight />
       </div>
 
-      <div className="pointer-events-none absolute -top-10 left-[8%] hidden h-56 w-56 animate-float rounded-full bg-[#3c74ae]/15 blur-3xl sm:block" />
-      <div className="pointer-events-none absolute bottom-24 right-[8%] hidden h-44 w-44 animate-float-delayed rounded-full bg-[#3c74ae]/10 blur-2xl sm:block" />
-      <div className="pointer-events-none absolute bottom-12 left-1/2 hidden h-36 w-36 -translate-x-1/2 animate-float rounded-full bg-[#3c74ae]/8 blur-2xl sm:block" />
+      <motion.div
+        className="pointer-events-none absolute right-[6%] top-28 hidden h-32 w-32 sm:block md:h-40 md:w-40"
+        animate={{ y: [0, -12, 0], rotate: [0, 3, 0] }}
+        transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY }}
+      >
+        <Image
+          src={HERO_GEM_RIGHT_URL}
+          alt="Decorative gemstone"
+          fill
+          sizes="160px"
+          className="object-contain drop-shadow-[0_16px_40px_rgba(60,116,174,0.35)]"
+        />
+      </motion.div>
+
+      <motion.div
+        className="pointer-events-none absolute bottom-20 left-[6%] hidden h-28 w-28 sm:block md:h-36 md:w-36"
+        animate={{ y: [0, 10, 0], rotate: [0, -4, 0] }}
+        transition={{ duration: 5.5, repeat: Number.POSITIVE_INFINITY }}
+      >
+        <Image
+          src={HERO_GEM_LEFT_URL}
+          alt="Decorative gemstone"
+          fill
+          sizes="140px"
+          className="object-contain drop-shadow-[0_16px_40px_rgba(60,116,174,0.3)]"
+        />
+      </motion.div>
 
       <motion.div
         initial="hidden"
