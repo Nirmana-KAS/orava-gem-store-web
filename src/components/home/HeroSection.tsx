@@ -23,9 +23,31 @@ const VIDEO_FADE_MS = 700;
 
 export default function HeroSection() {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 640px)");
+
+    const updateIsMobile = () => {
+      setIsMobile(mediaQuery.matches);
+    };
+
+    updateIsMobile();
+    mediaQuery.addEventListener("change", updateIsMobile);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateIsMobile);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      const firstVideo = videoRefs.current[0];
+      firstVideo?.play().catch(() => undefined);
+      return;
+    }
+
     videoRefs.current.forEach((video) => {
       video?.load();
     });
@@ -57,30 +79,45 @@ export default function HeroSection() {
     return () => {
       window.clearInterval(timer);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
-    <section className="relative flex min-h-[88svh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:min-h-[92vh] sm:[background-size:32px_32px]">
+    <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:min-h-[92vh] sm:[background-size:32px_32px]">
       <div className="absolute inset-0 overflow-hidden">
-        {HERO_VIDEO_URLS.map((videoUrl, index) => (
+        {isMobile ? (
           <video
-            key={videoUrl}
             ref={(element) => {
-              videoRefs.current[index] = element;
+              videoRefs.current[0] = element;
             }}
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
-              activeVideoIndex === index
-                ? "opacity-45 sm:opacity-60"
-                : "opacity-0"
-            }`}
+            className="absolute inset-0 h-full w-full object-cover object-center opacity-45"
+            autoPlay
+            loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             aria-hidden="true"
           >
-            <source src={videoUrl} type="video/mp4" />
+            <source src={HERO_VIDEO_URLS[0]} type="video/mp4" />
           </video>
-        ))}
+        ) : (
+          HERO_VIDEO_URLS.map((videoUrl, index) => (
+            <video
+              key={videoUrl}
+              ref={(element) => {
+                videoRefs.current[index] = element;
+              }}
+              className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
+                activeVideoIndex === index ? "opacity-60" : "opacity-0"
+              }`}
+              muted
+              playsInline
+              preload="auto"
+              aria-hidden="true"
+            >
+              <source src={videoUrl} type="video/mp4" />
+            </video>
+          ))
+        )}
       </div>
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/78 via-white/84 to-white/90 sm:from-white/68 sm:via-white/76 sm:to-white/84" />

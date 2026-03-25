@@ -16,6 +16,7 @@ interface ProductItem {
   colorHex: string;
   size: string;
   weight: number;
+  lotQuantity: number;
   price?: number | null;
   images: string[];
 }
@@ -80,66 +81,88 @@ export default function FeaturedProducts() {
             : products.map((product, index) => (
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: index * 0.06 }}
+                  transition={{ duration: 0.32, delay: index * 0.05 }}
                   className="h-full"
                 >
-                  <article className="h-full overflow-hidden rounded-2xl border border-[#dde2e8] bg-white">
-                    <div className="relative h-36 w-full sm:h-44">
-                      {product.images?.[0] ? (
-                        <Image
-                          src={product.images[0]}
-                          alt={product.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div
-                          className="h-full w-full"
-                          style={{
-                            background: `linear-gradient(135deg, ${product.colorHex || "#3c74ae"}, #f5f7fa)`,
-                          }}
-                        />
-                      )}
-                    </div>
-
-                    <div className="space-y-2 p-3 sm:space-y-3 sm:p-4">
-                      <h3 className="truncate text-sm font-semibold text-[#1a1a2e] sm:text-base">
-                        {product.name}
-                      </h3>
-
-                      <p className="truncate text-[11px] text-[#8f8b8f] sm:text-xs">
-                        {product.origin} · {product.shape}
-                      </p>
-
-                      <div className="flex items-center gap-2 text-xs text-[#4a4a6a] sm:text-sm">
-                        <span
-                          className="h-3.5 w-3.5 rounded-full border border-[#dde2e8] sm:h-4 sm:w-4"
-                          style={{
-                            backgroundColor: product.colorHex || "#3c74ae",
-                          }}
-                        />
-                        <span className="truncate">{product.colorName}</span>
+                  <Link
+                    href={`/products/${product.id}`}
+                    className="group block h-full"
+                  >
+                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#d8e0ea] bg-gradient-to-b from-white to-[#f8fbff] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_20px_rgba(31,54,84,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_14px_26px_rgba(31,54,84,0.14)]">
+                      <div className="relative h-36 w-full overflow-hidden sm:h-44">
+                        {product.images?.[0] ? (
+                          <Image
+                            src={product.images[0]}
+                            alt={product.name}
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div
+                            className="h-full w-full"
+                            style={{
+                              background: `linear-gradient(135deg, ${product.colorHex || "#3c74ae"}, #f5f7fa)`,
+                            }}
+                          />
+                        )}
                       </div>
 
-                      <p className="text-xs font-semibold text-[#3c74ae] sm:text-sm">
-                        {typeof product.price === "number"
-                          ? `$${product.price.toLocaleString()}`
-                          : "Contact for pricing"}
-                      </p>
+                      <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
+                        <div>
+                          <h3 className="truncate text-sm font-semibold text-[#1a1a2e] sm:text-base">
+                            {product.name}
+                          </h3>
+                          <p className="mt-1 truncate text-[11px] text-[#8f8b8f] sm:text-xs">
+                            {product.origin} · {product.shape}
+                          </p>
+                        </div>
 
-                      <div className="flex flex-col gap-2 pt-1 sm:flex-row">
-                        <Link
-                          href={`/products/${product.id}`}
-                          className="flex-1 rounded-lg bg-[#3c74ae] px-3 py-2 text-center text-[11px] font-semibold text-white transition hover:bg-[#2d5f96] sm:text-xs"
-                        >
-                          View Details
-                        </Link>
+                        <div className="grid grid-cols-2 gap-2 rounded-xl border border-[#e2e8f0] bg-white/90 p-2 text-[11px] text-[#4a4a6a] sm:text-xs">
+                          <div>
+                            <p className="text-[#8f8b8f]">Size</p>
+                            <p className="truncate font-medium text-[#1a1a2e]">
+                              {product.size}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[#8f8b8f]">Lot Qty</p>
+                            <p className="font-medium text-[#1a1a2e]">
+                              {product.lotQuantity}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[#8f8b8f]">Weight</p>
+                            <p className="font-medium text-[#1a1a2e]">
+                              {product.weight.toFixed(2)} ct
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className="h-3.5 w-3.5 rounded-full border border-[#dde2e8]"
+                              style={{
+                                backgroundColor: product.colorHex || "#3c74ae",
+                              }}
+                            />
+                            <span className="truncate font-medium text-[#1a1a2e]">
+                              {product.colorName}
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-xs font-semibold text-[#3c74ae] sm:text-sm">
+                          {typeof product.price === "number"
+                            ? `$${product.price.toLocaleString()}`
+                            : "Contact for pricing"}
+                        </p>
+
                         <button
-                          onClick={() =>
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
                             addItem({
                               id: product.id,
                               name: product.name,
@@ -151,15 +174,15 @@ export default function FeaturedProducts() {
                               weight: product.weight,
                               price: product.price,
                               image: product.images?.[0],
-                            })
-                          }
-                          className="flex-1 rounded-lg border border-[#3c74ae] px-3 py-2 text-[11px] font-semibold text-[#3c74ae] transition hover:bg-[#e8f0f9] sm:text-xs"
+                            });
+                          }}
+                          className="mt-auto w-full rounded-lg border border-[#3c74ae] px-3 py-2 text-[11px] font-semibold text-[#3c74ae] transition hover:bg-[#e8f0f9] sm:text-xs"
                         >
                           Add to Quote
                         </button>
                       </div>
-                    </div>
-                  </article>
+                    </article>
+                  </Link>
                 </motion.div>
               ))}
         </div>

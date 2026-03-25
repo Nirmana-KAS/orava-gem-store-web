@@ -29,8 +29,7 @@ export function QuotationCartDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={() => setIsOpen(true)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-[#e8f0f9]"
+        className="relative flex h-10 w-10 cursor-default items-center justify-center rounded-full transition-colors duration-200"
         aria-label="Quotation Cart"
       >
         <ShoppingBag size={20} className="text-[#3c74ae]" />
@@ -52,7 +51,6 @@ export function QuotationCartDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            onMouseLeave={() => setIsOpen(false)}
             className="fixed left-3 right-3 top-20 z-50 max-h-[min(24rem,calc(100vh-7rem))] overflow-hidden rounded-2xl border border-[#dde2e8] bg-white shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-12 sm:w-80"
           >
             <div className="flex items-center justify-between border-b border-[#dde2e8] px-4 py-3">

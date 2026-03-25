@@ -1,8 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Gem, Palette, Scissors, ShieldCheck } from "lucide-react";
-import { BentoGrid, BentoGridItem } from "@/components/ui/aceternity/BentoGrid";
+import {
+  Clock3,
+  Gem,
+  Palette,
+  Scissors,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 const services = [
   {
@@ -10,14 +16,20 @@ const services = [
     title: "Cutting & Calibration",
     description:
       "Our experienced team cuts Rounds, Cabochons, Baguettes and Beads to your exact specifications using the latest cutting techniques.",
-    className:
-      "col-span-2 md:col-span-2 border-l-4 border-l-[#3c74ae] bg-[#f5f7fa] hover:bg-[#e8f0f9]",
+    highlighted: true,
   },
   {
     icon: Gem,
     title: "Stone Sourcing",
     description:
       "Sapphire, ruby, emeralds and semi-precious materials sourced from reliable industry suppliers worldwide.",
+  },
+  {
+    icon: Clock3,
+    title: "24-Hour Dispatch",
+    description:
+      "Fast, reliable global dispatch within 24 hours after your order is completed and quality approved.",
+    highlighted: true,
   },
   {
     icon: Palette,
@@ -30,7 +42,12 @@ const services = [
     title: "Quality Assurance",
     description:
       "Computer Vision technology and precision measuring equipment ensure every stone meets our exacting standards before delivery.",
-    className: "md:col-span-2",
+  },
+  {
+    icon: Sparkles,
+    title: "Custom Diagram Engineering",
+    description:
+      "We craft stones based on your exact diagrams and dimensional requirements for premium precision outcomes.",
   },
 ];
 
@@ -47,25 +64,36 @@ export default function ServicesOverview() {
         </p>
 
         <div className="mt-8 sm:mt-12">
-          <BentoGrid>
-            {services.map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: index * 0.12 }}
-                className="h-full"
-              >
-                <BentoGridItem
-                  title={service.title}
-                  description={service.description}
-                  icon={<service.icon size={18} />}
-                  className={`h-full rounded-2xl p-5 transition hover:scale-[1.02] hover:shadow-md sm:p-8 ${service.className || ""}`}
-                />
-              </motion.div>
-            ))}
-          </BentoGrid>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+            {services.map((service, index) => {
+              const Icon = service.icon;
+
+              return (
+                <motion.article
+                  key={service.title}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.35, delay: index * 0.08 }}
+                  className={`h-full rounded-2xl border p-4 sm:p-6 ${
+                    service.highlighted
+                      ? "border-[#3c74ae]/25 bg-gradient-to-b from-[#f4f9ff] to-white shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_10px_20px_rgba(60,116,174,0.12)]"
+                      : "border-[#dde2e8] bg-[#f8fafc]"
+                  }`}
+                >
+                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f0f9] text-[#3c74ae]">
+                    <Icon size={18} />
+                  </div>
+                  <h3 className="text-sm font-semibold text-[#1a1a2e] sm:text-lg">
+                    {service.title}
+                  </h3>
+                  <p className="mt-2 text-xs leading-relaxed text-[#4a4a6a] sm:text-sm">
+                    {service.description}
+                  </p>
+                </motion.article>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
