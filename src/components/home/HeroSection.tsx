@@ -4,52 +4,93 @@ import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { Spotlight } from "@/components/ui/aceternity/SpotlightEffect";
 import { TextGenerateEffect } from "@/components/ui/aceternity/TextGenerateEffect";
 
-const HERO_VIDEO_URL =
-  "https://res.cloudinary.com/dzie1rnt3/video/upload/v1774438042/Generated_Video_March_24_2026_-_3_07PM_jcyvgy.mp4";
-const HERO_BACKGROUND_URL =
-  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436497/Gemini_Generated_Image_px2sudpx2sudpx2s_g9cntw.png";
+const HERO_VIDEO_URLS = [
+  "https://res.cloudinary.com/dzie1rnt3/video/upload/v1774438042/Generated_Video_March_24_2026_-_3_07PM_jcyvgy.mp4",
+  "https://res.cloudinary.com/dzie1rnt3/video/upload/v1774438041/Generated_Video_March_24_2026_-_3_12PM_eyokit.mp4",
+  "https://res.cloudinary.com/dzie1rnt3/video/upload/v1774438038/Generated_Video_March_24_2026_-_3_42PM_cbsffk.mp4",
+];
 const HERO_GEM_RIGHT_URL =
   "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436807/Gemini_Generated_Image_dlyzndlyzndlyznd_lttew9.png";
 const HERO_GEM_LEFT_URL =
   "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436874/Gemini_Generated_Image_2cdybh2cdybh2cdy_ekcdbm.png";
 
+const VIDEO_SWITCH_INTERVAL_MS = 6000;
+const VIDEO_FADE_MS = 700;
+
 export default function HeroSection() {
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
+
+  useEffect(() => {
+    videoRefs.current.forEach((video) => {
+      video?.load();
+    });
+
+    const firstVideo = videoRefs.current[0];
+    firstVideo?.play().catch(() => undefined);
+
+    const timer = window.setInterval(() => {
+      setActiveVideoIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % HERO_VIDEO_URLS.length;
+        const nextVideo = videoRefs.current[nextIndex];
+        const previousVideo = videoRefs.current[prevIndex];
+
+        if (nextVideo) {
+          nextVideo.currentTime = 0;
+          nextVideo.play().catch(() => undefined);
+        }
+
+        if (previousVideo) {
+          window.setTimeout(() => {
+            previousVideo.pause();
+          }, VIDEO_FADE_MS);
+        }
+
+        return nextIndex;
+      });
+    }, VIDEO_SWITCH_INTERVAL_MS);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, []);
+
   return (
-    <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:[background-size:32px_32px]">
-      <div className="absolute inset-0">
-        <Image
-          src={HERO_BACKGROUND_URL}
-          alt="Gemstone texture background"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-45"
-        />
-        <video
-          className="h-full w-full object-cover opacity-35"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          poster={HERO_BACKGROUND_URL}
-          aria-hidden="true"
-        >
-          <source src={HERO_VIDEO_URL} type="video/mp4" />
-        </video>
+    <section className="relative flex min-h-[88svh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:min-h-[92vh] sm:[background-size:32px_32px]">
+      <div className="absolute inset-0 overflow-hidden">
+        {HERO_VIDEO_URLS.map((videoUrl, index) => (
+          <video
+            key={videoUrl}
+            ref={(element) => {
+              videoRefs.current[index] = element;
+            }}
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
+              activeVideoIndex === index
+                ? "opacity-45 sm:opacity-60"
+                : "opacity-0"
+            }`}
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src={videoUrl} type="video/mp4" />
+          </video>
+        ))}
       </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/70 via-white/78 to-white/85" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/78 via-white/84 to-white/90 sm:from-white/68 sm:via-white/76 sm:to-white/84" />
 
       <div className="opacity-55 sm:opacity-100">
         <Spotlight />
       </div>
 
       <motion.div
-        className="pointer-events-none absolute right-[6%] top-28 hidden h-32 w-32 sm:block md:h-40 md:w-40"
+        className="pointer-events-none absolute right-3 top-24 h-16 w-16 sm:right-[6%] sm:top-28 sm:h-28 sm:w-28 md:h-40 md:w-40"
         animate={{ y: [0, -12, 0], rotate: [0, 3, 0] }}
         transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY }}
       >
@@ -57,13 +98,13 @@ export default function HeroSection() {
           src={HERO_GEM_RIGHT_URL}
           alt="Decorative gemstone"
           fill
-          sizes="160px"
-          className="object-contain drop-shadow-[0_16px_40px_rgba(60,116,174,0.35)]"
+          sizes="(max-width: 640px) 64px, (max-width: 768px) 112px, 160px"
+          className="object-contain opacity-80 drop-shadow-[0_10px_24px_rgba(60,116,174,0.28)] sm:opacity-100 sm:drop-shadow-[0_16px_40px_rgba(60,116,174,0.35)]"
         />
       </motion.div>
 
       <motion.div
-        className="pointer-events-none absolute bottom-20 left-[6%] hidden h-28 w-28 sm:block md:h-36 md:w-36"
+        className="pointer-events-none absolute bottom-16 left-3 h-14 w-14 sm:bottom-20 sm:left-[6%] sm:h-24 sm:w-24 md:h-36 md:w-36"
         animate={{ y: [0, 10, 0], rotate: [0, -4, 0] }}
         transition={{ duration: 5.5, repeat: Number.POSITIVE_INFINITY }}
       >
@@ -71,8 +112,8 @@ export default function HeroSection() {
           src={HERO_GEM_LEFT_URL}
           alt="Decorative gemstone"
           fill
-          sizes="140px"
-          className="object-contain drop-shadow-[0_16px_40px_rgba(60,116,174,0.3)]"
+          sizes="(max-width: 640px) 56px, (max-width: 768px) 96px, 140px"
+          className="object-contain opacity-75 drop-shadow-[0_8px_20px_rgba(60,116,174,0.25)] sm:opacity-100 sm:drop-shadow-[0_16px_40px_rgba(60,116,174,0.3)]"
         />
       </motion.div>
 
