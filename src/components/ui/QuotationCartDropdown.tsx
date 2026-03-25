@@ -53,7 +53,7 @@ export function QuotationCartDropdown() {
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             onMouseLeave={() => setIsOpen(false)}
-            className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-[#dde2e8] bg-white shadow-2xl"
+            className="fixed left-3 right-3 top-20 z-50 max-h-[min(24rem,calc(100vh-7rem))] overflow-hidden rounded-2xl border border-[#dde2e8] bg-white shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-12 sm:w-80"
           >
             <div className="flex items-center justify-between border-b border-[#dde2e8] px-4 py-3">
               <h3 className="text-sm font-semibold text-[#1a1a2e]">
@@ -67,7 +67,7 @@ export function QuotationCartDropdown() {
               </button>
             </div>
 
-            <div className="max-h-72 overflow-y-auto">
+            <div className="max-h-56 overflow-y-auto sm:max-h-72">
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
                   <Package size={32} className="mb-3 text-[#dde2e8]" />

@@ -22,6 +22,9 @@ export function Logo({ variant = "full", className, height = 40 }: LogoProps) {
           alt="ORAVA Gems"
           width={variant === "icon" ? 40 : 140}
           height={height}
+          sizes={
+            variant === "icon" ? "40px" : "(max-width: 640px) 120px, 140px"
+          }
           className="object-contain"
           priority
           onError={() => setFailed(true)}

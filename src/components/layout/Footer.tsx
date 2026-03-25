@@ -5,18 +5,18 @@ import { Logo } from "@/components/ui/Logo";
 export default function Footer() {
   return (
     <footer className="border-t border-[#dde2e8] bg-[#f5f7fa]">
-      <div className="px-4 py-16">
+      <div className="px-4 py-12 sm:py-16">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <Logo className="justify-center" />
-            <p className="mt-2 font-heading text-xl italic text-[#8f8b8f]">
+            <p className="mt-2 font-heading text-lg italic text-[#8f8b8f] sm:text-xl">
               Beauty Crafted To An Exemplary Standard
             </p>
           </div>
 
           <div className="mt-10 border-t border-[#dde2e8]" />
 
-          <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-8 sm:mt-10 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <h4 className="mb-4 font-semibold text-[#1a1a2e]">About ORAVA</h4>
               <p className="text-sm leading-relaxed text-[#8f8b8f]">
@@ -98,7 +98,9 @@ export default function Footer() {
               <div className="space-y-3 text-sm text-[#8f8b8f]">
                 <p className="flex items-start gap-2">
                   <MapPin size={16} className="mt-0.5 text-[#3c74ae]" />
-                  No. 24, Carlwil Place, Colombo 03, Sri Lanka
+                  <span className="break-words">
+                    No. 24, Carlwil Place, Colombo 03, Sri Lanka
+                  </span>
                 </p>
                 <p className="flex items-start gap-2">
                   <Phone size={16} className="mt-0.5 text-[#3c74ae]" />
@@ -109,7 +111,7 @@ export default function Footer() {
                   href="mailto:orava@eureka.lk"
                 >
                   <Mail size={16} className="mt-0.5 text-[#3c74ae]" />
-                  orava@eureka.lk
+                  <span className="break-all">orava@eureka.lk</span>
                 </a>
                 <a
                   className="flex items-start gap-2 hover:text-[#3c74ae]"
@@ -135,9 +137,9 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="flex flex-col justify-between gap-3 border-t border-[#dde2e8] px-8 py-4 text-xs text-[#8f8b8f] sm:flex-row">
+      <div className="flex flex-col items-center justify-between gap-3 border-t border-[#dde2e8] px-4 py-4 text-center text-xs text-[#8f8b8f] sm:flex-row sm:px-8 sm:text-left">
         <span>© 2025 ORAVA (Pvt) Ltd. All rights reserved.</span>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-end">
           <Link href="/terms">Terms & Conditions</Link>
           <Link href="/privacy">Privacy Policy</Link>
         </div>

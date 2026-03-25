@@ -8,18 +8,14 @@ import { TextGenerateEffect } from "@/components/ui/aceternity/TextGenerateEffec
 
 export default function HeroSection() {
   return (
-    <section
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-4 text-center"
-      style={{
-        backgroundImage: "radial-gradient(#3c74ae22 1px, transparent 1px)",
-        backgroundSize: "32px 32px",
-      }}
-    >
-      <Spotlight />
+    <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:[background-size:32px_32px]">
+      <div className="opacity-55 sm:opacity-100">
+        <Spotlight />
+      </div>
 
-      <div className="pointer-events-none absolute -top-10 left-[8%] h-56 w-56 animate-float rounded-full bg-[#3c74ae]/15 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-24 right-[8%] h-44 w-44 animate-float-delayed rounded-full bg-[#3c74ae]/10 blur-2xl" />
-      <div className="pointer-events-none absolute bottom-12 left-1/2 h-36 w-36 -translate-x-1/2 animate-float rounded-full bg-[#3c74ae]/8 blur-2xl" />
+      <div className="pointer-events-none absolute -top-10 left-[8%] hidden h-56 w-56 animate-float rounded-full bg-[#3c74ae]/15 blur-3xl sm:block" />
+      <div className="pointer-events-none absolute bottom-24 right-[8%] hidden h-44 w-44 animate-float-delayed rounded-full bg-[#3c74ae]/10 blur-2xl sm:block" />
+      <div className="pointer-events-none absolute bottom-12 left-1/2 hidden h-36 w-36 -translate-x-1/2 animate-float rounded-full bg-[#3c74ae]/8 blur-2xl sm:block" />
 
       <motion.div
         initial="hidden"
@@ -52,7 +48,7 @@ export default function HeroSection() {
         >
           <TextGenerateEffect
             words="Beauty Crafted To An Exemplary Standard"
-            className="font-heading text-5xl font-bold leading-tight text-[#1a1a2e] md:text-7xl"
+            className="font-heading text-3xl font-bold leading-tight text-[#1a1a2e] sm:text-5xl md:text-7xl"
           />
         </motion.div>
 
@@ -62,7 +58,7 @@ export default function HeroSection() {
             visible: { opacity: 1, y: 0 },
           }}
           transition={{ delay: 0.8 }}
-          className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[#4a4a6a] md:text-xl"
+          className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#4a4a6a] sm:mt-6 sm:text-lg md:text-xl"
         >
           Precision-cut coloured gemstones on demand for global luxury watch and
           jewelry brands. Founded in 2006, trusted by the world&apos;s most
@@ -75,17 +71,17 @@ export default function HeroSection() {
             visible: { opacity: 1, y: 0 },
           }}
           transition={{ delay: 1 }}
-          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:mt-10 sm:flex-row sm:gap-4"
         >
           <Link
             href="/products"
-            className="rounded-xl bg-[#3c74ae] px-8 py-4 font-semibold text-white shadow-lg shadow-[#3c74ae]/25 transition-all hover:scale-105 hover:bg-[#2d5f96]"
+            className="w-full rounded-xl bg-[#3c74ae] px-8 py-3.5 font-semibold text-white shadow-lg shadow-[#3c74ae]/25 transition-all hover:bg-[#2d5f96] sm:w-auto sm:py-4"
           >
             Explore Collection
           </Link>
           <Link
             href="/quotation"
-            className="rounded-xl border-2 border-[#3c74ae] px-8 py-4 font-semibold text-[#3c74ae] transition-all hover:bg-[#e8f0f9]"
+            className="w-full rounded-xl border-2 border-[#3c74ae] px-8 py-3.5 font-semibold text-[#3c74ae] transition-all hover:bg-[#e8f0f9] sm:w-auto sm:py-4"
           >
             Request Inquiry
           </Link>
@@ -99,7 +95,7 @@ export default function HeroSection() {
             duration: 1.5,
             repeat: Number.POSITIVE_INFINITY,
           }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#3c74ae]"
+          className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 text-[#3c74ae] sm:block"
         >
           <ChevronDown size={24} />
         </motion.div>

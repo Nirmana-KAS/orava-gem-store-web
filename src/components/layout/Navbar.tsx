@@ -61,6 +61,17 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setSearchOpen(false);
@@ -153,10 +164,10 @@ export function Navbar() {
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95, y: -10 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-[#dde2e8] bg-white shadow-2xl"
+                      className="fixed left-3 right-3 top-20 z-50 overflow-hidden rounded-2xl border border-[#dde2e8] bg-white shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-12 sm:w-80"
                     >
                       <div className="p-3">
-                        <div className="flex items-center gap-2 rounded-xl border border-[#dde2e8] bg-[#f5f7fa] px-3 py-2">
+                        <div className="flex w-full items-center gap-2 rounded-xl border border-[#dde2e8] bg-[#f5f7fa] px-3 py-2">
                           <Search size={16} className="text-[#8f8b8f]" />
                           <input
                             autoFocus
@@ -164,7 +175,7 @@ export function Navbar() {
                             placeholder="Search gemstones..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="flex-1 bg-transparent text-sm text-[#1a1a2e] placeholder-[#8f8b8f] outline-none"
+                            className="min-w-0 flex-1 bg-transparent text-sm text-[#1a1a2e] placeholder-[#8f8b8f] outline-none"
                           />
                           {searchQuery ? (
                             <button onClick={() => setSearchQuery("")}>
@@ -352,12 +363,12 @@ export function Navbar() {
         <AnimatePresence>
           {mobileOpen ? (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden border-t border-[#dde2e8] bg-white lg:hidden"
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto border-t border-[#dde2e8] bg-white/95 backdrop-blur-sm lg:hidden"
             >
-              <div className="space-y-1 px-4 py-4">
+              <div className="mx-auto max-w-7xl space-y-1 px-4 py-4">
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}

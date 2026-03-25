@@ -35,13 +35,13 @@ const points = [
 
 export default function WhyOrava() {
   return (
-    <section className="bg-[#f5f7fa] py-20">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 md:grid-cols-2 md:items-start">
+    <section className="bg-[#f5f7fa] py-14 sm:py-20">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-2 md:items-start md:gap-10">
         <div>
-          <h2 className="font-heading text-4xl font-bold text-[#1a1a2e]">
+          <h2 className="font-heading text-3xl font-bold text-[#1a1a2e] sm:text-4xl">
             Why Choose ORAVA?
           </h2>
-          <p className="mt-3 text-[#8f8b8f]">
+          <p className="mt-2 text-sm text-[#8f8b8f] sm:mt-3 sm:text-base">
             We operate as a precision partner, not just a supplier.
           </p>
 
@@ -58,13 +58,13 @@ export default function WhyOrava() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: index * 0.15 }}
-                      className="flex gap-4"
+                      className="flex gap-3 sm:gap-4"
                     >
                       <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#e8f0f9] text-[#3c74ae]">
                         <Icon size={16} />
                       </div>
                       <div>
-                        <h3 className="text-sm font-semibold text-[#1a1a2e]">
+                        <h3 className="text-sm font-semibold text-[#1a1a2e] sm:text-base">
                           {point.title}
                         </h3>
                         <p className="mt-1 text-sm text-[#8f8b8f]">
@@ -84,9 +84,9 @@ export default function WhyOrava() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="rounded-2xl bg-gradient-to-br from-[#3c74ae] to-[#2d5f96] p-8 text-white shadow-lg"
+          className="rounded-2xl bg-gradient-to-br from-[#3c74ae] to-[#2d5f96] p-6 text-white shadow-lg sm:p-8"
         >
-          <p className="font-heading text-2xl italic leading-relaxed">
+          <p className="font-heading text-xl italic leading-relaxed sm:text-2xl">
             &ldquo;With a passion for excellence, Orava (Private) Limited is
             committed to creating timeless pieces that resonate with the
             discerning tastes of our clients.&rdquo;
