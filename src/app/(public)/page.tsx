@@ -19,8 +19,8 @@ export default function HomePage() {
     <main>
       <HeroSection />
       <TrustBadges />
-      <ServicesOverview />
       <FeaturedProducts />
+      <ServicesOverview />
       <WhyOrava />
       <OurProcess />
       <CTASection />

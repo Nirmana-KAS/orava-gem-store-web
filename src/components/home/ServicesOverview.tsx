@@ -1,14 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Clock3,
-  Gem,
-  Palette,
-  Scissors,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { Clock3, Scissors, ShieldCheck } from "lucide-react";
 
 const services = [
   {
@@ -19,12 +12,6 @@ const services = [
     highlighted: true,
   },
   {
-    icon: Gem,
-    title: "Stone Sourcing",
-    description:
-      "Sapphire, ruby, emeralds and semi-precious materials sourced from reliable industry suppliers worldwide.",
-  },
-  {
     icon: Clock3,
     title: "24-Hour Dispatch",
     description:
@@ -32,22 +19,11 @@ const services = [
     highlighted: true,
   },
   {
-    icon: Palette,
-    title: "Colour Grading & Matching",
-    description:
-      "Expert blending and matching of coloured stones to create perfectly consistent sets for your requirements.",
-  },
-  {
     icon: ShieldCheck,
     title: "Quality Assurance",
     description:
       "Computer Vision technology and precision measuring equipment ensure every stone meets our exacting standards before delivery.",
-  },
-  {
-    icon: Sparkles,
-    title: "Custom Diagram Engineering",
-    description:
-      "We craft stones based on your exact diagrams and dimensional requirements for premium precision outcomes.",
+    highlighted: true,
   },
 ];
 
@@ -56,7 +32,7 @@ export default function ServicesOverview() {
     <section className="bg-white py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4">
         <h2 className="text-center font-heading text-3xl font-bold text-[#1a1a2e] sm:text-4xl">
-          Our Services
+          Our Major Services
         </h2>
         <div className="mx-auto mt-3 h-1 w-16 rounded bg-[#3c74ae]" />
         <p className="mt-3 text-center text-sm text-[#8f8b8f] sm:text-base">
@@ -64,7 +40,7 @@ export default function ServicesOverview() {
         </p>
 
         <div className="mt-8 sm:mt-12">
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3">
             {services.map((service, index) => {
               const Icon = service.icon;
 

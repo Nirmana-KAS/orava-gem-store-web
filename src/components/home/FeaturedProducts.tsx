@@ -49,7 +49,7 @@ export default function FeaturedProducts() {
       key={`placeholder-${index}`}
       className="overflow-hidden rounded-2xl border border-[#dde2e8] bg-white"
     >
-      <div className="flex h-36 items-center justify-center bg-[#f5f7fa] text-[#3c74ae] sm:h-44">
+      <div className="flex h-28 items-center justify-center bg-[#f5f7fa] text-[#3c74ae] sm:h-36">
         <Gem size={28} />
       </div>
       <div className="space-y-2 p-3 sm:p-4">
@@ -81,18 +81,18 @@ export default function FeaturedProducts() {
             : products.map((product, index) => (
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 12, scale: 0.985 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.32, delay: index * 0.05 }}
+                  transition={{ duration: 0.28, delay: index * 0.045 }}
                   className="h-full"
                 >
                   <Link
                     href={`/products/${product.id}`}
                     className="group block h-full"
                   >
-                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#d8e0ea] bg-gradient-to-b from-white to-[#f8fbff] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_20px_rgba(31,54,84,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_14px_26px_rgba(31,54,84,0.14)]">
-                      <div className="relative h-36 w-full overflow-hidden sm:h-44">
+                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#d8e0ea] bg-gradient-to-b from-white to-[#f8fbff] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_18px_rgba(31,54,84,0.09)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_13px_22px_rgba(31,54,84,0.14)]">
+                      <div className="relative h-28 w-full overflow-hidden sm:h-36">
                         {product.images?.[0] ? (
                           <Image
                             src={product.images[0]}
@@ -111,17 +111,17 @@ export default function FeaturedProducts() {
                         )}
                       </div>
 
-                      <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
+                      <div className="flex flex-1 flex-col gap-2 p-2.5 sm:gap-3 sm:p-4">
                         <div>
-                          <h3 className="truncate text-sm font-semibold text-[#1a1a2e] sm:text-base">
+                          <h3 className="truncate text-[13px] font-semibold text-[#1a1a2e] sm:text-base">
                             {product.name}
                           </h3>
-                          <p className="mt-1 truncate text-[11px] text-[#8f8b8f] sm:text-xs">
+                          <p className="mt-0.5 truncate text-[11px] text-[#8f8b8f] sm:mt-1 sm:text-xs">
                             {product.origin} · {product.shape}
                           </p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 rounded-xl border border-[#e2e8f0] bg-white/90 p-2 text-[11px] text-[#4a4a6a] sm:text-xs">
+                        <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-[#e2e8f0] bg-white/90 p-2 text-[10px] text-[#4a4a6a] sm:gap-2 sm:text-xs">
                           <div>
                             <p className="text-[#8f8b8f]">Size</p>
                             <p className="truncate font-medium text-[#1a1a2e]">
@@ -153,33 +153,35 @@ export default function FeaturedProducts() {
                           </div>
                         </div>
 
-                        <p className="text-xs font-semibold text-[#3c74ae] sm:text-sm">
-                          {typeof product.price === "number"
-                            ? `$${product.price.toLocaleString()}`
-                            : "Contact for pricing"}
-                        </p>
+                        <div className="mt-auto flex items-center gap-2">
+                          <p className="min-w-0 flex-1 text-sm font-semibold text-[#3c74ae] sm:text-base">
+                            {typeof product.price === "number"
+                              ? `$${product.price.toLocaleString()}`
+                              : "Contact"}
+                          </p>
 
-                        <button
-                          onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            addItem({
-                              id: product.id,
-                              name: product.name,
-                              origin: product.origin,
-                              shape: product.shape,
-                              colorName: product.colorName,
-                              colorHex: product.colorHex,
-                              size: product.size,
-                              weight: product.weight,
-                              price: product.price,
-                              image: product.images?.[0],
-                            });
-                          }}
-                          className="mt-auto w-full rounded-lg border border-[#3c74ae] px-3 py-2 text-[11px] font-semibold text-[#3c74ae] transition hover:bg-[#e8f0f9] sm:text-xs"
-                        >
-                          Add to Quote
-                        </button>
+                          <button
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              addItem({
+                                id: product.id,
+                                name: product.name,
+                                origin: product.origin,
+                                shape: product.shape,
+                                colorName: product.colorName,
+                                colorHex: product.colorHex,
+                                size: product.size,
+                                weight: product.weight,
+                                price: product.price,
+                                image: product.images?.[0],
+                              });
+                            }}
+                            className="rounded-lg border border-[#3c74ae] px-2.5 py-1.5 text-[10px] font-semibold text-[#3c74ae] transition hover:bg-[#e8f0f9] sm:px-3 sm:py-2 sm:text-xs"
+                          >
+                            Add to Quote
+                          </button>
+                        </div>
                       </div>
                     </article>
                   </Link>

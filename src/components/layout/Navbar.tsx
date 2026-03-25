@@ -147,7 +147,7 @@ export function Navbar() {
               ))}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <div className="relative" ref={searchRef}>
                 <button
                   onClick={() => setSearchOpen(!searchOpen)}
@@ -265,7 +265,7 @@ export function Navbar() {
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="group flex items-center gap-2 rounded-xl px-3 py-2 transition-colors hover:bg-[#e8f0f9]"
+                    className="group flex items-center gap-1 rounded-xl px-1.5 py-2 transition-colors hover:bg-[#e8f0f9] sm:gap-2 sm:px-3"
                   >
                     <div
                       className={`flex h-8 w-8 items-center justify-center rounded-full ${
@@ -288,7 +288,7 @@ export function Navbar() {
 
                     <ChevronDown
                       size={14}
-                      className={`text-[#8f8b8f] transition-transform ${userMenuOpen ? "rotate-180" : ""}`}
+                      className={`hidden text-[#8f8b8f] transition-transform sm:block ${userMenuOpen ? "rotate-180" : ""}`}
                     />
                   </button>
 
@@ -351,7 +351,7 @@ export function Navbar() {
               )}
 
               <button
-                className="flex h-10 w-10 items-center justify-center rounded-full text-[#4a4a6a] transition-colors hover:bg-[#e8f0f9] lg:hidden"
+                className="ml-0.5 flex h-10 w-10 items-center justify-center rounded-full text-[#4a4a6a] transition-colors hover:bg-[#e8f0f9] lg:hidden"
                 onClick={() => setMobileOpen(!mobileOpen)}
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
