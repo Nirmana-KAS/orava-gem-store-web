@@ -13,14 +13,22 @@ const HERO_VIDEO_URLS = [
   "https://res.cloudinary.com/dzie1rnt3/video/upload/v1774438041/Generated_Video_March_24_2026_-_3_12PM_eyokit.mp4",
   "https://res.cloudinary.com/dzie1rnt3/video/upload/v1774438038/Generated_Video_March_24_2026_-_3_42PM_cbsffk.mp4",
 ];
-const HERO_GEM_RIGHT_URL =
-  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436807/Gemini_Generated_Image_dlyzndlyzndlyznd_lttew9.png";
-const HERO_GEM_LEFT_URL =
-  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436874/Gemini_Generated_Image_2cdybh2cdybh2cdy_ekcdbm.png";
+const HERO_GEM1_RIGHT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774464292/Gemini_Generated_Image_2sr5eu2sr5eu2sr5_1_vuj4km.png";
+const HERO_GEM1_LEFT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774464292/Gemini_Generated_Image_drjmkhdrjmkhdrjm_1_s5l9v4.png";
+const HERO_GEM2_RIGHT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774464291/Gemini_Generated_Image_na3ksbna3ksbna3k_1_qsgpvf.png";
+const HERO_GEM2_LEFT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774464290/Gemini_Generated_Image_9ta8vy9ta8vy9ta8_1_apxxyi.png";
+const HERO_GEM3_RIGHT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774464290/Gemini_Generated_Image_4vjns74vjns74vjn_1_trwifv.png";
+const HERO_GEM3_LEFT_URL =
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774464289/Gemini_Generated_Image_13snlr13snlr13sn_1_hmoing.png";
 
 const DECORATIVE_GEMS = [
   {
-    src: HERO_GEM_RIGHT_URL,
+    src: HERO_GEM1_RIGHT_URL,
     alt: "Decorative gemstone",
     className:
       "right-2 top-24 h-14 w-14 sm:right-[6%] sm:top-28 sm:h-28 sm:w-28 md:h-40 md:w-40",
@@ -28,7 +36,7 @@ const DECORATIVE_GEMS = [
     duration: 5,
   },
   {
-    src: HERO_GEM_LEFT_URL,
+    src: HERO_GEM1_LEFT_URL,
     alt: "Decorative gemstone",
     className:
       "bottom-16 left-2 h-12 w-12 sm:bottom-20 sm:left-[6%] sm:h-24 sm:w-24 md:h-36 md:w-36",
@@ -36,7 +44,7 @@ const DECORATIVE_GEMS = [
     duration: 5.5,
   },
   {
-    src: HERO_GEM_RIGHT_URL,
+    src: HERO_GEM2_RIGHT_URL,
     alt: "Decorative gemstone",
     className:
       "right-10 top-1/2 hidden h-10 w-10 -translate-y-1/2 sm:block md:h-20 md:w-20",
@@ -44,21 +52,21 @@ const DECORATIVE_GEMS = [
     duration: 6,
   },
   {
-    src: HERO_GEM_LEFT_URL,
+    src: HERO_GEM2_LEFT_URL,
     alt: "Decorative gemstone",
     className: "left-10 top-1/3 hidden h-10 w-10 sm:block md:h-16 md:w-16",
     animate: { y: [0, 7, 0], rotate: [0, -3, 0] },
     duration: 5.2,
   },
   {
-    src: HERO_GEM_RIGHT_URL,
+    src: HERO_GEM3_RIGHT_URL,
     alt: "Decorative gemstone",
     className: "bottom-12 right-1/3 hidden h-9 w-9 sm:block md:h-14 md:w-14",
     animate: { y: [0, -6, 0], rotate: [0, 4, 0] },
     duration: 5.8,
   },
   {
-    src: HERO_GEM_LEFT_URL,
+    src: HERO_GEM3_LEFT_URL,
     alt: "Decorative gemstone",
     className: "left-1/4 top-16 hidden h-8 w-8 sm:block md:h-12 md:w-12",
     animate: { y: [0, 5, 0], rotate: [0, -2, 0] },
