@@ -138,7 +138,7 @@ export default function HeroSection() {
   }, [isMobile]);
 
   return (
-    <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:min-h-[92vh] sm:[background-size:32px_32px]">
+    <section className="relative z-0 flex min-h-[100svh] items-center justify-center overflow-hidden bg-[radial-gradient(#3c74ae22_1px,transparent_1px)] px-4 pb-10 pt-20 text-center [background-size:24px_24px] sm:min-h-[92vh] sm:[background-size:32px_32px]">
       <div className="absolute inset-0 overflow-hidden">
         {isMobile ? (
           <video
@@ -185,7 +185,7 @@ export default function HeroSection() {
       {DECORATIVE_GEMS.map((gem) => (
         <motion.div
           key={gem.className}
-          className={`pointer-events-none absolute ${gem.className}`}
+          className={`pointer-events-none absolute z-10 ${gem.className}`}
           animate={gem.animate}
           transition={{
             duration: gem.duration,

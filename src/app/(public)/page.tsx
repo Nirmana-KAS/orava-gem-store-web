@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import CTASection from "@/components/home/CTASection";
 import CertificationsStrip from "@/components/home/CertificationsStrip";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
+import GemstoneHighlights from "@/components/home/GemstoneHighlights";
 import HeroSection from "@/components/home/HeroSection";
 import OurProcess from "@/components/home/OurProcess";
-import ServicesOverview from "@/components/home/ServicesOverview";
+import OurCapabilities from "@/components/home/OurCapabilities";
 import TrustBadges from "@/components/home/TrustBadges";
 import WhyOrava from "@/components/home/WhyOrava";
 
@@ -20,7 +21,8 @@ export default function HomePage() {
       <HeroSection />
       <TrustBadges />
       <FeaturedProducts />
-      <ServicesOverview />
+      <GemstoneHighlights />
+      <OurCapabilities />
       <WhyOrava />
       <OurProcess />
       <CTASection />
