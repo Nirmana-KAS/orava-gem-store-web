@@ -20,7 +20,7 @@ const gems: GemItem[] = [
   {
     name: "Sapphire",
     origin: "Sri Lanka · Madagascar · Kashmir",
-    image: "/gems/sapphire.jpg",
+    image: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774560921/Sapphire-GCH-HomePage_e0uevs.png",
     fallbackGradient: "from-blue-900 to-blue-500",
     cuts: [
       "Round",
@@ -37,7 +37,7 @@ const gems: GemItem[] = [
   {
     name: "Ruby",
     origin: "Burma · Thailand · Africa",
-    image: "/gems/ruby.jpg",
+    image: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774560920/Ruby-GCH-HomePage_aoycsi.png",
     fallbackGradient: "from-red-900 to-red-500",
     cuts: ["Round", "Oval", "Cushion", "Cabochon", "Pear", "Custom"],
     capability: "Pigeon blood to rose — vivid reds precision cut to order",
@@ -46,7 +46,7 @@ const gems: GemItem[] = [
   {
     name: "Emerald",
     origin: "Colombia · Brazil · Africa",
-    image: "/gems/emerald.jpg",
+    image: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774560924/Emerald-GCH-HomePage_qr9cgp.png",
     fallbackGradient: "from-green-900 to-green-600",
     cuts: ["Emerald Cut", "Oval", "Cushion", "Pear", "Round", "Custom"],
     capability: "Vivid green lots — calibrated sets for jewelry and watches",
@@ -55,7 +55,7 @@ const gems: GemItem[] = [
   {
     name: "Semi-Precious",
     origin: "Multiple Origins Worldwide",
-    image: "/gems/semi-precious.jpg",
+    image: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774560921/SemiPrecious-GCH-HomePage_tqnxbt.png",
     fallbackGradient: "from-purple-800 to-amber-500",
     cuts: ["All Shapes", "Beads", "Cabochons", "Calibrated", "Custom"],
     capability:
