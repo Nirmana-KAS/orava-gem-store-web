@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Gem } from "lucide-react";
+import { Gem, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -52,7 +52,7 @@ export default function FeaturedProducts() {
       key={`placeholder-${index}`}
       className="overflow-hidden rounded-2xl border border-[#dde2e8] bg-white"
     >
-      <div className="flex h-28 items-center justify-center bg-[#f5f7fa] text-[#3c74ae] sm:h-36">
+      <div className="flex h-28 items-center justify-center bg-[#f5f7fa] text-[#3c74ae] sm:h-36 md:h-40">
         <Gem size={28} />
       </div>
       <div className="space-y-2 p-3 sm:p-4">
@@ -92,94 +92,92 @@ export default function FeaturedProducts() {
                 >
                   <article
                     onClick={() => router.push(`/products/${product.id}`)}
-                    className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[#dde2e8] bg-white transition-all duration-300 hover:border-[#3c74ae] hover:shadow-lg hover:shadow-[#3c74ae]/10"
+                    className="group relative bg-white rounded-2xl border border-[#dde2e8] overflow-hidden hover:border-[#3c74ae] hover:shadow-lg hover:shadow-[#3c74ae]/10 transition-all duration-300 cursor-pointer"
                   >
-                    <div className="relative h-28 w-full overflow-hidden bg-[#f5f7fa] sm:h-36 md:h-40">
+                    <div className="relative w-full h-28 sm:h-36 md:h-40 bg-[#f5f7fa] overflow-hidden">
                       {product.images?.[0] ? (
                         <Image
                           src={product.images[0]}
                           alt={product.name}
                           fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                           sizes="(max-width: 640px) 50vw, 25vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
                         <div
                           className="absolute inset-0 flex items-center justify-center"
                           style={{
-                            background: `linear-gradient(135deg, ${(product.colorHex || "#3c74ae") + "33"}, ${(product.colorHex || "#3c74ae") + "88"})`,
+                            background: `linear-gradient(135deg, ${product.colorHex}33, ${product.colorHex}88)`,
                           }}
                         >
                           <Gem size={48} className="text-[#3c74ae]" />
                         </div>
                       )}
 
-                      <span
-                        className={`absolute right-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                          product.availability
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-600"
-                        }`}
-                      >
-                        {product.availability ? "Available" : "Sold"}
-                      </span>
+                      {product.availability ? (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700 absolute top-2 right-2">
+                          Available
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-600 absolute top-2 right-2">
+                          Sold
+                        </span>
+                      )}
                     </div>
 
                     <div className="p-2.5 sm:p-3">
-                      <h3 className="mb-1 line-clamp-1 text-xs font-semibold leading-tight text-[#1a1a2e] sm:text-sm">
+                      <h3 className="font-semibold text-[#1a1a2e] text-xs sm:text-sm leading-tight line-clamp-1 mb-1">
                         {product.name}
                       </h3>
 
-                      <div className="mb-2 flex items-center gap-1">
-                        <span className="line-clamp-1 text-[10px] text-[#8f8b8f] sm:text-xs">
+                      <div className="flex items-center gap-1 mb-2">
+                        <span className="text-[10px] sm:text-xs text-[#8f8b8f] line-clamp-1">
                           {product.origin}
                         </span>
                         <span className="text-[#dde2e8]">•</span>
-                        <span className="text-[10px] text-[#8f8b8f] sm:text-xs">
+                        <span className="text-[10px] sm:text-xs text-[#8f8b8f]">
                           {product.shape}
                         </span>
                       </div>
 
-                      <div className="mb-2.5 grid grid-cols-2 gap-x-2 gap-y-1">
+                      <div className="grid grid-cols-2 gap-x-2 gap-y-1 mb-2.5">
                         <div>
-                          <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
+                          <p className="text-[9px] sm:text-[10px] text-[#8f8b8f] uppercase tracking-wide">
                             Weight
                           </p>
-                          <p className="text-[10px] font-medium text-[#4a4a6a] sm:text-xs">
+                          <p className="text-[10px] sm:text-xs font-medium text-[#4a4a6a]">
                             {product.weight}ct
                           </p>
                         </div>
 
                         <div>
-                          <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
+                          <p className="text-[9px] sm:text-[10px] text-[#8f8b8f] uppercase tracking-wide">
                             Size
                           </p>
-                          <p className="line-clamp-1 text-[10px] font-medium text-[#4a4a6a] sm:text-xs">
+                          <p className="text-[10px] sm:text-xs font-medium text-[#4a4a6a] line-clamp-1">
                             {product.size}
                           </p>
                         </div>
 
                         <div>
-                          <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
+                          <p className="text-[9px] sm:text-[10px] text-[#8f8b8f] uppercase tracking-wide">
                             Lot Qty
                           </p>
-                          <p className="text-[10px] font-medium text-[#4a4a6a] sm:text-xs">
+                          <p className="text-[10px] sm:text-xs font-medium text-[#4a4a6a]">
                             {product.lotQuantity}
                           </p>
                         </div>
 
                         <div>
-                          <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
+                          <p className="text-[9px] sm:text-[10px] text-[#8f8b8f] uppercase tracking-wide">
                             Color
                           </p>
                           <div className="flex items-center gap-1">
                             <span
-                              className="h-2.5 w-2.5 rounded-full"
-                              style={{
-                                backgroundColor: product.colorHex || "#3c74ae",
-                              }}
+                              className="w-2.5 h-2.5 rounded-full"
+                              style={{ backgroundColor: product.colorHex }}
                             />
-                            <span className="line-clamp-1 text-[10px] text-[#4a4a6a] sm:text-xs">
+                            <span className="text-[10px] sm:text-xs text-[#4a4a6a] line-clamp-1">
                               {product.colorName}
                             </span>
                           </div>
@@ -187,28 +185,20 @@ export default function FeaturedProducts() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 px-2.5 pb-2.5 sm:px-3 sm:pb-3">
-                      {typeof product.price === "number" ? (
-                        <p className="text-sm font-bold text-[#3c74ae] sm:text-base">
-                          ${product.price.toLocaleString()}
-                        </p>
-                      ) : (
-                        <p className="text-[10px] italic text-[#8f8b8f] sm:text-xs">
-                          Contact for Price
-                        </p>
-                      )}
+                    <div className="px-2.5 sm:px-3 pb-2.5 sm:pb-3 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        {typeof product.price === "number" ? (
+                          <p className="font-bold text-[#3c74ae] text-xs sm:text-sm overflow-hidden text-ellipsis">
+                            ${product.price.toLocaleString()}
+                          </p>
+                        ) : (
+                          <p className="text-[10px] sm:text-xs text-[#8f8b8f] italic leading-tight overflow-hidden text-ellipsis">
+                            Contact for Price
+                          </p>
+                        )}
+                      </div>
 
-                      <div className="flex items-center gap-1.5">
-                        <Link
-                          href={`/products/${product.id}`}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                          }}
-                          className="whitespace-nowrap rounded-lg border border-[#3c74ae] px-2 py-1 text-[10px] font-medium text-[#3c74ae] transition-colors hover:bg-[#e8f0f9] sm:px-3 sm:py-1.5 sm:text-xs"
-                        >
-                          Details
-                        </Link>
-
+                      <div className="flex-shrink-0">
                         <button
                           onClick={(event) => {
                             event.stopPropagation();
@@ -225,9 +215,10 @@ export default function FeaturedProducts() {
                               image: product.images?.[0],
                             });
                           }}
-                          className="whitespace-nowrap rounded-lg bg-[#3c74ae] px-2 py-1 text-[10px] font-medium text-white transition-colors hover:bg-[#2d5f96] sm:px-3 sm:py-1.5 sm:text-xs"
+                          className="flex items-center justify-center gap-1 w-full text-[10px] sm:text-xs font-semibold px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-[#3c74ae] text-white hover:bg-[#2d5f96] active:scale-95 transition-all duration-200 whitespace-nowrap"
                         >
-                          Quote
+                          <ShoppingBag size={10} className="flex-shrink-0" />
+                          <span>Add</span>
                         </button>
                       </div>
                     </div>
