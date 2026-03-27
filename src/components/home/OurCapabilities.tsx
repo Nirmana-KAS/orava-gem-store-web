@@ -9,19 +9,19 @@ export default function OurCapabilities() {
   const watchGemImages = [
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593697/CWG1-PCC-HomePage_saffrq.png",
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593679/CWG2-PCC-HomePage_ryubht.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593680/CWG3-PCC-HomePage_zqkzqf.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593681/CWG4-PCC-HomePage_kzqkzq.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593682/CWG5-PCC-HomePage_qkzqkz.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593683/CWG6-PCC-HomePage_zqkzqf.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593689/CWG3-PCC-HomePage_y2gjy8.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593697/CWG4-PCC-HomePage_xicagl.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593696/CWG5-PCC-HomePage_ktacy7.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593689/CWG6-PCC-HomePage_zwq4bn.png",
   ];
 
   const jewelryGemImages = [
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593750/BJS1-PCC-HomePage_mdxrdp.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593751/BJS2-PCC-HomePage_ryubht.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593752/BJS3-PCC-HomePage_zqkzqf.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593753/BJS4-PCC-HomePage_kzqkzq.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593754/BJS5-PCC-HomePage_qkzqkz.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593755/BJS6-PCC-HomePage_zqkzqf.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593756/BJS2-PCC-HomePage_mfl9qn.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593752/BJS3-PCC-HomePage_gbomqa.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593756/BJS4-PCC-HomePage_g1mzxq.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593747/BJS5-PCC-HomePage_uactnl.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593748/BJS6-PCC-HomePage_brengn.png",
   ];
 
   return (
