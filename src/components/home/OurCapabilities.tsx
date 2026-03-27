@@ -2,10 +2,28 @@
 
 import { motion } from "framer-motion";
 import { Award, CheckCircle, Gem, Watch } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { AutoImageSlider } from "@/components/ui/AutoImageSlider";
 
 export default function OurCapabilities() {
+  const watchGemImages = [
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593697/CWG1-PCC-HomePage_saffrq.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593679/CWG2-PCC-HomePage_ryubht.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593680/CWG3-PCC-HomePage_zqkzqf.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593681/CWG4-PCC-HomePage_kzqkzq.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593682/CWG5-PCC-HomePage_qkzqkz.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593683/CWG6-PCC-HomePage_zqkzqf.png",
+  ];
+
+  const jewelryGemImages = [
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593750/BJS1-PCC-HomePage_mdxrdp.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593751/BJS2-PCC-HomePage_ryubht.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593752/BJS3-PCC-HomePage_zqkzqf.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593753/BJS4-PCC-HomePage_kzqkzq.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593754/BJS5-PCC-HomePage_qkzqkz.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593755/BJS6-PCC-HomePage_zqkzqf.png",
+  ];
+
   return (
     <section className="bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4">
@@ -30,17 +48,17 @@ export default function OurCapabilities() {
             transition={{ duration: 0.6, delay: 0 }}
             className="group relative overflow-hidden rounded-3xl border border-[#dde2e8] transition-all duration-400 hover:shadow-xl hover:shadow-[#3c74ae]/10"
           >
-            <div className="relative h-48 overflow-hidden">
-              <Image
-                src="/capabilities/watch-gems.jpg"
-                alt="Custom watch gemstones"
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+            <div className="relative overflow-hidden">
+              <AutoImageSlider
+                images={watchGemImages}
+                alt="Custom Watch Gemstones"
+                interval={3000}
+                className="h-40 w-full sm:h-48 md:h-52"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e]/80 to-transparent" />
-              <div className="absolute bottom-4 left-4">
-                <Watch className="mb-2 h-10 w-10 rounded-xl bg-[#3c74ae] p-2 text-white" />
-                <h3 className="font-heading text-xl font-bold text-white">
+              <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#1a1a2e]/70 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 z-20">
+                <Watch className="mb-2 h-9 w-9 rounded-xl bg-[#3c74ae] p-2 text-white" />
+                <h3 className="font-heading text-lg font-bold text-white drop-shadow-lg">
                   Custom Watch Gemstones
                 </h3>
               </div>
@@ -77,17 +95,17 @@ export default function OurCapabilities() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="group relative overflow-hidden rounded-3xl border border-[#dde2e8] transition-all duration-400 hover:shadow-xl hover:shadow-[#3c74ae]/10"
           >
-            <div className="relative h-48 overflow-hidden">
-              <Image
-                src="/capabilities/jewelry-gems.jpg"
-                alt="Bespoke jewelry gemstones"
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+            <div className="relative overflow-hidden">
+              <AutoImageSlider
+                images={jewelryGemImages}
+                alt="Bespoke Jewelry Solutions"
+                interval={3500}
+                className="h-40 w-full sm:h-48 md:h-52"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e]/80 to-transparent" />
-              <div className="absolute bottom-4 left-4">
-                <Gem className="mb-2 h-10 w-10 rounded-xl bg-[#3c74ae] p-2 text-white" />
-                <h3 className="font-heading text-xl font-bold text-white">
+              <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#1a1a2e]/70 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 z-20">
+                <Gem className="mb-2 h-9 w-9 rounded-xl bg-[#3c74ae] p-2 text-white" />
+                <h3 className="font-heading text-lg font-bold text-white drop-shadow-lg">
                   Bespoke Jewelry Solutions
                 </h3>
               </div>
