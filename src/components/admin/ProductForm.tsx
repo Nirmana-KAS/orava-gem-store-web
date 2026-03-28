@@ -10,6 +10,7 @@ import { z } from "zod";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
+import { SmartDropdown } from "@/components/ui/SmartDropdown";
 import { toast } from "@/components/ui/Toast";
 import { adminProductSchema } from "@/lib/validations";
 import { ApiResponse } from "@/types";
@@ -49,7 +50,7 @@ export default function ProductForm({
   const [isDragging, setIsDragging] = useState(false);
   const [uploadItems, setUploadItems] = useState<UploadItem[]>([]);
 
-  const { register, handleSubmit, setValue, formState, reset } =
+  const { register, handleSubmit, setValue, formState, reset, watch } =
     useForm<FormValues>({
       resolver: zodResolver(adminProductSchema),
       defaultValues: {
@@ -306,29 +307,101 @@ export default function ProductForm({
       <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-3 sm:grid-cols-2">
           <Input placeholder="Name" {...register("name")} />
-          <Input placeholder="Origin" {...register("origin")} />
-          <Input placeholder="Shape" {...register("shape")} />
-          <Input placeholder="Size" {...register("size")} />
-          <Input placeholder="Color Name" {...register("colorName")} />
+          <SmartDropdown
+            fieldType="origin"
+            label="Origin"
+            value={watch("origin")}
+            onChange={(val) =>
+              setValue("origin", val, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            placeholder="Select origin..."
+            required
+          />
+          <SmartDropdown
+            fieldType="shape"
+            label="Shape"
+            value={watch("shape")}
+            onChange={(val) =>
+              setValue("shape", val, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            placeholder="Select shape..."
+            required
+          />
+          <SmartDropdown
+            fieldType="size"
+            label="Size"
+            value={watch("size")}
+            onChange={(val) =>
+              setValue("size", val, { shouldDirty: true, shouldValidate: true })
+            }
+            placeholder="Select size..."
+            required
+          />
+          <SmartDropdown
+            fieldType="colorName"
+            label="Color Name"
+            value={watch("colorName")}
+            onChange={(val) =>
+              setValue("colorName", val, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            placeholder="Select color name..."
+            required
+          />
           <Input type="color" {...register("colorHex")} />
-          <Input placeholder="Polish Type" {...register("polishedType")} />
-          <Input placeholder="Clarity Type" {...register("clarityType")} />
+          <SmartDropdown
+            fieldType="polishedType"
+            label="Polish Type"
+            value={watch("polishedType")}
+            onChange={(val) =>
+              setValue("polishedType", val, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            placeholder="Select polish type..."
+            required
+          />
+          <SmartDropdown
+            fieldType="clarityType"
+            label="Clarity Type"
+            value={watch("clarityType")}
+            onChange={(val) =>
+              setValue("clarityType", val, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            placeholder="Select clarity type..."
+            required
+          />
           <Input
             type="number"
             step="0.01"
             placeholder="Weight"
             {...register("weight", { valueAsNumber: true })}
           />
-          <select
-            {...register("condition")}
-            className="rounded-md border border-white/20 bg-dark-elevated px-3 py-2 text-sm"
-          >
-            {Object.values(Condition).map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
+          <SmartDropdown
+            fieldType="condition"
+            label="Condition"
+            value={watch("condition")}
+            onChange={(val) =>
+              setValue("condition", val as Condition, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            placeholder="Select condition..."
+            required
+          />
           <Input
             type="number"
             placeholder="Lot Quantity"

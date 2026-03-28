@@ -144,6 +144,16 @@ model Service {
   updatedAt   DateTime @updatedAt
 }
 
+model FieldValue {
+  id        String   @id @default(uuid())
+  fieldType String
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([fieldType, value])
+  @@index([fieldType])
+}
+
 model AuditLog {
   id         String   @id @default(uuid())
   adminId    String
