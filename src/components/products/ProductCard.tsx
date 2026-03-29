@@ -147,7 +147,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       </div>
 
       <div className="px-2.5 pb-2.5 sm:px-3 sm:pb-3">
-        <div className="mb-2">
+        <div className="mb-2 text-center">
           {product.price ? (
             <p className="text-sm font-bold text-[#3c74ae] sm:text-base">
               ${product.price.toLocaleString()}
