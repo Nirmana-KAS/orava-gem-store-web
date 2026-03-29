@@ -196,7 +196,7 @@ export function SmartDropdown({
           setError("");
           setSearchQuery("");
         }}
-        className={`w-full cursor-pointer rounded-xl border px-3 py-2.5 text-left text-sm transition-all duration-200 ${
+        className={`w-full cursor-pointer rounded-xl border px-3 py-2.5 text-left text-sm transition-all duration-200 h-[38px] ${
           disabled ? "cursor-not-allowed opacity-50" : ""
         } ${
           isOpen

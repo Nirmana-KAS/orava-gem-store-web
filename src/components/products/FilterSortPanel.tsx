@@ -239,8 +239,8 @@ export function FilterSortPanel({
             </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[#dde2e8] pt-3">
-            <div className="w-32">
+          <div className="mt-3 flex items-stretch gap-2 border-t border-[#dde2e8] pt-3 w-full">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="gemName"
                 label=""
@@ -251,7 +251,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-28">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="origin"
                 label=""
@@ -262,7 +262,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-28">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="shape"
                 label=""
@@ -273,7 +273,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-28">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="colorName"
                 label=""
@@ -284,7 +284,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-24">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="size"
                 label=""
@@ -295,7 +295,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-32">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="polishedType"
                 label=""
@@ -306,7 +306,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-32">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="clarityType"
                 label=""
@@ -317,7 +317,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-28">
+            <div className="flex-1 min-w-0">
               <SmartDropdown
                 fieldType="condition"
                 label=""
