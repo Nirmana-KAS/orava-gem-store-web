@@ -187,7 +187,7 @@ export function FilterSortPanel({
     <>
       <div className="sticky top-16 z-40 hidden border-b border-[#dde2e8] bg-white shadow-sm md:block">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <ArrowUpDown size={14} className="text-[#3c74ae]" />
               <select
@@ -203,90 +203,88 @@ export function FilterSortPanel({
               </select>
             </div>
 
-            <div className="h-5 w-px bg-[#dde2e8]" />
+            <div
+              className="flex items-center gap-2"
+              data-total-count={totalCount}
+            >
+              {[
+                { value: "all", label: "All" },
+                { value: "true", label: "Available" },
+                { value: "false", label: "Sold" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => updateFilter("availability", opt.value)}
+                  className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
+                    filters.availability === opt.value
+                      ? "border-[#3c74ae] bg-[#3c74ae] text-white"
+                      : "border-[#dde2e8] bg-white text-[#4a4a6a] hover:border-[#3c74ae]/50"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
 
-            <div className="flex flex-1 flex-wrap items-center gap-2">
-              <div className="w-36">
-                <SmartDropdown
-                  fieldType="gemName"
-                  label=""
-                  value={filters.name}
-                  onChange={(val) => updateFilter("name", val)}
-                  placeholder="Gemstone"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-              <div className="w-32">
-                <SmartDropdown
-                  fieldType="origin"
-                  label=""
-                  value={filters.origin}
-                  onChange={(val) => updateFilter("origin", val)}
-                  placeholder="Origin"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-              <div className="w-32">
-                <SmartDropdown
-                  fieldType="shape"
-                  label=""
-                  value={filters.shape}
-                  onChange={(val) => updateFilter("shape", val)}
-                  placeholder="Shape"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-              <div className="w-32">
-                <SmartDropdown
-                  fieldType="colorName"
-                  label=""
-                  value={filters.colorName}
-                  onChange={(val) => updateFilter("colorName", val)}
-                  placeholder="Color"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-              <div className="flex gap-1">
-                {[
-                  { value: "all", label: "All" },
-                  { value: "true", label: "Available" },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => updateFilter("availability", opt.value)}
-                    className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
-                      filters.availability === opt.value
-                        ? "border-[#3c74ae] bg-[#3c74ae] text-white"
-                        : "border-[#dde2e8] bg-white text-[#4a4a6a]"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
+              <div className="mx-1 h-5 w-px bg-[#dde2e8]" />
+
+              {activeFiltersCount > 0 ? (
+                <button
+                  onClick={clearAllFilters}
+                  className="flex items-center gap-1 whitespace-nowrap rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50"
+                >
+                  <X size={12} />
+                  Clear ({activeFiltersCount})
+                </button>
+              ) : null}
             </div>
-
-            <span className="text-xs font-semibold text-[#8f8b8f]">
-              {totalCount.toLocaleString()} results
-            </span>
-
-            {activeFiltersCount > 0 ? (
-              <button
-                onClick={clearAllFilters}
-                className="flex items-center gap-1 whitespace-nowrap rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50"
-              >
-                <X size={12} />
-                Clear ({activeFiltersCount})
-              </button>
-            ) : null}
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-[#dde2e8] pt-3">
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[#dde2e8] pt-3">
             <div className="w-32">
+              <SmartDropdown
+                fieldType="gemName"
+                label=""
+                value={filters.name}
+                onChange={(val) => updateFilter("name", val)}
+                placeholder="Gemstone"
+                showAllOption
+                readOnly
+              />
+            </div>
+            <div className="w-28">
+              <SmartDropdown
+                fieldType="origin"
+                label=""
+                value={filters.origin}
+                onChange={(val) => updateFilter("origin", val)}
+                placeholder="Origin"
+                showAllOption
+                readOnly
+              />
+            </div>
+            <div className="w-28">
+              <SmartDropdown
+                fieldType="shape"
+                label=""
+                value={filters.shape}
+                onChange={(val) => updateFilter("shape", val)}
+                placeholder="Shape"
+                showAllOption
+                readOnly
+              />
+            </div>
+            <div className="w-28">
+              <SmartDropdown
+                fieldType="colorName"
+                label=""
+                value={filters.colorName}
+                onChange={(val) => updateFilter("colorName", val)}
+                placeholder="Color"
+                showAllOption
+                readOnly
+              />
+            </div>
+            <div className="w-24">
               <SmartDropdown
                 fieldType="size"
                 label=""
@@ -297,7 +295,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-36">
+            <div className="w-32">
               <SmartDropdown
                 fieldType="polishedType"
                 label=""
@@ -308,7 +306,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-36">
+            <div className="w-32">
               <SmartDropdown
                 fieldType="clarityType"
                 label=""
@@ -319,7 +317,7 @@ export function FilterSortPanel({
                 readOnly
               />
             </div>
-            <div className="w-36">
+            <div className="w-28">
               <SmartDropdown
                 fieldType="condition"
                 label=""
