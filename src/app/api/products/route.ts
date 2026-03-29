@@ -17,7 +17,7 @@ const sortFieldSchema = z.enum([
 
 const querySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(100).default(12),
+  limit: z.coerce.number().int().positive().max(100).default(16),
   name: z.string().optional(),
   search: z.string().optional(),
   shape: z.union([z.string(), z.array(z.string())]).optional(),
@@ -147,6 +147,11 @@ export async function GET(request: NextRequest): Promise<Response> {
         : availability === "true";
 
     const orderByField = sortField ?? sortBy ?? "createdAt";
+    const skip = (page - 1) * limit;
+    const orderBy: Prisma.ProductOrderByWithRelationInput =
+      orderByField === "lotQuantity"
+        ? { lotQuantity: sortOrder }
+        : { [orderByField]: sortOrder };
 
     const where: Prisma.ProductWhereInput = {
       OR: filters.search
@@ -189,9 +194,9 @@ export async function GET(request: NextRequest): Promise<Response> {
       prisma.product.findMany({
         where,
         include: { inquiredProducts: true },
-        skip: (page - 1) * limit,
+        skip,
         take: limit,
-        orderBy: { [orderByField]: sortOrder },
+        orderBy,
       }),
       prisma.product.count({ where }),
     ]);

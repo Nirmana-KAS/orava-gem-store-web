@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@prisma/client";
 import { useRef } from "react";
-import ProductCard from "@/components/products/ProductCard";
+import { ProductCard } from "@/components/products/ProductCard";
 import Button from "@/components/ui/Button";
 
 interface FeaturedProductsCarouselProps {
