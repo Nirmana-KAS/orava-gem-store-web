@@ -193,7 +193,7 @@ export function FilterSortPanel({
               <select
                 value={filters.sortBy}
                 onChange={(event) => updateFilter("sortBy", event.target.value)}
-                className="cursor-pointer rounded-lg border border-[#dde2e8] bg-white px-3 py-1.5 pr-8 text-sm text-[#1a1a2e] focus:border-[#3c74ae] focus:outline-none"
+                className="cursor-pointer rounded-lg border border-[#dde2e8] bg-white px-3 py-1.5 pr-6 text-sm text-[#1a1a2e] focus:border-[#3c74ae] focus:outline-none"
               >
                 {sortOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
