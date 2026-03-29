@@ -294,12 +294,14 @@ export default function AdminProductsPage() {
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
-          <Input
-            placeholder="Product name"
+          <SmartDropdown
+            fieldType="gemName"
+            label="Gemstone Name"
             value={query.name}
-            onChange={(e) =>
-              setQuery((prev) => ({ ...prev, name: e.target.value }))
-            }
+            onChange={(val) => setQuery((prev) => ({ ...prev, name: val }))}
+            placeholder="All Gemstones"
+            showAllOption
+            allOptionLabel="All Gemstones"
           />
           <SmartDropdown
             fieldType="origin"

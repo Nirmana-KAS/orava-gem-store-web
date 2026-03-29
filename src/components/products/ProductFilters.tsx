@@ -19,10 +19,15 @@ export default function ProductFilters() {
   return (
     <div className="space-y-4 rounded-xl border border-[#dde2e8] bg-white p-4">
       <h3 className="font-semibold text-brand-blue">Filters</h3>
-      <Input
-        placeholder="Gemstone name"
-        defaultValue={search.get("name") ?? ""}
-        onBlur={(e) => setParam("name", e.target.value)}
+      <SmartDropdown
+        fieldType="gemName"
+        label="Gemstone Name"
+        value={search.get("name") ?? ""}
+        onChange={(val) => setParam("name", val)}
+        placeholder="All Gemstones"
+        showAllOption
+        allOptionLabel="All Gemstones"
+        readOnly
       />
       <Input
         placeholder="Size"

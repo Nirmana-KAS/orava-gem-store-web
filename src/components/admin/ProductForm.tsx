@@ -306,7 +306,19 @@ export default function ProductForm({
     >
       <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Input placeholder="Name" {...register("name")} />
+          <SmartDropdown
+            fieldType="gemName"
+            label="Gemstone Name"
+            value={watch("name")}
+            onChange={(val) =>
+              setValue("name", val, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            placeholder="Select or add gemstone name..."
+            required
+          />
           <SmartDropdown
             fieldType="origin"
             label="Origin"
