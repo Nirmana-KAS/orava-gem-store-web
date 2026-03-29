@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  Filter,
-  SlidersHorizontal,
-  X,
-} from "lucide-react";
+import { ArrowUpDown, Filter, SlidersHorizontal, X } from "lucide-react";
 import { SmartDropdown } from "@/components/ui/SmartDropdown";
 
 interface FilterState {
@@ -291,7 +285,52 @@ export function FilterSortPanel({
             ) : null}
           </div>
 
-          <MoreFiltersRow filters={filters} updateFilter={updateFilter} />
+          <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-[#dde2e8] pt-3">
+            <div className="w-32">
+              <SmartDropdown
+                fieldType="size"
+                label=""
+                value={filters.size}
+                onChange={(val) => updateFilter("size", val)}
+                placeholder="Size"
+                showAllOption
+                readOnly
+              />
+            </div>
+            <div className="w-36">
+              <SmartDropdown
+                fieldType="polishedType"
+                label=""
+                value={filters.polishedType}
+                onChange={(val) => updateFilter("polishedType", val)}
+                placeholder="Polish Type"
+                showAllOption
+                readOnly
+              />
+            </div>
+            <div className="w-36">
+              <SmartDropdown
+                fieldType="clarityType"
+                label=""
+                value={filters.clarityType}
+                onChange={(val) => updateFilter("clarityType", val)}
+                placeholder="Clarity Type"
+                showAllOption
+                readOnly
+              />
+            </div>
+            <div className="w-36">
+              <SmartDropdown
+                fieldType="condition"
+                label=""
+                value={filters.condition}
+                onChange={(val) => updateFilter("condition", val)}
+                placeholder="Condition"
+                showAllOption
+                readOnly
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -379,89 +418,5 @@ export function FilterSortPanel({
         ) : null}
       </AnimatePresence>
     </>
-  );
-}
-
-function MoreFiltersRow({
-  filters,
-  updateFilter,
-}: {
-  filters: FilterState;
-  updateFilter: (key: keyof FilterState, value: string) => void;
-}) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div className="mt-2">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-1 text-xs font-medium text-[#3c74ae] hover:underline"
-      >
-        <ChevronDown
-          size={14}
-          className={`transition-transform ${expanded ? "rotate-180" : ""}`}
-        />
-        {expanded ? "Less filters" : "More filters"}
-      </button>
-
-      <AnimatePresence>
-        {expanded ? (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="flex flex-wrap items-center gap-3 pt-3">
-              <div className="w-36">
-                <SmartDropdown
-                  fieldType="size"
-                  label=""
-                  value={filters.size}
-                  onChange={(val) => updateFilter("size", val)}
-                  placeholder="Size"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-              <div className="w-36">
-                <SmartDropdown
-                  fieldType="polishedType"
-                  label=""
-                  value={filters.polishedType}
-                  onChange={(val) => updateFilter("polishedType", val)}
-                  placeholder="Polish Type"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-              <div className="w-36">
-                <SmartDropdown
-                  fieldType="clarityType"
-                  label=""
-                  value={filters.clarityType}
-                  onChange={(val) => updateFilter("clarityType", val)}
-                  placeholder="Clarity Type"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-              <div className="w-36">
-                <SmartDropdown
-                  fieldType="condition"
-                  label=""
-                  value={filters.condition}
-                  onChange={(val) => updateFilter("condition", val)}
-                  placeholder="Condition"
-                  showAllOption
-                  readOnly
-                />
-              </div>
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </div>
   );
 }
