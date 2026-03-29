@@ -204,12 +204,12 @@ export function SmartDropdown({
             : "border-[#dde2e8] bg-white hover:border-[#3c74ae]/50"
         } ${!value ? "text-[#8f8b8f]" : "font-medium text-[#1a1a2e]"}`}
       >
-        <span className="truncate">
+        <span className="flex-1 truncate text-left">
           {loading ? "Loading..." : value || placeholder}
         </span>
         <ChevronDown
-          size={16}
-          className={`ml-2 inline-flex flex-shrink-0 text-[#8f8b8f] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          size={14}
+          className={`ml-auto flex-shrink-0 text-[#8f8b8f] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 

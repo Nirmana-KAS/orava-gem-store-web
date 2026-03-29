@@ -146,10 +146,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-2 px-2.5 pb-2.5 sm:px-3 sm:pb-3">
-        <div className="min-w-0 flex-1">
+      <div className="px-2.5 pb-2.5 sm:px-3 sm:pb-3">
+        <div className="mb-2">
           {product.price ? (
-            <p className="truncate text-xs font-bold text-[#3c74ae] sm:text-sm">
+            <p className="text-sm font-bold text-[#3c74ae] sm:text-base">
               ${product.price.toLocaleString()}
             </p>
           ) : (
@@ -158,16 +158,17 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </p>
           )}
         </div>
+
         <button
           onClick={handleAddToCart}
-          className={`flex flex-shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all duration-200 active:scale-95 sm:px-3 sm:py-2 sm:text-xs ${
+          className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all duration-200 active:scale-95 sm:py-2.5 sm:text-xs ${
             inCart
-              ? "border border-green-300 bg-green-100 text-green-700"
-              : "bg-[#3c74ae] text-white hover:bg-[#2d5f96]"
+              ? "border border-green-300 bg-green-50 text-green-700"
+              : "bg-[#3c74ae] text-white shadow-sm shadow-[#3c74ae]/20 hover:bg-[#2d5f96]"
           }`}
         >
-          <ShoppingBag size={10} className="flex-shrink-0" />
-          <span>{inCart ? "Added" : "Add"}</span>
+          <ShoppingBag size={12} className="flex-shrink-0" />
+          <span>{inCart ? "Added to Quote" : "Add to Quote"}</span>
         </button>
       </div>
     </motion.div>
