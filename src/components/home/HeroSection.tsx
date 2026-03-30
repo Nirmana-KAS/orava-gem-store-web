@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -329,6 +329,10 @@ function getTextAnimations(type: string) {
 export default function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const autoplayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
@@ -338,18 +342,52 @@ export default function HeroSection() {
     setCurrentSlide((prev) => (prev === 0 ? SLIDES.length - 1 : prev - 1));
   }, []);
 
-  const goToSlide = useCallback((index: number) => {
-    setCurrentSlide(index);
+  const pauseAutoPlay = useCallback(() => {
     setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 8000);
+    if (autoplayTimeoutRef.current) {
+      clearTimeout(autoplayTimeoutRef.current);
+    }
+    autoplayTimeoutRef.current = setTimeout(() => {
+      setIsAutoPlaying(true);
+    }, 8000);
   }, []);
+
+  const goToSlide = useCallback(
+    (index: number) => {
+      setCurrentSlide(index);
+      pauseAutoPlay();
+    },
+    [pauseAutoPlay],
+  );
 
   // Auto-advance every 6 seconds
   useEffect(() => {
+    if (autoplayIntervalRef.current) {
+      clearInterval(autoplayIntervalRef.current);
+    }
     if (!isAutoPlaying) return;
-    const timer = setInterval(nextSlide, 6000);
-    return () => clearInterval(timer);
+    autoplayIntervalRef.current = setInterval(nextSlide, 6000);
+    return () => {
+      if (autoplayIntervalRef.current) {
+        clearInterval(autoplayIntervalRef.current);
+      }
+    };
   }, [isAutoPlaying, nextSlide]);
+
+  useEffect(() => {
+    SLIDES.forEach((slideItem) => {
+      const preloaded = new window.Image();
+      preloaded.src = slideItem.image;
+    });
+    return () => {
+      if (autoplayTimeoutRef.current) {
+        clearTimeout(autoplayTimeoutRef.current);
+      }
+      if (autoplayIntervalRef.current) {
+        clearInterval(autoplayIntervalRef.current);
+      }
+    };
+  }, []);
 
   const slide = SLIDES[currentSlide];
   const imgVariant =
@@ -359,7 +397,7 @@ export default function HeroSection() {
   return (
     <section className="relative w-full min-h-screen overflow-hidden bg-[#1a1a2e] flex flex-col">
       {/* ── BACKGROUND IMAGE CAROUSEL ── */}
-      <AnimatePresence mode="sync">
+      <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={`image-${slide.id}`}
           className="absolute inset-0 z-0"
@@ -373,7 +411,7 @@ export default function HeroSection() {
             alt={slide.bigTitle}
             fill
             priority={currentSlide === 0}
-            className="object-cover"
+            className="object-cover hero-image-transition"
             sizes="100vw"
           />
         </motion.div>
@@ -406,10 +444,14 @@ export default function HeroSection() {
       {/* ── MAIN CONTENT ── */}
       <div className="relative z-20 flex-1 flex items-center justify-center px-4 sm:px-8 lg:px-16 pt-20 pb-24">
         <div className="max-w-4xl mx-auto text-center">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={`content-${slide.id}`}
               className="flex flex-col items-center gap-5 sm:gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
             >
               {/* Badge */}
               <motion.div
@@ -516,8 +558,7 @@ export default function HeroSection() {
       <button
         onClick={() => {
           prevSlide();
-          setIsAutoPlaying(false);
-          setTimeout(() => setIsAutoPlaying(true), 8000);
+          pauseAutoPlay();
         }}
         className="hidden sm:flex absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 items-center justify-center transition-all duration-200 backdrop-blur-sm"
         aria-label="Previous slide"
@@ -527,8 +568,7 @@ export default function HeroSection() {
       <button
         onClick={() => {
           nextSlide();
-          setIsAutoPlaying(false);
-          setTimeout(() => setIsAutoPlaying(true), 8000);
+          pauseAutoPlay();
         }}
         className="hidden sm:flex absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 items-center justify-center transition-all duration-200 backdrop-blur-sm"
         aria-label="Next slide"
