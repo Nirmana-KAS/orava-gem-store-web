@@ -9,9 +9,17 @@ interface LogoProps {
   variant?: "full" | "icon";
   className?: string;
   height?: number;
+  width?: number;
+  sizes?: string;
 }
 
-export function Logo({ variant = "full", className, height = 40 }: LogoProps) {
+export function Logo({
+  variant = "full",
+  className,
+  height = 40,
+  width,
+  sizes,
+}: LogoProps) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -20,10 +28,11 @@ export function Logo({ variant = "full", className, height = 40 }: LogoProps) {
         <Image
           src="https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436994/Orava_Logo_oyar7b.png"
           alt="ORAVA Gems"
-          width={variant === "icon" ? 40 : 140}
+          width={width ?? (variant === "icon" ? 40 : 140)}
           height={height}
           sizes={
-            variant === "icon" ? "40px" : "(max-width: 640px) 120px, 140px"
+            sizes ??
+            (variant === "icon" ? "40px" : "(max-width: 640px) 120px, 140px")
           }
           className="object-contain"
           priority

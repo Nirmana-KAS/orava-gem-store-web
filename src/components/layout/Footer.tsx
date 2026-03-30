@@ -8,7 +8,12 @@ export default function Footer() {
       <div className="px-4 py-12 sm:py-16">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
-            <Logo className="justify-center" />
+            <Logo
+              className="justify-center"
+              height={56}
+              width={180}
+              sizes="(max-width: 640px) 160px, 180px"
+            />
             <p className="mt-2 font-heading text-lg italic text-[#8f8b8f] sm:text-xl">
               Beauty Crafted To An Exemplary Standard
             </p>
