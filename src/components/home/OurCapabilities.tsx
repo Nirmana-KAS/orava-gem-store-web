@@ -18,7 +18,7 @@ export default function OurCapabilities() {
   const jewelryGemImages = [
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593750/BJS1-PCC-HomePage_mdxrdp.png",
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593756/BJS2-PCC-HomePage_mfl9qn.png",
-    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593752/BJS3-PCC-HomePage_gbomqa.png",
+    "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774877534/BJS3-PCC-HomePage_hu0wsp.png",
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593756/BJS4-PCC-HomePage_g1mzxq.png",
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593747/BJS5-PCC-HomePage_uactnl.png",
     "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774593748/BJS6-PCC-HomePage_brengn.png",
@@ -73,7 +73,7 @@ export default function OurCapabilities() {
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {[
-                  "0.5mm–10mm",
+                  "0.5mm Above",
                   "Color-Matched Lots",
                   "Any Custom Shape",
                   "Worldwide Supply",
