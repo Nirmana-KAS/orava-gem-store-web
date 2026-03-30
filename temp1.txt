@@ -1090,7 +1090,7 @@ Use these EXACT real company details — no placeholder data:
 
 Address: No. 24, Carlwil Place, Colombo 03, Sri Lanka
 Phone: +94 11 257 4062
-Email: orava@eureka.lk
+Email: info@oravagems.com
 LinkedIn: https://www.linkedin.com/company/orava-private-limited/
 Google Maps: https://maps.app.goo.gl/SXjNNqZzYhqV8qHR7
 
@@ -1122,7 +1122,7 @@ Footer layout:
       Items with Lucide icons:
       - MapPin: "No. 24, Carlwil Place, Colombo 03, Sri Lanka"
       - Phone: "+94 11 257 4062"
-      - Mail: "orava@eureka.lk" (mailto link)
+      - Mail: "info@oravagems.com" (mailto link)
       - Linkedin: Link to https://www.linkedin.com/company/orava-private-limited/
       - ExternalLink: "View on Google Maps" link to maps URL
       All text-sm text-[#8f8b8f], icons text-[#3c74ae]
@@ -1221,7 +1221,7 @@ After all implementations:
 6. Verify all real company details are used:
    - Address: No. 24, Carlwil Place, Colombo 03, Sri Lanka
    - Phone: +94 11 257 4062
-   - Email: orava@eureka.lk
+  - Email: info@oravagems.com
    - LinkedIn: https://www.linkedin.com/company/orava-private-limited/
 7. Verify quotation cart works with zustand persist
 8. Verify search debounce works

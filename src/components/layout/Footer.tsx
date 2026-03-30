@@ -108,10 +108,10 @@ export default function Footer() {
                 </p>
                 <a
                   className="flex items-start gap-2 hover:text-[#3c74ae]"
-                  href="mailto:orava@eureka.lk"
+                  href="mailto:info@oravagems.com"
                 >
                   <Mail size={16} className="mt-0.5 text-[#3c74ae]" />
-                  <span className="break-all">orava@eureka.lk</span>
+                  <span className="break-all">info@oravagems.com</span>
                 </a>
                 <a
                   className="flex items-start gap-2 hover:text-[#3c74ae]"
