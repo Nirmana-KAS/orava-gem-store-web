@@ -111,3 +111,13 @@ h6 {
     transform: translateX(-50%);
   }
 }
+
+/* Smooth image transitions */
+.hero-image-transition {
+  transition: opacity 1.2s ease-in-out;
+}
+
+/* Ensure hero section takes full viewport */
+section.hero-full {
+  min-height: 100svh;
+}
