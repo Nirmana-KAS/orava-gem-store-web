@@ -51,7 +51,7 @@ export function CertificationsLogos() {
           </p>
         </motion.div>
 
-        <div className="flex flex-nowrap items-center justify-center gap-2 overflow-x-auto sm:gap-3 sm:overflow-visible md:gap-4">
+        <div className="flex flex-nowrap items-center justify-center gap-1 overflow-x-auto sm:gap-2 sm:overflow-visible md:gap-3">
           {CERTIFICATION_LOGOS.map((cert, index) => (
             <motion.div
               key={index}
@@ -59,7 +59,7 @@ export function CertificationsLogos() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="group relative flex h-20 w-32 items-center justify-center sm:h-24 sm:w-40 md:h-28 md:w-44"
+              className="group relative flex h-24 w-40 items-center justify-center sm:h-28 sm:w-48 md:h-32 md:w-56"
             >
               <div className="relative h-full w-full grayscale opacity-60 transition-all duration-300 group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-100">
                 <Image
