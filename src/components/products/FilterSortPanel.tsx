@@ -193,7 +193,7 @@ export function FilterSortPanel({
               <select
                 value={filters.sortBy}
                 onChange={(event) => updateFilter("sortBy", event.target.value)}
-                className="cursor-pointer rounded-lg border border-[#dde2e8] bg-white px-3 py-1.5 pr-6 text-sm text-[#1a1a2e] focus:border-[#3c74ae] focus:outline-none"
+                className="text-sm text-[#1a1a2e] border border-[#dde2e8] rounded-lg pl-3 pr-8 py-1.5 bg-white focus:outline-none focus:border-[#3c74ae] cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%238f8b8f%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_10px_center]"
               >
                 {sortOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
