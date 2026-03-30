@@ -51,7 +51,7 @@ export function CertificationsLogos() {
           </p>
         </motion.div>
 
-        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16">
+        <div className="flex flex-nowrap items-center justify-center gap-4 overflow-x-auto sm:gap-6 sm:overflow-visible md:gap-8">
           {CERTIFICATION_LOGOS.map((cert, index) => (
             <motion.div
               key={index}
