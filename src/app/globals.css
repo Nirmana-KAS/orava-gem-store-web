@@ -101,3 +101,13 @@ h6 {
   background: #3c74ae;
   border-radius: 3px;
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}

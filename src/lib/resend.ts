@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const from = process.env.RESEND_FROM_EMAIL ?? "noreply@oravagems.com";
+const from = process.env.RESEND_FROM_EMAIL;
 
 function shell(title: string, body: string): string {
   return `
@@ -23,16 +23,23 @@ function shell(title: string, body: string): string {
   </div>`;
 }
 
-async function sendEmail(to: string | string[], subject: string, html: string): Promise<void> {
+async function sendEmail(
+  to: string | string[],
+  subject: string,
+  html: string,
+): Promise<void> {
   try {
-    if (!process.env.RESEND_API_KEY) return;
+    if (!process.env.RESEND_API_KEY || !from) return;
     await resend.emails.send({ from, to, subject, html });
   } catch (error) {
     console.error("Resend error:", error);
   }
 }
 
-export async function sendWelcomeEmail(to: string, firstName: string): Promise<void> {
+export async function sendWelcomeEmail(
+  to: string,
+  firstName: string,
+): Promise<void> {
   await sendEmail(
     to,
     "Welcome to ORAVA Gems — Your Account is Ready",
@@ -44,7 +51,10 @@ export async function sendWelcomeEmail(to: string, firstName: string): Promise<v
   );
 }
 
-export async function sendSignInGreetingEmail(to: string, firstName: string): Promise<void> {
+export async function sendSignInGreetingEmail(
+  to: string,
+  firstName: string,
+): Promise<void> {
   await sendEmail(
     to,
     "Welcome Back to ORAVA Gems",
@@ -56,7 +66,10 @@ export async function sendSignInGreetingEmail(to: string, firstName: string): Pr
   );
 }
 
-export async function sendPasswordResetEmail(to: string, resetLink: string): Promise<void> {
+export async function sendPasswordResetEmail(
+  to: string,
+  resetLink: string,
+): Promise<void> {
   await sendEmail(
     to,
     "ORAVA Gems — Password Reset Request",
@@ -68,9 +81,20 @@ export async function sendPasswordResetEmail(to: string, resetLink: string): Pro
   );
 }
 
-export async function sendInquiryConfirmationEmail(to: string, inquiryDetails: object): Promise<void> {
-  const data = inquiryDetails as { id?: string; inquiryType?: string; description?: string; products?: string[] };
-  const products = data.products && data.products.length > 0 ? data.products.join(", ") : "N/A";
+export async function sendInquiryConfirmationEmail(
+  to: string,
+  inquiryDetails: object,
+): Promise<void> {
+  const data = inquiryDetails as {
+    id?: string;
+    inquiryType?: string;
+    description?: string;
+    products?: string[];
+  };
+  const products =
+    data.products && data.products.length > 0
+      ? data.products.join(", ")
+      : "N/A";
   await sendEmail(
     to,
     `ORAVA Gems — Inquiry Received (#${data.id ?? "ID"})`,
@@ -86,8 +110,15 @@ export async function sendInquiryConfirmationEmail(to: string, inquiryDetails: o
   );
 }
 
-export async function sendMeetingConfirmationEmail(to: string, meetingDetails: object): Promise<void> {
-  const data = meetingDetails as { id?: string; meetingType?: string; description?: string };
+export async function sendMeetingConfirmationEmail(
+  to: string,
+  meetingDetails: object,
+): Promise<void> {
+  const data = meetingDetails as {
+    id?: string;
+    meetingType?: string;
+    description?: string;
+  };
   await sendEmail(
     to,
     `ORAVA Gems — Meeting Request Received (#${data.id ?? "ID"})`,
@@ -102,11 +133,18 @@ export async function sendMeetingConfirmationEmail(to: string, meetingDetails: o
   );
 }
 
-export async function sendAdminInquiryReplyEmail(to: string, inquiryId: string, reply: string): Promise<void> {
+export async function sendAdminInquiryReplyEmail(
+  to: string,
+  inquiryId: string,
+  reply: string,
+): Promise<void> {
   await sendEmail(
     to,
     `ORAVA Gems — Response to Your Inquiry (#${inquiryId})`,
-    shell("Inquiry Response", `<p>Inquiry #${inquiryId}</p><blockquote style="border-left:3px solid #C9A84C;padding-left:12px">${reply}</blockquote>`),
+    shell(
+      "Inquiry Response",
+      `<p>Inquiry #${inquiryId}</p><blockquote style="border-left:3px solid #C9A84C;padding-left:12px">${reply}</blockquote>`,
+    ),
   );
 }
 
@@ -126,7 +164,10 @@ export async function sendMeetingScheduledEmail(
   );
 }
 
-export async function sendDailySummaryReport(to: string[], reportData: object): Promise<void> {
+export async function sendDailySummaryReport(
+  to: string[],
+  reportData: object,
+): Promise<void> {
   const data = reportData as {
     newInquiries?: number;
     newMeetings?: number;
@@ -146,7 +187,10 @@ export async function sendDailySummaryReport(to: string[], reportData: object): 
   );
 }
 
-export async function sendQuotationConfirmationEmail(to: string, quotationDetails: object): Promise<void> {
+export async function sendQuotationConfirmationEmail(
+  to: string,
+  quotationDetails: object,
+): Promise<void> {
   const data = quotationDetails as { id?: string; description?: string };
   await sendEmail(
     to,
@@ -200,4 +244,3 @@ export async function sendAdminMeetingNotificationEmail(
     ),
   );
 }
-

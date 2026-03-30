@@ -32,11 +32,12 @@ export default function OurCapabilities() {
             What We Do Best
           </span>
           <h2 className="mt-4 text-center font-heading text-3xl font-bold text-[#1a1a2e] sm:text-4xl">
-            Precision. Customization. Certification.
+            Precision. Bespoke. Certification.
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[#8f8b8f] sm:text-base">
-            From custom watch gemstones to certified fine jewelry stones — ORAVA
-            delivers world-class quality on every order.
+            From calibration gemstone collections to bespoke gemstone
+            collections and certified stones, ORAVA delivers world-class quality
+            on every order.
           </p>
         </div>
 
@@ -51,7 +52,7 @@ export default function OurCapabilities() {
             <div className="relative overflow-hidden">
               <AutoImageSlider
                 images={watchGemImages}
-                alt="Custom Watch Gemstones"
+                alt="Calibration Gemstone Collection"
                 interval={3000}
                 className="h-40 w-full sm:h-48 md:h-52"
               />
@@ -59,16 +60,16 @@ export default function OurCapabilities() {
               <div className="absolute bottom-4 left-4 z-20">
                 <Watch className="mb-2 h-9 w-9 rounded-xl bg-[#3c74ae] p-2 text-white" />
                 <h3 className="font-heading text-lg font-bold text-white drop-shadow-lg">
-                  Custom Watch Gemstones
+                  Calibration Gemstone Collection
                 </h3>
               </div>
             </div>
 
             <div className="p-6">
               <p className="text-sm leading-relaxed text-[#4a4a6a]">
-                Specialized precision cutting for luxury watch manufacturers
-                worldwide. Ultra-small sizes from 0.5mm, color-matched lots,
-                consistent calibration for every production run.
+                Specialized precision cutting for luxury watch manufacturers.
+                Ultra-small sizes from 0.5mm, color-matched lots, and consistent
+                calibration for every production run.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {[
@@ -98,7 +99,7 @@ export default function OurCapabilities() {
             <div className="relative overflow-hidden">
               <AutoImageSlider
                 images={jewelryGemImages}
-                alt="Bespoke Jewelry Solutions"
+                alt="Bespoke Gemstone Collection"
                 interval={3500}
                 className="h-40 w-full sm:h-48 md:h-52"
               />
@@ -106,15 +107,15 @@ export default function OurCapabilities() {
               <div className="absolute bottom-4 left-4 z-20">
                 <Gem className="mb-2 h-9 w-9 rounded-xl bg-[#3c74ae] p-2 text-white" />
                 <h3 className="font-heading text-lg font-bold text-white drop-shadow-lg">
-                  Bespoke Jewelry Solutions
+                  Bespoke Gemstone Collection
                 </h3>
               </div>
             </div>
 
             <div className="p-6">
               <p className="text-sm leading-relaxed text-[#4a4a6a]">
-                Custom designed and precision cut gemstones for fine jewelry
-                brands. Any shape, any diagram, any design. We bring your
+                Custom designed and precision-cut gemstones for bespoke
+                collections. Any shape, any diagram, any design. We bring your
                 creative vision to life with flawless execution.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">

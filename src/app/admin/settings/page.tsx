@@ -29,8 +29,12 @@ async function seedTemplates() {
 
 export default async function AdminSettingsPage() {
   await seedTemplates();
-  const templates = await prisma.emailTemplate.findMany({ orderBy: { name: "asc" } });
-  const schedules = await prisma.reportSchedule.findMany({ orderBy: { createdAt: "desc" } });
+  const templates = await prisma.emailTemplate.findMany({
+    orderBy: { name: "asc" },
+  });
+  const schedules = await prisma.reportSchedule.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div className="space-y-6">
@@ -41,19 +45,24 @@ export default async function AdminSettingsPage() {
       </section>
       <section className="rounded-xl border border-white/10 bg-dark-surface p-4">
         <h2 className="text-2xl font-semibold">Report Schedule Management</h2>
-        <p className="mt-2 text-sm text-zinc-300">Existing schedules: {schedules.length}</p>
+        <p className="mt-2 text-sm text-zinc-300">
+          Existing schedules: {schedules.length}
+        </p>
       </section>
       <section className="rounded-xl border border-white/10 bg-dark-surface p-4">
         <h2 className="text-2xl font-semibold">Admin Email Access</h2>
         <p className="mt-2 text-sm text-zinc-300">
-          Current ADMIN_EMAILS: {(process.env.ADMIN_EMAILS ?? "admin@oravagems.com").split(",").join(", ")}
+          Current ADMIN_EMAILS:{" "}
+          {(process.env.ADMIN_EMAILS ?? "").split(",").join(", ")}
         </p>
       </section>
       <section className="rounded-xl border border-white/10 bg-dark-surface p-4">
         <h2 className="text-2xl font-semibold">Low Availability Alerts</h2>
-        <p className="mt-2 text-sm text-zinc-300">Configure product lot threshold alerts and notification toggles via admin reporting policies.</p>
+        <p className="mt-2 text-sm text-zinc-300">
+          Configure product lot threshold alerts and notification toggles via
+          admin reporting policies.
+        </p>
       </section>
     </div>
   );
 }
-

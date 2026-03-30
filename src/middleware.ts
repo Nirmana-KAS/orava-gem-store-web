@@ -13,7 +13,13 @@ export default function middleware(req: NextRequest) {
     pathname.startsWith("/admin") || pathname.startsWith("/profile");
 
   if (isProtectedRoute && !hasSessionCookie(req)) {
-    return NextResponse.redirect(new URL("/signin", req.url));
+    const envBaseUrl = process.env.NEXTAUTH_URL;
+    const requestOrigin = req.nextUrl.origin;
+    const baseUrl =
+      envBaseUrl && envBaseUrl.startsWith("http") ? envBaseUrl : requestOrigin;
+    const signInUrl = new URL("/signin", baseUrl);
+    signInUrl.searchParams.set("callbackUrl", `${requestOrigin}${pathname}`);
+    return NextResponse.redirect(signInUrl);
   }
 
   return NextResponse.next();

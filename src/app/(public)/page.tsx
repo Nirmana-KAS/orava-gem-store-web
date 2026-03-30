@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import CTASection from "@/components/home/CTASection";
-import CertificationsStrip from "@/components/home/CertificationsStrip";
+import { CertificationsLogos } from "@/components/home/CertificationsLogos";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import GemstoneHighlights from "@/components/home/GemstoneHighlights";
 import HeroSection from "@/components/home/HeroSection";
+import { MarqueeTicker } from "@/components/home/MarqueeTicker";
 import OurProcess from "@/components/home/OurProcess";
 import OurCapabilities from "@/components/home/OurCapabilities";
-import TrustBadges from "@/components/home/TrustBadges";
 import WhyOrava from "@/components/home/WhyOrava";
 
 export const metadata: Metadata = {
@@ -19,14 +19,14 @@ export default function HomePage() {
   return (
     <main>
       <HeroSection />
-      <TrustBadges />
+      <MarqueeTicker />
       <FeaturedProducts />
       <GemstoneHighlights />
       <OurCapabilities />
       <WhyOrava />
       <OurProcess />
       <CTASection />
-      <CertificationsStrip />
+      <CertificationsLogos />
     </main>
   );
 }
