@@ -6,7 +6,7 @@ import Image from "next/image";
 import { TracingBeam } from "@/components/ui/aceternity/TracingBeam";
 
 const TEAM_PHOTO_URL =
-  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774602959/Team2_thnyrz.png";
+  "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774928473/Team2_thnyrz.png";
 
 const points = [
   {
