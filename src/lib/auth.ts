@@ -6,7 +6,6 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rateLimit";
-import { sendSignInGreetingEmail } from "@/lib/resend";
 import { signInSchema } from "@/lib/validations";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -93,34 +92,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         user.firstName = dbUser.firstName;
         user.lastName = dbUser.lastName;
         user.role = dbUser.role;
-      }
 
-      let dbUser = await prisma.user.findUnique({ where: { email } });
-      if (!dbUser) return true;
-
-      if (account?.provider === "google" && !dbUser.firstName) {
-        const nameParts = (user.name ?? "").trim().split(" ").filter(Boolean);
-        const firstName = nameParts[0] || "User";
-        const lastName = nameParts.slice(1).join(" ");
-        dbUser = await prisma.user.update({
-          where: { id: dbUser.id },
-          data: { firstName, lastName },
+        await prisma.inquiry.updateMany({
+          where: { guestEmail: dbUser.email, userId: null },
+          data: { userId: dbUser.id, guestEmail: null },
         });
+        await prisma.meeting.updateMany({
+          where: { guestEmail: dbUser.email, userId: null },
+          data: { userId: dbUser.id, guestEmail: null },
+        });
+      } else {
+        const dbUser = await prisma.user.findUnique({ where: { email } });
+        if (dbUser) {
+          user.id = dbUser.id;
+          user.firstName = dbUser.firstName;
+          user.lastName = dbUser.lastName;
+          user.role = dbUser.role;
+          await prisma.inquiry.updateMany({
+            where: { guestEmail: dbUser.email, userId: null },
+            data: { userId: dbUser.id, guestEmail: null },
+          });
+          await prisma.meeting.updateMany({
+            where: { guestEmail: dbUser.email, userId: null },
+            data: { userId: dbUser.id, guestEmail: null },
+          });
+        }
       }
 
-      user.id = dbUser.id;
-      user.firstName = dbUser.firstName;
-      user.lastName = dbUser.lastName;
-      user.role = dbUser.role;
-      await prisma.inquiry.updateMany({
-        where: { guestEmail: dbUser.email, userId: null },
-        data: { userId: dbUser.id, guestEmail: null },
-      });
-      await prisma.meeting.updateMany({
-        where: { guestEmail: dbUser.email, userId: null },
-        data: { userId: dbUser.id, guestEmail: null },
-      });
-      void sendSignInGreetingEmail(dbUser.email, dbUser.firstName);
       return true;
     },
     async jwt({ token, user }) {

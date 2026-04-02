@@ -37,7 +37,7 @@ interface SearchProduct {
   colorHex?: string;
 }
 
-export function Navbar() {
+export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -411,4 +411,4 @@ export function Navbar() {
   );
 }
 
-export default Navbar;
+

@@ -19,10 +19,6 @@
 }
 
 * {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   box-sizing: border-box;
 }
 
@@ -70,19 +66,7 @@ h6 {
   font-family: "Cormorant Garamond", serif;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
 
-::-webkit-scrollbar-thumb {
-  background: #bcc6d1;
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9ba8b5;
-}
 
 ::selection {
   background: #3c74ae;
@@ -102,15 +86,7 @@ h6 {
   border-radius: 3px;
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
 
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
 /* Smooth image transitions */
 .hero-image-transition {

@@ -11,6 +11,15 @@ const config: Config = {
           "blue-light": "#e8f0f9",
           ash: "#8f8b8f",
         },
+        dark: {
+          DEFAULT: "#0A0A0A",
+          surface: "#111111",
+          elevated: "#1a1a2a",
+        },
+        gold: {
+          DEFAULT: "#C9A84C",
+          light: "#E8C97A",
+        },
         surface: {
           DEFAULT: "#f5f7fa",
           elevated: "#eef1f5",

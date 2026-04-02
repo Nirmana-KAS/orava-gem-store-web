@@ -3,16 +3,13 @@ import { NextRequest } from "next/server";
 import { fail, ok } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/lib/resend";
-import { signUpSchemaBase } from "@/lib/validations";
+import { signUpSchema } from "@/lib/validations";
 
-const registerSchema = signUpSchemaBase.extend({
-  confirmPassword: signUpSchemaBase.shape.confirmPassword,
-});
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     const payload = await request.json();
-    const parsed = registerSchema.safeParse(payload);
+    const parsed = signUpSchema.safeParse(payload);
     if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Invalid payload", 400);
     const exists = await prisma.user.findUnique({ where: { email: parsed.data.email } });
     if (exists) return fail("Email already exists", 400);

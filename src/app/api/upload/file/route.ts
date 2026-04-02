@@ -14,7 +14,8 @@ const allowed = new Set([
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {
-    await auth();
+    const session = await auth();
+    if (!session?.user) return fail("Unauthorized", 401);
     const formData = await request.formData();
     const file = formData.get("file");
     if (!(file instanceof File)) return fail("File is required", 400);

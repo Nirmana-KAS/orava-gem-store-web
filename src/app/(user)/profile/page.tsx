@@ -46,20 +46,20 @@ export default async function ProfilePage() {
           {user.inquiries.map((inquiry: (typeof user.inquiries)[number]) => (
             <div
               key={inquiry.id}
-              className="rounded-md border border-white/10 p-3"
+              className="rounded-md border border-[#dde2e8] p-3"
             >
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>{inquiry.inquiryType}</Badge>
                 <Badge>{inquiry.status}</Badge>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-[#8f8b8f]">
                   {formatDateTime(inquiry.createdAt)}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-zinc-300">
+              <p className="mt-2 text-sm text-[#4a4a6a]">
                 {inquiry.description ?? "No description"}
               </p>
               {inquiry.adminReply ? (
-                <p className="mt-2 text-sm text-gold">
+                <p className="mt-2 text-sm text-brand-blue font-medium">
                   Reply: {inquiry.adminReply}
                 </p>
               ) : null}
@@ -73,20 +73,20 @@ export default async function ProfilePage() {
           {user.meetings.map((meeting: (typeof user.meetings)[number]) => (
             <div
               key={meeting.id}
-              className="rounded-md border border-white/10 p-3"
+              className="rounded-md border border-[#dde2e8] p-3"
             >
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>{meeting.meetingType}</Badge>
                 <Badge>{meeting.status}</Badge>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-[#8f8b8f]">
                   {formatDateTime(meeting.createdAt)}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-zinc-300">
+              <p className="mt-2 text-sm text-[#4a4a6a]">
                 {meeting.description ?? "No description"}
               </p>
               {meeting.adminReply ? (
-                <p className="mt-2 text-sm text-gold">
+                <p className="mt-2 text-sm text-brand-blue font-medium">
                   Reply: {meeting.adminReply}
                 </p>
               ) : null}

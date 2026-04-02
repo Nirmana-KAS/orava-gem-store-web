@@ -77,14 +77,18 @@ export async function DELETE(
     });
     if (!existing) return fail("Product not found", 404);
     await Promise.all(
-      existing.images.map(async (url) => {
+      existing.images.map(async (url: string) => {
         try {
-          const segments = new URL(url).pathname.split("/");
-          const filename = segments
-            .slice(-2)
-            .join("/")
-            .replace(/\.[a-z]+$/i, "");
-          await deleteImage(filename);
+          const pathname = new URL(url).pathname;
+          const uploadIdx = pathname.indexOf("/upload/");
+          if (uploadIdx === -1) return;
+          // After /upload/ there may be a version like v1234567890/
+          let publicId = pathname.slice(uploadIdx + "/upload/".length);
+          // Remove version prefix if present (e.g., v1234567890/)
+          publicId = publicId.replace(/^v\d+\//, "");
+          // Remove file extension
+          publicId = publicId.replace(/\.[a-z]+$/i, "");
+          await deleteImage(publicId);
         } catch (error) {
           console.error("Cloudinary cleanup warning:", error);
         }

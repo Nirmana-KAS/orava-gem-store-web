@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, ShieldCheck } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 
@@ -17,9 +17,14 @@ export default function PasskeyGate({ onVerified }: PasskeyGateProps) {
   const [attempts, setAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
 
-  const lockoutSeconds = useMemo(() => {
-    if (!lockoutUntil) return 0;
-    return Math.max(0, Math.ceil((lockoutUntil - Date.now()) / 1000));
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+
+  useEffect(() => {
+    if (!lockoutUntil) { setLockoutSeconds(0); return; }
+    const tick = () => setLockoutSeconds(Math.max(0, Math.ceil((lockoutUntil - Date.now()) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
   }, [lockoutUntil]);
 
   const handleVerify = async () => {
