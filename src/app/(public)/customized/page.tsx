@@ -55,13 +55,7 @@ export default function CustomizedPage() {
             key={i}
             className="relative h-44 overflow-hidden rounded-xl border border-[#dde2e8]"
           >
-            <Image
-              src={`https://res.cloudinary.com/demo/image/upload/sample.jpg?i=${i}`}
-              alt="Custom gem sample"
-              fill
-              className="object-cover"
-              sizes="(max-width:768px) 50vw, 33vw"
-            />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#c9d9ec] via-[#f5f7fa] to-[#dbe3f2]" />
           </div>
         ))}
       </section>
