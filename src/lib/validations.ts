@@ -9,13 +9,18 @@ export const signUpSchemaBase = z.object({
   email: emailSchema,
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string().min(8),
-  terms: z.literal(true, { errorMap: () => ({ message: "Terms must be accepted" }) }),
+  terms: z.literal(true, {
+    errorMap: () => ({ message: "Terms must be accepted" }),
+  }),
 });
 
-export const signUpSchema = signUpSchemaBase.refine((data) => data.password === data.confirmPassword, {
-  path: ["confirmPassword"],
-  message: "Passwords do not match",
-});
+export const signUpSchema = signUpSchemaBase.refine(
+  (data) => data.password === data.confirmPassword,
+  {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  },
+);
 
 export const inquirySchemaBase = z.object({
   inquiryType: z.nativeEnum(InquiryType),
@@ -26,8 +31,14 @@ export const inquirySchemaBase = z.object({
   attachmentName: z.string().max(255).optional(),
 });
 
-const productInquiryRule = (val: z.infer<typeof inquirySchemaBase>, ctx: z.RefinementCtx): void => {
-  if (val.inquiryType === InquiryType.PRODUCT && (!val.productIds || val.productIds.length === 0)) {
+const productInquiryRule = (
+  val: z.infer<typeof inquirySchemaBase>,
+  ctx: z.RefinementCtx,
+): void => {
+  if (
+    val.inquiryType === InquiryType.PRODUCT &&
+    (!val.productIds || val.productIds.length === 0)
+  ) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["productIds"],
@@ -42,7 +53,8 @@ export const inquiryGuestSchemaBase = inquirySchemaBase.extend({
   guestEmail: emailSchema,
 });
 
-export const inquiryGuestSchema = inquiryGuestSchemaBase.superRefine(productInquiryRule);
+export const inquiryGuestSchema =
+  inquiryGuestSchemaBase.superRefine(productInquiryRule);
 
 export const meetingSchemaBase = z.object({
   meetingType: z.nativeEnum(MeetingType),
@@ -93,7 +105,6 @@ export const productSchemaBase = z.object({
   size: z.string().min(1).max(50),
   colorName: z.string().min(2).max(50),
   colorHex: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/),
-  polishedType: z.string().min(2).max(50),
   clarityType: z.string().min(2).max(50),
   weight: z.number().positive(),
   condition: z.nativeEnum(Condition),
@@ -118,4 +129,3 @@ export const paginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(12),
 });
-

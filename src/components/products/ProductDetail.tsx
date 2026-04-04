@@ -18,7 +18,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         Color: <ColorSwatch hex={product.colorHex} label={product.colorName} />
       </p>
       <p>Clarity: {product.clarityType}</p>
-      <p>Polish Type: {product.polishedType}</p>
       <p>
         Condition: <Badge>{product.condition}</Badge>
       </p>

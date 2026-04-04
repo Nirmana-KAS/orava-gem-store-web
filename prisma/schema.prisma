@@ -72,7 +72,7 @@ model Product {
   size             String
   colorName        String
   colorHex         String
-  polishedType     String
+  
   clarityType      String
   weight           Float
   condition        Condition

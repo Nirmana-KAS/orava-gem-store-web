@@ -25,7 +25,6 @@ const querySchema = z.object({
   colorName: z.string().optional(),
   origin: z.union([z.string(), z.array(z.string())]).optional(),
   clarityType: z.union([z.string(), z.array(z.string())]).optional(),
-  polishedType: z.union([z.string(), z.array(z.string())]).optional(),
   condition: z
     .union([z.nativeEnum(Condition), z.array(z.nativeEnum(Condition))])
     .optional(),
@@ -73,8 +72,6 @@ export async function GET(request: NextRequest): Promise<Response> {
         ? request.nextUrl.searchParams.getAll("origin")
         : (request.nextUrl.searchParams.get("origin") ?? undefined),
       clarityType: request.nextUrl.searchParams.get("clarityType") ?? undefined,
-      polishedType:
-        request.nextUrl.searchParams.get("polishedType") ?? undefined,
       condition: request.nextUrl.searchParams.getAll("condition").length
         ? request.nextUrl.searchParams.getAll("condition")
         : (request.nextUrl.searchParams.get("condition") ?? undefined),
@@ -115,7 +112,6 @@ export async function GET(request: NextRequest): Promise<Response> {
     const originValues = toArray(filters.origin);
     const conditionValues = toConditionArray(filters.condition);
     const clarityValues = toArray(filters.clarityType);
-    const polishedValues = toArray(filters.polishedType);
 
     const createdAtFilter: Prisma.DateTimeFilter | undefined =
       createdFrom || createdTo
@@ -177,11 +173,6 @@ export async function GET(request: NextRequest): Promise<Response> {
         ? clarityValues.length
           ? { in: clarityValues }
           : { contains: filters.clarityType as string, mode: "insensitive" }
-        : undefined,
-      polishedType: filters.polishedType
-        ? polishedValues.length
-          ? { in: polishedValues }
-          : { contains: filters.polishedType as string, mode: "insensitive" }
         : undefined,
       condition: conditionValues.length ? { in: conditionValues } : undefined,
       availability: availabilityFilter,

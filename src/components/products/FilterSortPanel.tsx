@@ -11,7 +11,6 @@ interface FilterState {
   shape: string;
   colorName: string;
   size: string;
-  polishedType: string;
   clarityType: string;
   condition: string;
   availability: string;
@@ -50,7 +49,6 @@ export function FilterSortPanel({
       shape: "",
       colorName: "",
       size: "",
-      polishedType: "",
       clarityType: "",
       condition: "",
       availability: "all",
@@ -115,15 +113,6 @@ export function FilterSortPanel({
         value={filters.size}
         onChange={(val) => updateFilter("size", val)}
         placeholder="All Sizes"
-        showAllOption
-        readOnly
-      />
-      <SmartDropdown
-        fieldType="polishedType"
-        label="Polish Type"
-        value={filters.polishedType}
-        onChange={(val) => updateFilter("polishedType", val)}
-        placeholder="All Polish Types"
         showAllOption
         readOnly
       />
@@ -291,17 +280,6 @@ export function FilterSortPanel({
                 value={filters.size}
                 onChange={(val) => updateFilter("size", val)}
                 placeholder="Size"
-                showAllOption
-                readOnly
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="polishedType"
-                label=""
-                value={filters.polishedType}
-                onChange={(val) => updateFilter("polishedType", val)}
-                placeholder="Polish Type"
                 showAllOption
                 readOnly
               />

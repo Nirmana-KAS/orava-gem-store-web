@@ -60,7 +60,6 @@ interface ProductQueryState {
   availability: "all" | "true" | "false";
   weightMin: string;
   weightMax: string;
-  polishedType: string;
   clarityType: string;
   createdFrom: string;
   createdTo: string;
@@ -83,7 +82,7 @@ const defaultQuery: ProductQueryState = {
   availability: "all",
   weightMin: "",
   weightMax: "",
-  polishedType: "",
+
   clarityType: "",
   createdFrom: "",
   createdTo: "",
@@ -134,8 +133,6 @@ export default function AdminProductsPage() {
       params.set("availability", current.availability);
     if (current.weightMin) params.set("weightMin", current.weightMin);
     if (current.weightMax) params.set("weightMax", current.weightMax);
-    if (current.polishedType.trim())
-      params.set("polishedType", current.polishedType.trim());
     if (current.clarityType.trim())
       params.set("clarityType", current.clarityType.trim());
     if (current.createdFrom) params.set("createdFrom", current.createdFrom);
@@ -421,17 +418,6 @@ export default function AdminProductsPage() {
             onChange={(e) =>
               setQuery((prev) => ({ ...prev, updatedTo: e.target.value }))
             }
-          />
-          <SmartDropdown
-            fieldType="polishedType"
-            label="Polish Type"
-            value={query.polishedType}
-            onChange={(val) =>
-              setQuery((prev) => ({ ...prev, polishedType: val }))
-            }
-            placeholder="All Polish Types"
-            showAllOption
-            allOptionLabel="All Polish Types"
           />
           <SmartDropdown
             fieldType="clarityType"

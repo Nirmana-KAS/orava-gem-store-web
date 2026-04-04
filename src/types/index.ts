@@ -45,7 +45,6 @@ export interface FilterOptions {
   colorName?: string | string[];
   origin?: string[];
   clarityType?: string[];
-  polishedType?: string[];
   condition?: Condition[];
   availability?: boolean;
 }
@@ -100,4 +99,3 @@ export interface AuthUserBase {
   firstName: string;
   lastName: string;
 }
-

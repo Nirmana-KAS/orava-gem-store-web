@@ -22,7 +22,6 @@ interface FilterState {
   shape: string;
   colorName: string;
   size: string;
-  polishedType: string;
   clarityType: string;
   condition: string;
   availability: string;
@@ -58,7 +57,6 @@ export default function ProductsPage() {
     shape: "",
     colorName: "",
     size: "",
-    polishedType: "",
     clarityType: "",
     condition: "",
     availability: "all",
@@ -79,8 +77,6 @@ export default function ProductsPage() {
       if (filters.shape) params.set("shape", filters.shape);
       if (filters.colorName) params.set("colorName", filters.colorName);
       if (filters.size) params.set("size", filters.size);
-      if (filters.polishedType)
-        params.set("polishedType", filters.polishedType);
       if (filters.clarityType) params.set("clarityType", filters.clarityType);
       if (filters.condition) params.set("condition", filters.condition);
       if (filters.availability !== "all")

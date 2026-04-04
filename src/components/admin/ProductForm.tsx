@@ -60,7 +60,6 @@ export default function ProductForm({
         size: "",
         colorName: "",
         colorHex: "#C9A84C",
-        polishedType: "",
         clarityType: "",
         weight: 0,
         condition: Condition.NATURAL,
@@ -83,7 +82,6 @@ export default function ProductForm({
           size: "",
           colorName: "",
           colorHex: "#C9A84C",
-          polishedType: "",
           clarityType: "",
           weight: 0,
           condition: Condition.NATURAL,
@@ -369,19 +367,6 @@ export default function ProductForm({
             required
           />
           <Input type="color" {...register("colorHex")} />
-          <SmartDropdown
-            fieldType="polishedType"
-            label="Polish Type"
-            value={watch("polishedType")}
-            onChange={(val) =>
-              setValue("polishedType", val, {
-                shouldDirty: true,
-                shouldValidate: true,
-              })
-            }
-            placeholder="Select polish type..."
-            required
-          />
           <SmartDropdown
             fieldType="clarityType"
             label="Clarity Type"
