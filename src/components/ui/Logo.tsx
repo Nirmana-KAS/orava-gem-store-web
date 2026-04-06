@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { buildCloudinaryUrlFromPath } from "@/lib/cloudinary-url";
 
 interface LogoProps {
   variant?: "full" | "icon";
@@ -26,7 +27,7 @@ export function Logo({
     <Link href="/" className={cn("flex items-center gap-2", className)}>
       {!failed ? (
         <Image
-          src="https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436994/Orava_Logo_oyar7b.png"
+          src={buildCloudinaryUrlFromPath("v1774436994/Orava_Logo_oyar7b.png")}
           alt="ORAVA Gems"
           width={width ?? (variant === "icon" ? 40 : 140)}
           height={height}

@@ -3,26 +3,37 @@
 import { motion } from "framer-motion";
 import { Award } from "lucide-react";
 import Image from "next/image";
+import { buildCloudinaryUrlFromPath } from "@/lib/cloudinary-url";
 
 const CERTIFICATION_LOGOS = [
   {
-    src: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774876145/1-GIA-CQTS-HomePage_gywewc.png",
+    src: buildCloudinaryUrlFromPath(
+      "v1774876145/1-GIA-CQTS-HomePage_gywewc.png",
+    ),
     alt: "Certification 1",
   },
   {
-    src: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774876145/2-ICA-CQTS-HomePage_j1kaqv.png",
+    src: buildCloudinaryUrlFromPath(
+      "v1774876145/2-ICA-CQTS-HomePage_j1kaqv.png",
+    ),
     alt: "Certification 2",
   },
   {
-    src: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774876148/3-SLEDB-CQTS-HomePage_xqlktw.png",
+    src: buildCloudinaryUrlFromPath(
+      "v1774876148/3-SLEDB-CQTS-HomePage_xqlktw.png",
+    ),
     alt: "Certification 3",
   },
   {
-    src: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774876151/4-NGJA-CQTS-HomePage_cdkadk.png",
+    src: buildCloudinaryUrlFromPath(
+      "v1774876151/4-NGJA-CQTS-HomePage_cdkadk.png",
+    ),
     alt: "Certification 4",
   },
   {
-    src: "https://res.cloudinary.com/dzie1rnt3/image/upload/v1774876149/4-SLGJA-CQTS-HomePage_ngm4gi.png",
+    src: buildCloudinaryUrlFromPath(
+      "v1774876149/4-SLGJA-CQTS-HomePage_ngm4gi.png",
+    ),
     alt: "Certification 5",
   },
 ];

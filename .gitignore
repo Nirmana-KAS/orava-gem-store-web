@@ -4,11 +4,27 @@ out
 dist
 .env
 .env.local
+.env.production
 .env.*.local
+
+# Temp files
+tmp/
+*.txt
+!README.md
+prisma-push-output.txt
+tsc-output.txt
+
+# Generated files
+public/sitemap*.xml
+
+# Logs
 coverage
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 *.tsbuildinfo
+
+# Example env files (should not be committed)
+*.example
 

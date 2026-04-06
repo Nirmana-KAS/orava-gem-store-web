@@ -30,14 +30,16 @@ export default function ContactPage() {
             Lanka
           </p>
           <p className="flex items-center gap-3 text-[#4a4a6a]">
-            <Phone className="text-brand-blue" size={18} /> +94 [Your Phone Number]
+            <Phone className="text-brand-blue" size={18} /> +94 11 257 4062
           </p>
           <p className="flex items-center gap-3 text-[#4a4a6a]">
-            <Mail className="text-brand-blue" size={18} /> admin@oravagems.com
+            <Mail className="text-brand-blue" size={18} /> info@oravagems.com
           </p>
           <Link
-            href="https://linkedin.com/company/orava-gems"
+            href="https://www.linkedin.com/company/orava-private-limited/"
             className="text-brand-blue underline"
+            target="_blank"
+            rel="noreferrer"
           >
             LinkedIn Profile
           </Link>
