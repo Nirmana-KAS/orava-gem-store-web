@@ -26,7 +26,7 @@ export function Logo({
     <Link href="/" className={cn("flex items-center gap-2", className)}>
       {!failed ? (
         <Image
-          src="https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436994/Orava_Logo_oyar7b.png"
+          src="https://res.cloudinary.com/dafsnkkux/image/upload/v1776302247/orava-logo_ft6zps.png"
           alt="ORAVA Gems"
           width={width ?? (variant === "icon" ? 40 : 140)}
           height={height}
