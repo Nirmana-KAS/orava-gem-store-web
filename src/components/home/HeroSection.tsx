@@ -442,10 +442,7 @@ export default function HeroSection() {
             <motion.div
               key={`content-${slide.id}`}
               className="flex flex-col items-center gap-5 sm:gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              exit={{ opacity: 0, transition: { duration: 0.3 } }}
             >
               {/* Badge */}
               <motion.div
