@@ -3,12 +3,10 @@
 import { motion } from "framer-motion";
 import { Award, Calendar, Eye, Package, Scissors } from "lucide-react";
 import Image from "next/image";
-import { buildCloudinaryUrlFromPath } from "@/lib/cloudinary-url";
 import { TracingBeam } from "@/components/ui/aceternity/TracingBeam";
 
-const TEAM_PHOTO_URL = buildCloudinaryUrlFromPath(
-  "https://res.cloudinary.com/dafsnkkux/image/upload/v1776674347/Team-WCO_mydns4.png",
-);
+const TEAM_PHOTO_URL =
+  "https://res.cloudinary.com/dafsnkkux/image/upload/v1776674347/Team-WCO_mydns4.png";
 
 const points = [
   {

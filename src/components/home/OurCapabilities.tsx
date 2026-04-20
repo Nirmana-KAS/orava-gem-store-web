@@ -3,26 +3,25 @@
 import { motion } from "framer-motion";
 import { Award, CheckCircle, Gem, Watch } from "lucide-react";
 import Link from "next/link";
-import { buildCloudinaryUrlFromPath } from "@/lib/cloudinary-url";
 import { AutoImageSlider } from "@/components/ui/AutoImageSlider";
 
 export default function OurCapabilities() {
   const watchGemImages = [
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670614/01-CGC-PCB_i1fxak.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670621/02-CGC-PCB_stuaau.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670621/03-CGC-PCB_k4ukgb.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670570/04-CGC-PCB_k13hlr.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670609/05-CGC-PCB_aza3p8.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670575/06-CGC-PCB_lavzu0.png"),
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670614/01-CGC-PCB_i1fxak.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670621/02-CGC-PCB_stuaau.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670621/03-CGC-PCB_k4ukgb.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670570/04-CGC-PCB_k13hlr.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670609/05-CGC-PCB_aza3p8.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670575/06-CGC-PCB_lavzu0.png",
   ];
 
   const jewelryGemImages = [
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670768/01-BGM-PCB_lpovnf.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670764/02-BGM-PCB_gonmef.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670760/03-BGM-PCB_eysptd.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670749/04-BGM-PCB_qkorcj.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670770/05-BGM-PCB_fio3ub.png"),
-    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670783/06-BGM-PCB_sp6zhs.png"),
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670768/01-BGM-PCB_lpovnf.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670764/02-BGM-PCB_gonmef.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670760/03-BGM-PCB_eysptd.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670749/04-BGM-PCB_qkorcj.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670770/05-BGM-PCB_fio3ub.png",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670783/06-BGM-PCB_sp6zhs.png",
   ];
 
   return (

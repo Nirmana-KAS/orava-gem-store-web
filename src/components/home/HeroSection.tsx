@@ -4,15 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import { buildCloudinaryUrlFromPath } from "@/lib/cloudinary-url";
 
 // ─── SLIDE DATA ───────────────────────────────────────────
 const SLIDES = [
   {
     id: 1,
-    image: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663773/01-HS_fpkhwg.png",
-    ),
+    image: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663773/01-HS_fpkhwg.png",
     bigTitle: "Beauty Crafted To An Exemplary Standard",
     smallText:
       "Precision-cut coloured gemstones on demand for the world's most discerning luxury watch and jewellery brands. Founded in Colombo, Sri Lanka, 2006.",
@@ -23,9 +20,7 @@ const SLIDES = [
   },
   {
     id: 2,
-    image: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663753/02-HS_bn8zh4.png",
-    ),
+    image: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663753/02-HS_bn8zh4.png",
     bigTitle: "Every Stone, A Masterpiece of Precision",
     smallText:
       "From Ceylon sapphires to Burmese rubies and Colombian emeralds — sourced, cut and calibrated to your exact specifications, every single time.",
@@ -36,9 +31,7 @@ const SLIDES = [
   },
   {
     id: 3,
-    image: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663749/03-HS_zut9mb.png",
-    ),
+    image: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663749/03-HS_zut9mb.png",
     bigTitle: "Any Shape. Any Design. Any Size.",
     smallText:
       "Ultra-precision cutting from 0.5mm to 10mm. Custom diagrams, calibrated sets and bespoke designs crafted for your unique production requirements.",
@@ -49,9 +42,7 @@ const SLIDES = [
   },
   {
     id: 4,
-    image: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663744/04-HS_bgwlxa.png",
-    ),
+    image: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663744/04-HS_bgwlxa.png",
     bigTitle: "Perfection Measured To The Micron",
     smallText:
       "Computer Vision technology and precision measuring equipment ensure every stone meets the highest international quality standards before leaving our facility.",
@@ -62,9 +53,7 @@ const SLIDES = [
   },
   {
     id: 5,
-    image: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663750/05-HS_wpgca1.png",
-    ),
+    image: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663750/05-HS_wpgca1.png",
     bigTitle: "Your Vision, Cut To Perfection",
     smallText:
       "From ultra-small 0.5mm precision cuts to large bespoke designs — ORAVA transforms your creative vision into flawless gemstones for the world\'s finest watch and jewellery collections.",
@@ -75,9 +64,7 @@ const SLIDES = [
   },
   {
     id: 6,
-    image: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663744/06-HS_qlfzvg.png",
-    ),
+    image: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663744/06-HS_qlfzvg.png",
     bigTitle: "Two Decades Of Gemstone Excellence",
     smallText:
       "Since 2006, ORAVA (Pvt) Ltd. has served the intricate needs of fine jewellery and luxury watch sectors with an unwavering commitment to quality and integrity.",

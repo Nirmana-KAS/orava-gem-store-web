@@ -1,7 +1,8 @@
 /** @type {import('next-sitemap').IConfig} */
 const siteUrl =
-  process.env.NEXTAUTH_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+  process.env.SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ??
+  process.env.NEXTAUTH_URL;
 
 if (!siteUrl) {
   throw new Error(

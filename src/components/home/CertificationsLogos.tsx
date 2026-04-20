@@ -3,37 +3,26 @@
 import { motion } from "framer-motion";
 import { Award } from "lucide-react";
 import Image from "next/image";
-import { buildCloudinaryUrlFromPath } from "@/lib/cloudinary-url";
 
 const CERTIFICATION_LOGOS = [
   {
-    src: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/01-GIA-CQTS_jb0kld.png",
-    ),
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/01-GIA-CQTS_jb0kld.png",
     alt: "Certification 1",
   },
   {
-    src: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/02-ICA-CQTS_jdmajv.png",
-    ),
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/02-ICA-CQTS_jdmajv.png",
     alt: "Certification 2",
   },
   {
-    src: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/03-SLEDB-CQTS_ntxycj.png",
-    ),
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/03-SLEDB-CQTS_ntxycj.png",
     alt: "Certification 3",
   },
   {
-    src: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/04-SLGJA-CQTS_bvpymm.png",
-    ),
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/04-SLGJA-CQTS_bvpymm.png",
     alt: "Certification 4",
   },
   {
-    src: buildCloudinaryUrlFromPath(
-      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671037/05-NGJA-CQTS_bptjpk.png",
-    ),
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671037/05-NGJA-CQTS_bptjpk.png",
     alt: "Certification 5",
   },
 ];
