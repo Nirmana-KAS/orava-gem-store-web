@@ -56,12 +56,6 @@ export default function Footer() {
                 </Link>
                 <Link
                   className="py-1 text-sm text-[#4a4a6a] transition-colors hover:text-[#3c74ae]"
-                  href="/customized"
-                >
-                  Customized
-                </Link>
-                <Link
-                  className="py-1 text-sm text-[#4a4a6a] transition-colors hover:text-[#3c74ae]"
                   href="/about"
                 >
                   About

@@ -35,7 +35,7 @@ const SLIDES = [
     bigTitle: "Any Shape. Any Design. Any Size.",
     smallText:
       "Ultra-precision cutting from 0.5mm to 10mm. Custom diagrams, calibrated sets and bespoke designs crafted for your unique production requirements.",
-    cta1: { label: "Custom Orders", href: "/customized" },
+    cta1: { label: "Custom Orders", href: "/quotation?type=CUSTOMIZED" },
     cta2: { label: "Our Services", href: "/services" },
     animationType: "slideRight",
     overlayOpacity: 0.55,
