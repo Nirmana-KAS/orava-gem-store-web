@@ -6,7 +6,7 @@ import Image from "next/image";
 import { TracingBeam } from "@/components/ui/aceternity/TracingBeam";
 
 const TEAM_PHOTO_URL =
-  "https://res.cloudinary.com/dafsnkkux/image/upload/v1776674347/Team-WCO_mydns4.png";
+  "https://res.cloudinary.com/dafsnkkux/image/upload/v1776684164/Team-WCO_mydns4.png";
 
 const points = [
   {
@@ -96,7 +96,7 @@ export default function WhyOrava() {
               alt="ORAVA team"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
+              className="object-contain"
             />
           </div>
           <p className="font-heading text-xl italic leading-relaxed sm:text-2xl">
