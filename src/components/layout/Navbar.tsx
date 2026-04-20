@@ -121,7 +121,7 @@ export default function Navbar() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex-shrink-0">
-              <Logo height={38} />
+              <Logo height={28} />
             </div>
 
             <div className="hidden items-center gap-1 lg:flex">

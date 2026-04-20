@@ -90,7 +90,7 @@ export default function WhyOrava() {
           transition={{ duration: 0.5 }}
           className="rounded-2xl bg-gradient-to-br from-[#3c74ae] to-[#2d5f96] p-6 text-white shadow-lg sm:p-8"
         >
-          <div className="relative mb-5 h-52 overflow-hidden rounded-xl border border-white/25 sm:h-64">
+          <div className="relative mb-5 aspect-video overflow-hidden rounded-xl border border-white/25">
             <Image
               src={TEAM_PHOTO_URL}
               alt="ORAVA team"

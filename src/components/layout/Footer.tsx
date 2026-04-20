@@ -10,9 +10,9 @@ export default function Footer() {
           <div className="text-center">
             <Logo
               className="justify-center"
-              height={56}
-              width={180}
-              sizes="(max-width: 640px) 160px, 180px"
+              height={40}
+              width={130}
+              sizes="(max-width: 640px) 120px, 130px"
             />
             <p className="mt-2 font-heading text-lg italic text-[#8f8b8f] sm:text-xl">
               Beauty Crafted To An Exemplary Standard

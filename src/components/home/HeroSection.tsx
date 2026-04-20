@@ -272,23 +272,23 @@ function getTextAnimations(type: string) {
     case "wordReveal":
       return {
         badge: {
-          initial: { opacity: 0 },
-          animate: { opacity: 1 },
+          initial: { opacity: 0, y: 20 },
+          animate: { opacity: 1, y: 0 },
           transition: { duration: 1.0, delay: 0.4 },
         },
         title: {
-          initial: { opacity: 0, letterSpacing: "0.3em" },
-          animate: { opacity: 1, letterSpacing: "0.02em" },
-          transition: { duration: 1.2, delay: 0.6 },
+          initial: { opacity: 0, y: 24 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 1.1, delay: 0.6, ease: "easeOut" },
         },
         desc: {
-          initial: { opacity: 0 },
-          animate: { opacity: 1 },
+          initial: { opacity: 0, y: 16 },
+          animate: { opacity: 1, y: 0 },
           transition: { duration: 1.0, delay: 0.9 },
         },
         buttons: {
-          initial: { opacity: 0 },
-          animate: { opacity: 1 },
+          initial: { opacity: 0, y: 12 },
+          animate: { opacity: 1, y: 0 },
           transition: { duration: 0.8, delay: 1.2 },
         },
       };
