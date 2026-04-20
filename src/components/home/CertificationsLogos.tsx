@@ -8,31 +8,31 @@ import { buildCloudinaryUrlFromPath } from "@/lib/cloudinary-url";
 const CERTIFICATION_LOGOS = [
   {
     src: buildCloudinaryUrlFromPath(
-      "v1774876145/1-GIA-CQTS-HomePage_gywewc.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/01-GIA-CQTS_jb0kld.png",
     ),
     alt: "Certification 1",
   },
   {
     src: buildCloudinaryUrlFromPath(
-      "v1774876145/2-ICA-CQTS-HomePage_j1kaqv.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/02-ICA-CQTS_jdmajv.png",
     ),
     alt: "Certification 2",
   },
   {
     src: buildCloudinaryUrlFromPath(
-      "v1774876148/3-SLEDB-CQTS-HomePage_xqlktw.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/03-SLEDB-CQTS_ntxycj.png",
     ),
     alt: "Certification 3",
   },
   {
     src: buildCloudinaryUrlFromPath(
-      "v1774876151/4-NGJA-CQTS-HomePage_cdkadk.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/04-SLGJA-CQTS_bvpymm.png",
     ),
     alt: "Certification 4",
   },
   {
     src: buildCloudinaryUrlFromPath(
-      "v1774876149/4-SLGJA-CQTS-HomePage_ngm4gi.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671037/05-NGJA-CQTS_bptjpk.png",
     ),
     alt: "Certification 5",
   },

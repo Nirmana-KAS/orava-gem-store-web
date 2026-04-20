@@ -17,7 +17,7 @@ interface LogoProps {
 export function Logo({
   variant = "full",
   className,
-  height = 40,
+  height = 32,
   width,
   sizes,
 }: LogoProps) {
@@ -29,7 +29,7 @@ export function Logo({
         <Image
           src="https://res.cloudinary.com/dzie1rnt3/image/upload/v1774436994/Orava_Logo_oyar7b.png"
           alt="ORAVA Gems"
-          width={width ?? (variant === "icon" ? 40 : 140)}
+          width={width ?? (variant === "icon" ? 32 : 112)}
           height={height}
           sizes={
             sizes ??

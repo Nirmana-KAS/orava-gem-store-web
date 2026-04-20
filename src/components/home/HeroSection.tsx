@@ -11,7 +11,7 @@ const SLIDES = [
   {
     id: 1,
     image: buildCloudinaryUrlFromPath(
-      "v1774593697/CWG1-PCC-HomePage_saffrq.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663773/01-HS_fpkhwg.png",
     ),
     bigTitle: "Beauty Crafted To An Exemplary Standard",
     smallText:
@@ -24,7 +24,7 @@ const SLIDES = [
   {
     id: 2,
     image: buildCloudinaryUrlFromPath(
-      "v1774593679/CWG2-PCC-HomePage_ryubht.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663753/02-HS_bn8zh4.png",
     ),
     bigTitle: "Every Stone, A Masterpiece of Precision",
     smallText:
@@ -37,7 +37,7 @@ const SLIDES = [
   {
     id: 3,
     image: buildCloudinaryUrlFromPath(
-      "v1774593689/CWG3-PCC-HomePage_y2gjy8.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663749/03-HS_zut9mb.png",
     ),
     bigTitle: "Any Shape. Any Design. Any Size.",
     smallText:
@@ -50,7 +50,7 @@ const SLIDES = [
   {
     id: 4,
     image: buildCloudinaryUrlFromPath(
-      "v1774593697/CWG4-PCC-HomePage_xicagl.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663744/04-HS_bgwlxa.png",
     ),
     bigTitle: "Perfection Measured To The Micron",
     smallText:
@@ -63,7 +63,7 @@ const SLIDES = [
   {
     id: 5,
     image: buildCloudinaryUrlFromPath(
-      "v1774593696/CWG5-PCC-HomePage_ktacy7.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663750/05-HS_wpgca1.png",
     ),
     bigTitle: "Your Vision, Cut To Perfection",
     smallText:
@@ -76,7 +76,7 @@ const SLIDES = [
   {
     id: 6,
     image: buildCloudinaryUrlFromPath(
-      "v1774593689/CWG6-PCC-HomePage_zwq4bn.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776663744/06-HS_qlfzvg.png",
     ),
     bigTitle: "Two Decades Of Gemstone Excellence",
     smallText:

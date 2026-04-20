@@ -4,7 +4,6 @@ import { CertificationsLogos } from "@/components/home/CertificationsLogos";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import GemstoneHighlights from "@/components/home/GemstoneHighlights";
 import HeroSection from "@/components/home/HeroSection";
-import { MarqueeTicker } from "@/components/home/MarqueeTicker";
 import OurProcess from "@/components/home/OurProcess";
 import OurCapabilities from "@/components/home/OurCapabilities";
 import WhyOrava from "@/components/home/WhyOrava";
@@ -19,7 +18,6 @@ export default function HomePage() {
   return (
     <main>
       <HeroSection />
-      <MarqueeTicker />
       <FeaturedProducts />
       <GemstoneHighlights />
       <OurCapabilities />

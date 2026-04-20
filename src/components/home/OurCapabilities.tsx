@@ -8,21 +8,21 @@ import { AutoImageSlider } from "@/components/ui/AutoImageSlider";
 
 export default function OurCapabilities() {
   const watchGemImages = [
-    buildCloudinaryUrlFromPath("v1774593697/CWG1-PCC-HomePage_saffrq.png"),
-    buildCloudinaryUrlFromPath("v1774593679/CWG2-PCC-HomePage_ryubht.png"),
-    buildCloudinaryUrlFromPath("v1774593689/CWG3-PCC-HomePage_y2gjy8.png"),
-    buildCloudinaryUrlFromPath("v1774593697/CWG4-PCC-HomePage_xicagl.png"),
-    buildCloudinaryUrlFromPath("v1774593696/CWG5-PCC-HomePage_ktacy7.png"),
-    buildCloudinaryUrlFromPath("v1774593689/CWG6-PCC-HomePage_zwq4bn.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670614/01-CGC-PCB_i1fxak.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670621/02-CGC-PCB_stuaau.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670621/03-CGC-PCB_k4ukgb.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670570/04-CGC-PCB_k13hlr.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670609/05-CGC-PCB_aza3p8.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670575/06-CGC-PCB_lavzu0.png"),
   ];
 
   const jewelryGemImages = [
-    buildCloudinaryUrlFromPath("v1774593750/BJS1-PCC-HomePage_mdxrdp.png"),
-    buildCloudinaryUrlFromPath("v1774593756/BJS2-PCC-HomePage_mfl9qn.png"),
-    buildCloudinaryUrlFromPath("v1774877534/BJS3-PCC-HomePage_hu0wsp.png"),
-    buildCloudinaryUrlFromPath("v1774593756/BJS4-PCC-HomePage_g1mzxq.png"),
-    buildCloudinaryUrlFromPath("v1774593747/BJS5-PCC-HomePage_uactnl.png"),
-    buildCloudinaryUrlFromPath("v1774593748/BJS6-PCC-HomePage_brengn.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670768/01-BGM-PCB_lpovnf.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670764/02-BGM-PCB_gonmef.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670760/03-BGM-PCB_eysptd.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670749/04-BGM-PCB_qkorcj.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670770/05-BGM-PCB_fio3ub.png"),
+    buildCloudinaryUrlFromPath("https://res.cloudinary.com/dafsnkkux/image/upload/v1776670783/06-BGM-PCB_sp6zhs.png"),
   ];
 
   return (

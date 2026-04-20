@@ -22,7 +22,7 @@ const gems: GemItem[] = [
     name: "Sapphire",
     origin: "Sri Lanka · Madagascar · Kashmir",
     image: buildCloudinaryUrlFromPath(
-      "v1774560921/Sapphire-GCH-HomePage_e0uevs.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776662955/01-Sapphire-GCH_cyvwqf.png",
     ),
     fallbackGradient: "from-blue-900 to-blue-500",
     cuts: [
@@ -41,7 +41,7 @@ const gems: GemItem[] = [
     name: "Ruby",
     origin: "Burma · Thailand · Africa",
     image: buildCloudinaryUrlFromPath(
-      "v1774560920/Ruby-GCH-HomePage_aoycsi.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776662957/02-Ruby-GCH_k9het9.png",
     ),
     fallbackGradient: "from-red-900 to-red-500",
     cuts: ["Round", "Oval", "Cushion", "Cabochon", "Pear", "Custom"],
@@ -52,7 +52,7 @@ const gems: GemItem[] = [
     name: "Emerald",
     origin: "Colombia · Brazil · Africa",
     image: buildCloudinaryUrlFromPath(
-      "v1774560924/Emerald-GCH-HomePage_qr9cgp.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776662957/02-Emerald-GCH_tdry4c.png",
     ),
     fallbackGradient: "from-green-900 to-green-600",
     cuts: ["Emerald Cut", "Oval", "Cushion", "Pear", "Round", "Custom"],
@@ -63,7 +63,7 @@ const gems: GemItem[] = [
     name: "Semi-Precious",
     origin: "Multiple Origins Worldwide",
     image: buildCloudinaryUrlFromPath(
-      "v1774560921/SemiPrecious-GCH-HomePage_tqnxbt.png",
+      "https://res.cloudinary.com/dafsnkkux/image/upload/v1776662965/04-SemiPrecious-GCH_cbdvxc.png",
     ),
     fallbackGradient: "from-purple-800 to-amber-500",
     cuts: ["All Shapes", "Beads", "Cabochons", "Calibrated", "Custom"],
