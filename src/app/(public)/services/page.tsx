@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
-import {
-  Gem,
-  Gauge,
-  Microscope,
-  Palette,
-  ScanLine,
-  Wrench,
-} from "lucide-react";
+import { Gauge, Gem, Microscope, Palette, Sparkles } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import ScrollReveal from "@/components/ui/ScrollReveal";
@@ -14,22 +8,28 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "CNC, laser cutting, grading, sourcing and custom finishing services.",
+    "Calibration, colour grading, quality assurance and bespoke diagram gemstone cutting services.",
 };
 
+const BANNER_IMAGES = [
+  {
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757753/Gemini_Generated_Image_pwf1zspwf1zspwf1_f5lklm.png",
+    caption: "Precision cutting floor",
+    eyebrow: "Precision Cutting",
+  },
+  {
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757742/Gemini_Generated_Image_s0z1mts0z1mts0z1_tkuqvi.png",
+    caption: "Calibration & inspection",
+    eyebrow: "Calibration",
+  },
+  {
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757779/Gemini_Generated_Image_ie80lqie80lqie80_uthyzq.png",
+    caption: "Bespoke design studio",
+    eyebrow: "Bespoke",
+  },
+];
+
 const services = [
-  {
-    icon: Wrench,
-    title: "CNC Premium Cutting & Finishing",
-    description:
-      "Micro-precision cuts with repeatable geometry for production-grade consistency.",
-  },
-  {
-    icon: ScanLine,
-    title: "Laser Cutting",
-    description:
-      "Laser-guided shaping for tight tolerance and flawless edge behavior.",
-  },
   {
     icon: Gauge,
     title: "Calibration & Measurement",
@@ -49,7 +49,7 @@ const services = [
   },
   {
     icon: Gem,
-    title: "Custom Diagram Cutting",
+    title: "Bespoke Diagrams Gemstones",
     description:
       "Client-specific geometry translated into high-fidelity finished stones.",
   },
@@ -63,6 +63,78 @@ export default function ServicesPage() {
         <p className="mt-3 text-[#4a4a6a]">
           Precision, consistency, and luxury-grade output for global brands.
         </p>
+      </section>
+
+      {/* SERVICES BANNER MOSAIC */}
+      <section aria-labelledby="services-banner-heading" className="space-y-5">
+        <ScrollReveal>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="inline-flex items-center gap-2 text-xs font-semibold text-[#3c74ae]">
+                <Sparkles size={12} /> Craft in Motion
+              </span>
+              <h2
+                id="services-banner-heading"
+                className="mt-1 font-heading text-2xl font-bold text-[#1a1a2e] sm:text-3xl"
+              >
+                Precision, from rough to finished.
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm text-[#8f8b8f]">
+              Every service performed in-house under the same disciplined eye.
+            </p>
+          </div>
+        </ScrollReveal>
+
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:h-[460px] md:grid-cols-3 md:grid-rows-2">
+          {BANNER_IMAGES.map((image, i) => {
+            const isFeature = i === 0;
+            return (
+              <ScrollReveal
+                key={image.src}
+                delay={i * 0.08}
+                className={
+                  isFeature ? "md:col-span-2 md:row-span-2" : "md:col-span-1"
+                }
+              >
+                <figure
+                  className={`group relative h-full overflow-hidden rounded-2xl border border-[#dde2e8] bg-[#f5f7fa] ${
+                    isFeature ? "min-h-[260px]" : "min-h-[200px]"
+                  }`}
+                >
+                  <Image
+                    src={image.src}
+                    alt={image.caption}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes={
+                      isFeature
+                        ? "(max-width: 768px) 100vw, 66vw"
+                        : "(max-width: 768px) 100vw, 33vw"
+                    }
+                    priority={isFeature}
+                  />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1a1a2e]/80 via-[#1a1a2e]/20 to-transparent transition-opacity duration-300 group-hover:from-[#1a1a2e]/85"
+                  />
+                  <figcaption className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#3c74ae] shadow-sm">
+                      {image.eyebrow}
+                    </span>
+                    <p
+                      className={`mt-2 font-heading font-bold text-white drop-shadow-md ${
+                        isFeature ? "text-lg sm:text-2xl" : "text-base sm:text-lg"
+                      }`}
+                    >
+                      {image.caption}
+                    </p>
+                  </figcaption>
+                </figure>
+              </ScrollReveal>
+            );
+          })}
+        </div>
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">
