@@ -101,10 +101,13 @@ export default function Footer() {
                     No. 24, Carlwil Place, Colombo 03, Sri Lanka
                   </span>
                 </p>
-                <p className="flex items-start gap-2">
+                <a
+                  className="flex items-start gap-2 hover:text-[#3c74ae]"
+                  href="tel:+94112575756"
+                >
                   <Phone size={16} className="mt-0.5 text-[#3c74ae]" />
-                  +94 11 257 4062
-                </p>
+                  +94 11 257 5756
+                </a>
                 <a
                   className="flex items-start gap-2 hover:text-[#3c74ae]"
                   href="mailto:info@oravagems.com"
@@ -123,7 +126,7 @@ export default function Footer() {
                 </a>
                 <a
                   className="flex items-start gap-2 hover:text-[#3c74ae]"
-                  href="https://maps.app.goo.gl/SXjNNqZzYhqV8qHR7"
+                  href="https://maps.app.goo.gl/69GvtsP2E5J6aByD9"
                   target="_blank"
                   rel="noreferrer"
                 >
