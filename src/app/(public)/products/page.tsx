@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Gem, Loader2, PackageSearch } from "lucide-react";
-import { CraftQualityShowcase } from "@/components/products/CraftQualityShowcase";
 import { FilterSortPanel } from "@/components/products/FilterSortPanel";
 import { ProductCard } from "@/components/products/ProductCard";
 
@@ -180,18 +179,13 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <CraftQualityShowcase totalCount={totalCount} />
-
       <FilterSortPanel
         filters={filters}
         onFilterChange={handleFilterChange}
         totalCount={totalCount}
       />
 
-      <div
-        id="products-collection-grid"
-        className="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 pb-28 sm:px-6 lg:px-8 md:pb-8"
-      >
+      <div className="mx-auto max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 md:pb-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
             <Loader2 size={32} className="mb-4 animate-spin text-[#3c74ae]" />
