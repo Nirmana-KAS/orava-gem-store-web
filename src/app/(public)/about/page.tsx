@@ -3,12 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   Award,
+  BookOpen,
   Building2,
-  Crown,
-  Globe2,
-  Ruler,
+  ExternalLink,
   ShieldCheck,
   Sparkles,
+  Target,
   Trophy,
 } from "lucide-react";
 import ScrollReveal from "@/components/ui/ScrollReveal";
@@ -25,58 +25,53 @@ export const metadata: Metadata = {
 // touching layout.
 
 const FACILITY_PHOTOS: { src: string; caption: string }[] = [
-  // TODO: Replace with real facility photography (cutting floor, QA lab, office, etc.)
   {
-    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670614/01-CGC-PCB_i1fxak.png",
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757753/Gemini_Generated_Image_pwf1zspwf1zspwf1_f5lklm.png",
     caption: "Precision cutting floor",
   },
   {
-    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670609/05-CGC-PCB_aza3p8.png",
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757742/Gemini_Generated_Image_s0z1mts0z1mts0z1_tkuqvi.png",
     caption: "Calibration & inspection",
   },
   {
-    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670768/01-BGM-PCB_lpovnf.png",
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757779/Gemini_Generated_Image_ie80lqie80lqie80_uthyzq.png",
     caption: "Bespoke design studio",
   },
   {
-    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670764/02-BGM-PCB_gonmef.png",
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757829/Gemini_Generated_Image_wgwnadwgwnadwgwn_zaeam1.png",
     caption: "Quality assurance lab",
   },
   {
-    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776670770/05-BGM-PCB_fio3ub.png",
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757858/Gemini_Generated_Image_za423dza423dza42_mxnut3.png",
     caption: "Finishing & export packing",
   },
 ];
 
-// TODO: Replace placeholder image and details with the real award once shared.
 const AWARD = {
   image:
-    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/03-SLEDB-CQTS_ntxycj.png",
-  title: "Best Gemstone Exporter",
-  awardedBy: "Sri Lanka Export Development Board",
-  year: "2024",
+    "https://res.cloudinary.com/dafsnkkux/image/upload/v1776757177/Orava_Private_Limited_s_ygcq6y.webp",
+  title: "Presidential Export Award Winner 2024/25",
+  awardedBy: "Sri Lanka Export Development Board (SLEDB)",
+  year: "2024/25",
   description:
-    "Recognised for outstanding contribution to Sri Lanka's gem and jewellery export sector — honouring two decades of uncompromising quality, precision craftsmanship, and international partnerships.",
+    "Orava (Private) Limited has been recognised as the recipient of the Gems award at the Presidential Export Awards, organised annually by the Sri Lanka Export Development Board (SLEDB), in recognition of the company's outstanding export performance during the financial year 2024/25.",
+  link: "https://pea.edb.gov.lk/home/company/105/orava-private-limited",
 };
 
-const MISSION_VALUES = [
+const STORY_BLOCKS = [
   {
-    icon: Ruler,
-    title: "Precision",
-    description:
-      "Every stone calibrated to the micron. No compromises — from 0.5 mm calibration cuts to bespoke bench work.",
+    icon: BookOpen,
+    eyebrow: "Our Story",
+    title: "Two decades of precision craftsmanship.",
+    body:
+      "Founded in 2006, Orava (Pvt) Ltd caters to the intricate needs of the fine jewellery and watch sectors, with a mission to exceed the expectations of discerning clients. Orava precision-cuts coloured stones on demand, serving prestigious watch and jewellery brands. This commitment to excellence and integrity defines Orava's esteemed industry presence.",
   },
   {
-    icon: Crown,
-    title: "Heritage",
-    description:
-      "Two decades serving the world's most discerning luxury watch and jewellery brands, on every order.",
-  },
-  {
-    icon: Globe2,
-    title: "Global Reach",
-    description:
-      "A trusted Sri Lankan export partner for fine workshops across four continents.",
+    icon: Target,
+    eyebrow: "Our Mission",
+    title: "Exceeding Expectations.",
+    body:
+      "Orava is dedicated to delivering exceptional quality and service — striving to meet the demands of the most exacting customer, on every single order.",
   },
 ];
 
@@ -85,8 +80,8 @@ const GROWTH_CHAPTERS = [
     range: "2006 — 2011",
     title: "Founding",
     description:
-      "ORAVA is founded in Colombo, Sri Lanka — built on a simple promise: deliver precision-cut coloured gemstones to an exemplary standard.",
-    achievements: ["Founded in Colombo", "First export shipments"],
+      "ORAVA is founded in Sri Lanka — built on a simple promise: deliver precision-cut coloured gemstones to an exemplary standard.",
+    achievements: ["Sri Lankan foundation", "First export shipments"],
   },
   {
     range: "2012 — 2017",
@@ -112,46 +107,27 @@ const GROWTH_CHAPTERS = [
   },
 ];
 
-const CERT_GROUPS = [
+const CERTIFICATIONS = [
   {
-    title: "International Certifications",
-    caption: "Recognised by leading global gemmological bodies.",
-    logos: [
-      {
-        src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/01-GIA-CQTS_jb0kld.png",
-        alt: "GIA — Gemological Institute of America",
-      },
-      {
-        src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/02-ICA-CQTS_jdmajv.png",
-        alt: "ICA — International Colored Gemstone Association",
-      },
-    ],
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/01-GIA-CQTS_jb0kld.png",
+    alt: "GIA — Gemological Institute of America",
   },
   {
-    title: "National Memberships & Standards",
-    caption: "Registered with Sri Lanka's national gem and export authorities.",
-    logos: [
-      {
-        src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/03-SLEDB-CQTS_ntxycj.png",
-        alt: "SLEDB — Sri Lanka Export Development Board",
-      },
-      {
-        src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/04-SLGJA-CQTS_bvpymm.png",
-        alt: "SLGJA — Sri Lanka Gem & Jewellery Association",
-      },
-      {
-        src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671037/05-NGJA-CQTS_bptjpk.png",
-        alt: "NGJA — National Gem & Jewellery Authority",
-      },
-    ],
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/02-ICA-CQTS_jdmajv.png",
+    alt: "ICA — International Colored Gemstone Association",
   },
-];
-
-const TEAM = [
-  "Operations Director",
-  "Quality Lead",
-  "Production Manager",
-  "Export Coordinator",
+  {
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/03-SLEDB-CQTS_ntxycj.png",
+    alt: "SLEDB — Sri Lanka Export Development Board",
+  },
+  {
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/04-SLGJA-CQTS_bvpymm.png",
+    alt: "SLGJA — Sri Lanka Gem & Jewellery Association",
+  },
+  {
+    src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1776671037/05-NGJA-CQTS_bptjpk.png",
+    alt: "NGJA — National Gem & Jewellery Authority",
+  },
 ];
 
 // ─── PAGE ────────────────────────────────────────────────
@@ -162,7 +138,7 @@ export default function AboutPage() {
       {/* HERO */}
       <section className="relative overflow-hidden rounded-3xl border border-[#dbe3f2] bg-gradient-to-br from-[#e8f0f9] via-white to-white p-8 sm:p-12">
         <span className="inline-flex items-center gap-2 rounded-full border border-[#3c74ae]/20 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#3c74ae] backdrop-blur">
-          <Sparkles size={12} /> Est. 2006 · Colombo, Sri Lanka
+          <Sparkles size={12} /> Est. 2006 · Sri Lanka
         </span>
         <h1 className="mt-4 font-heading text-4xl font-bold text-[#1a1a2e] sm:text-5xl md:text-6xl">
           About ORAVA
@@ -174,36 +150,29 @@ export default function AboutPage() {
         </p>
       </section>
 
-      {/* MISSION & VALUES — replaces the previous stats strip */}
-      <section aria-labelledby="mission-heading">
-        <ScrollReveal>
-          <div className="mb-6 text-center">
-            <h2
-              id="mission-heading"
-              className="font-heading text-2xl font-bold text-[#1a1a2e] sm:text-3xl"
-            >
-              What We Stand For
-            </h2>
-            <p className="mx-auto mt-2 max-w-xl text-sm text-[#8f8b8f] sm:text-base">
-              The three principles that have guided every stone we&apos;ve cut
-              for two decades.
-            </p>
-          </div>
-        </ScrollReveal>
-        <div className="grid gap-4 md:grid-cols-3">
-          {MISSION_VALUES.map((value, i) => {
-            const Icon = value.icon;
+      {/* OUR STORY & OUR MISSION — replaces the previous stats strip */}
+      <section aria-labelledby="story-heading">
+        <div className="grid gap-4 md:grid-cols-2">
+          {STORY_BLOCKS.map((block, i) => {
+            const Icon = block.icon;
+            const isFirst = i === 0;
             return (
-              <ScrollReveal key={value.title} delay={i * 0.08}>
-                <article className="h-full rounded-2xl border border-[#dde2e8] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#3c74ae]/30 hover:shadow-lg hover:shadow-[#3c74ae]/5">
+              <ScrollReveal key={block.eyebrow} delay={i * 0.08}>
+                <article className="flex h-full flex-col rounded-2xl border border-[#dde2e8] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#3c74ae]/30 hover:shadow-lg hover:shadow-[#3c74ae]/5 sm:p-8">
                   <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#e8f0f9] text-[#3c74ae]">
                     <Icon size={18} />
                   </div>
-                  <h3 className="font-heading text-lg font-bold text-[#1a1a2e]">
-                    {value.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#4a4a6a]">
-                    {value.description}
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-[#3c74ae]">
+                    {block.eyebrow}
+                  </p>
+                  <h2
+                    {...(isFirst ? { id: "story-heading" } : {})}
+                    className="mt-1 font-heading text-xl font-bold text-[#1a1a2e] sm:text-2xl"
+                  >
+                    {block.title}
+                  </h2>
+                  <p className="mt-3 text-sm leading-relaxed text-[#4a4a6a] sm:text-base">
+                    {block.body}
                   </p>
                 </article>
               </ScrollReveal>
@@ -223,7 +192,7 @@ export default function AboutPage() {
               id="growth-heading"
               className="mt-3 font-heading text-2xl font-bold text-[#1a1a2e] sm:text-3xl md:text-4xl"
             >
-              From a Colombo workshop to a global name.
+              From a Sri Lankan workshop to a global name.
             </h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-[#8f8b8f] sm:text-base">
               Four chapters of growth, each unlocking a new level of precision
@@ -376,17 +345,12 @@ export default function AboutPage() {
                   src={AWARD.image}
                   alt={`${AWARD.title} — ${AWARD.awardedBy}`}
                   fill
-                  className="object-contain p-6"
+                  className="object-cover"
                   sizes="(max-width: 768px) 100vw, 40vw"
                 />
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 opacity-20"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)",
-                    backgroundSize: "20px 20px",
-                  }}
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1a1a2e]/40 via-transparent to-transparent"
                 />
               </div>
 
@@ -407,6 +371,15 @@ export default function AboutPage() {
                 <p className="mt-3 text-sm leading-relaxed text-[#4a4a6a] sm:text-base">
                   {AWARD.description}
                 </p>
+                <a
+                  href={AWARD.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex w-fit items-center gap-2 rounded-xl bg-[#3c74ae] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#3c74ae]/25 transition-all hover:bg-[#2d5f96] active:scale-95"
+                >
+                  View on SLEDB
+                  <ExternalLink size={14} />
+                </a>
               </div>
             </div>
           </div>
@@ -433,41 +406,38 @@ export default function AboutPage() {
           </div>
         </ScrollReveal>
 
-        <div className="space-y-5">
-          {CERT_GROUPS.map((group, gi) => (
-            <ScrollReveal key={group.title} delay={gi * 0.06}>
-              <article className="rounded-2xl border border-[#dde2e8] bg-white p-6 sm:p-8">
-                <header className="mb-5 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                  <h3 className="inline-flex items-center gap-2 font-heading text-base font-bold text-[#1a1a2e] sm:text-lg">
-                    <Award size={16} className="text-[#3c74ae]" />
-                    {group.title}
-                  </h3>
-                  <p className="text-xs text-[#8f8b8f] sm:text-sm">
-                    {group.caption}
-                  </p>
-                </header>
-                <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-                  {group.logos.map((logo) => (
-                    <div
-                      key={logo.alt}
-                      className="group relative h-16 w-28 sm:h-20 sm:w-36"
-                    >
-                      <div className="relative h-full w-full grayscale opacity-70 transition-all duration-300 group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-100">
-                        <Image
-                          src={logo.src}
-                          alt={logo.alt}
-                          fill
-                          className="object-contain"
-                          sizes="(max-width: 640px) 112px, 144px"
-                        />
-                      </div>
-                    </div>
-                  ))}
+        <ScrollReveal>
+          <article className="rounded-2xl border border-[#dde2e8] bg-white p-6 sm:p-10">
+            <header className="mb-6 flex flex-col gap-1 text-center sm:mb-8">
+              <h3 className="inline-flex items-center justify-center gap-2 font-heading text-base font-bold text-[#1a1a2e] sm:text-lg">
+                <Award size={16} className="text-[#3c74ae]" />
+                International Certifications & National Memberships
+              </h3>
+              <p className="text-xs text-[#8f8b8f] sm:text-sm">
+                Recognised by leading global gemmological bodies and registered
+                with Sri Lanka&apos;s national gem and export authorities.
+              </p>
+            </header>
+            <div className="flex flex-wrap items-center justify-center gap-5 sm:gap-8">
+              {CERTIFICATIONS.map((logo) => (
+                <div
+                  key={logo.alt}
+                  className="group relative h-16 w-28 sm:h-20 sm:w-36"
+                >
+                  <div className="relative h-full w-full grayscale opacity-70 transition-all duration-300 group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-100">
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 112px, 144px"
+                    />
+                  </div>
                 </div>
-              </article>
-            </ScrollReveal>
-          ))}
-        </div>
+              ))}
+            </div>
+          </article>
+        </ScrollReveal>
 
         <p className="mx-auto mt-6 max-w-lg text-center text-xs leading-relaxed text-[#8f8b8f]">
           ORAVA (Pvt) Ltd. operates to the highest international gemstone
@@ -482,37 +452,6 @@ export default function AboutPage() {
         </p>
       </section>
 
-      {/* TEAM (unchanged structurally) */}
-      <section aria-labelledby="team-heading">
-        <ScrollReveal>
-          <div className="mb-6 text-center">
-            <h2
-              id="team-heading"
-              className="font-heading text-2xl font-bold text-[#1a1a2e] sm:text-3xl"
-            >
-              Led by Experienced Hands
-            </h2>
-            <p className="mx-auto mt-2 max-w-xl text-sm text-[#8f8b8f]">
-              Operational discipline, export-grade quality, and a single
-              standard of excellence.
-            </p>
-          </div>
-        </ScrollReveal>
-        <div className="grid gap-4 md:grid-cols-4">
-          {TEAM.map((role, index) => (
-            <ScrollReveal key={role} delay={index * 0.06}>
-              <article className="rounded-xl border border-[#dde2e8] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                <div className="mb-3 h-20 rounded-lg bg-gradient-to-r from-[#e8f0f9] to-[#f5f7fa]" />
-                <h3 className="font-semibold text-[#1a1a2e]">{role}</h3>
-                <p className="mt-2 text-sm text-[#4a4a6a]">
-                  Experienced leadership with export-grade operational
-                  discipline.
-                </p>
-              </article>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
     </main>
   );
 }
