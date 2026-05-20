@@ -1,67 +1,34 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Gem, Loader2, PackageSearch } from "lucide-react";
-import { FilterSortPanel } from "@/components/products/FilterSortPanel";
-import { ProductCard } from "@/components/products/ProductCard";
+import { Loader2, PackageSearch, X } from "lucide-react";
+import {
+  DEFAULT_FILTERS,
+  FilterSortPanel,
+  PRICE_BOUNDS,
+  WEIGHT_BOUNDS,
+  type FilterState,
+} from "@/components/products/FilterSortPanel";
+import {
+  ProductCard,
+  type ProductCardData,
+} from "@/components/products/ProductCard";
+import { ProductsHero } from "@/components/products/ProductsHero";
+import { ActivityTicker } from "@/components/products/ActivityTicker";
+import { FeaturedGem } from "@/components/products/FeaturedGem";
+import { BirthstoneStrip } from "@/components/products/BirthstoneStrip";
+import type { ViewMode } from "@/components/products/ViewToggle";
 
 const PRODUCTS_PER_PAGE = 16;
 
-const GREETING_LINES = [
-  "Discover gemstones crafted to perfection.",
-  "Every stone tells a story of precision.",
-  "Sourced globally. Cut with excellence.",
-  "Your next masterpiece starts here.",
-  "Beauty crafted to an exemplary standard.",
-];
-
-interface FilterState {
-  name: string;
-  origin: string;
-  shape: string;
-  colorName: string;
-  size: string;
-  clarityType: string;
-  condition: string;
-  availability: string;
-  sortBy: string;
-}
-
-interface ProductItem {
-  id: string;
-  name: string;
-  origin: string;
-  shape: string;
-  colorName: string;
-  colorHex: string;
-  size: string;
-  weight: number;
-  lotQuantity: number;
-  price?: number | null;
-  availability: boolean;
-  images: string[];
-}
-
 export default function ProductsPage() {
-  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [products, setProducts] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [greetingIndex] = useState(() =>
-    Math.floor(Math.random() * GREETING_LINES.length),
-  );
-  const [filters, setFilters] = useState<FilterState>({
-    name: "",
-    origin: "",
-    shape: "",
-    colorName: "",
-    size: "",
-    clarityType: "",
-    condition: "",
-    availability: "all",
-    sortBy: "latest",
-  });
+  const [viewMode, setViewMode] = useState<ViewMode>("grid4");
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
   const totalPages = Math.ceil(totalCount / PRODUCTS_PER_PAGE);
 
@@ -81,6 +48,14 @@ export default function ProductsPage() {
       if (filters.condition) params.set("condition", filters.condition);
       if (filters.availability !== "all")
         params.set("availability", filters.availability);
+      if (filters.weightMin > WEIGHT_BOUNDS[0])
+        params.set("weightMin", String(filters.weightMin));
+      if (filters.weightMax < WEIGHT_BOUNDS[1])
+        params.set("weightMax", String(filters.weightMax));
+      if (filters.priceMin > PRICE_BOUNDS[0])
+        params.set("priceMin", String(filters.priceMin));
+      if (filters.priceMax < PRICE_BOUNDS[1])
+        params.set("priceMax", String(filters.priceMax));
 
       const sortMap: Record<string, { sortBy: string; sortOrder: string }> = {
         latest: { sortBy: "createdAt", sortOrder: "desc" },
@@ -119,73 +94,104 @@ export default function ProductsPage() {
     setCurrentPage(1);
   }, [filters]);
 
-  function handleFilterChange(newFilters: FilterState) {
-    setFilters(newFilters);
+  function handleFilterChange(next: FilterState) {
+    setFilters(next);
   }
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  const activeChips = useMemo(
+    () => buildActiveChips(filters),
+    [filters],
+  );
+
+  function removeChip(key: ChipKey) {
+    switch (key) {
+      case "name":
+      case "origin":
+      case "shape":
+      case "colorName":
+      case "size":
+      case "clarityType":
+      case "condition":
+        setFilters({ ...filters, [key]: "", presetId: null });
+        break;
+      case "availability":
+        setFilters({ ...filters, availability: "all", presetId: null });
+        break;
+      case "weight":
+        setFilters({
+          ...filters,
+          weightMin: WEIGHT_BOUNDS[0],
+          weightMax: WEIGHT_BOUNDS[1],
+          presetId: null,
+        });
+        break;
+      case "price":
+        setFilters({
+          ...filters,
+          priceMin: PRICE_BOUNDS[0],
+          priceMax: PRICE_BOUNDS[1],
+          presetId: null,
+        });
+        break;
+    }
+  }
+
+  const gridClass =
+    viewMode === "list"
+      ? "flex flex-col gap-3"
+      : viewMode === "grid3"
+      ? "grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5"
+      : "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-5";
+
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-gradient-to-br from-[#e8f0f9] via-white to-white px-4 py-10 sm:py-14">
-        <div className="mx-auto max-w-7xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#3c74ae]/20 bg-[#e8f0f9] px-4 py-1.5 text-xs font-semibold text-[#3c74ae]"
-          >
-            <Gem size={12} />
-            Precision-Cut Gemstone Collection
-          </motion.div>
+      <ProductsHero totalCount={totalCount} loading={loading} />
 
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-3 font-heading text-3xl font-bold text-[#1a1a2e] sm:text-4xl md:text-5xl"
-          >
-            Our Gemstone Collection
-          </motion.h1>
+      <ActivityTicker />
 
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto max-w-xl text-base italic text-[#4a4a6a] sm:text-lg"
-          >
-            &quot;{GREETING_LINES[greetingIndex]}&quot;
-          </motion.p>
-
-          {!loading ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#dde2e8] bg-white px-5 py-2 shadow-sm"
-            >
-              <div className="h-2 w-2 animate-pulse rounded-full bg-[#3c74ae]" />
-              <span className="text-sm font-semibold text-[#1a1a2e]">
-                {totalCount.toLocaleString()}{" "}
-                <span className="text-[#3c74ae]">
-                  {totalCount === 1 ? "Gemstone" : "Gemstones"}
-                </span>{" "}
-                in Collection
-              </span>
-            </motion.div>
-          ) : null}
-        </div>
-      </div>
+      <FeaturedGem />
 
       <FilterSortPanel
         filters={filters}
         onFilterChange={handleFilterChange}
         totalCount={totalCount}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 md:pb-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <BirthstoneStrip
+          activeStone={filters.name}
+          onPick={(stone) =>
+            setFilters({ ...filters, name: stone, presetId: null })
+          }
+        />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 pb-28 sm:px-6 lg:px-8 md:pb-12">
+        {activeChips.length > 0 ? (
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[#8f8b8f]">
+              Active:
+            </span>
+            {activeChips.map((c) => (
+              <button
+                key={c.key}
+                type="button"
+                onClick={() => removeChip(c.key)}
+                className="inline-flex items-center gap-1 rounded-full border border-[#3c74ae]/30 bg-[#e8f0f9] px-3 py-1 text-xs font-semibold text-[#3c74ae] transition-colors hover:bg-[#3c74ae] hover:text-white"
+              >
+                {c.label}
+                <X size={11} />
+              </button>
+            ))}
+          </div>
+        ) : null}
+
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
             <Loader2 size={32} className="mb-4 animate-spin text-[#3c74ae]" />
@@ -210,9 +216,14 @@ export default function ProductsPage() {
           </motion.div>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-5">
+            <div className={gridClass}>
               {products.map((product, index) => (
-                <ProductCard key={product.id} product={product} index={index} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  viewMode={viewMode}
+                />
               ))}
             </div>
 
@@ -224,6 +235,7 @@ export default function ProductsPage() {
               >
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <button
+                    type="button"
                     onClick={() => {
                       setCurrentPage((page) => Math.max(1, page - 1));
                       scrollToTop();
@@ -260,6 +272,7 @@ export default function ProductsPage() {
                     return (
                       <button
                         key={pageNum}
+                        type="button"
                         onClick={() => {
                           setCurrentPage(pageNum);
                           scrollToTop();
@@ -276,6 +289,7 @@ export default function ProductsPage() {
                   })}
 
                   <button
+                    type="button"
                     onClick={() => {
                       setCurrentPage((page) => Math.min(totalPages, page + 1));
                       scrollToTop();
@@ -303,4 +317,43 @@ export default function ProductsPage() {
       </div>
     </div>
   );
+}
+
+type ChipKey =
+  | "name"
+  | "origin"
+  | "shape"
+  | "colorName"
+  | "size"
+  | "clarityType"
+  | "condition"
+  | "availability"
+  | "weight"
+  | "price";
+
+function buildActiveChips(f: FilterState): Array<{ key: ChipKey; label: string }> {
+  const chips: Array<{ key: ChipKey; label: string }> = [];
+  if (f.name) chips.push({ key: "name", label: `Search: ${f.name}` });
+  if (f.origin) chips.push({ key: "origin", label: f.origin });
+  if (f.shape) chips.push({ key: "shape", label: f.shape });
+  if (f.colorName) chips.push({ key: "colorName", label: f.colorName });
+  if (f.size) chips.push({ key: "size", label: `Size: ${f.size}` });
+  if (f.clarityType) chips.push({ key: "clarityType", label: f.clarityType });
+  if (f.condition) chips.push({ key: "condition", label: f.condition });
+  if (f.availability !== "all" && f.availability !== "")
+    chips.push({
+      key: "availability",
+      label: f.availability === "true" ? "Available" : "Sold",
+    });
+  if (f.weightMin > WEIGHT_BOUNDS[0] || f.weightMax < WEIGHT_BOUNDS[1])
+    chips.push({
+      key: "weight",
+      label: `${f.weightMin.toFixed(1)}–${f.weightMax.toFixed(1)}ct`,
+    });
+  if (f.priceMin > PRICE_BOUNDS[0] || f.priceMax < PRICE_BOUNDS[1])
+    chips.push({
+      key: "price",
+      label: `$${f.priceMin.toLocaleString()}–$${f.priceMax.toLocaleString()}`,
+    });
+  return chips;
 }

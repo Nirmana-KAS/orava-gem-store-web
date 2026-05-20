@@ -1,11 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpDown, Filter, SlidersHorizontal, X } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  Filter,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import { SmartDropdown } from "@/components/ui/SmartDropdown";
+import { ShapeFilterGrid } from "./ShapeFilterGrid";
+import { ColorSwatchGrid } from "./ColorSwatchGrid";
+import { RangeSlider } from "./RangeSlider";
+import { PresetChips } from "./PresetChips";
+import { ViewToggle, type ViewMode } from "./ViewToggle";
+import type { PresetFilter } from "@/lib/productsDesignData";
 
-interface FilterState {
+export const WEIGHT_BOUNDS: [number, number] = [0, 30];
+export const PRICE_BOUNDS: [number, number] = [0, 30000];
+
+export interface FilterState {
   name: string;
   origin: string;
   shape: string;
@@ -15,176 +31,243 @@ interface FilterState {
   condition: string;
   availability: string;
   sortBy: string;
+  weightMin: number;
+  weightMax: number;
+  priceMin: number;
+  priceMax: number;
+  presetId: string | null;
 }
+
+export const DEFAULT_FILTERS: FilterState = {
+  name: "",
+  origin: "",
+  shape: "",
+  colorName: "",
+  size: "",
+  clarityType: "",
+  condition: "",
+  availability: "all",
+  sortBy: "latest",
+  weightMin: WEIGHT_BOUNDS[0],
+  weightMax: WEIGHT_BOUNDS[1],
+  priceMin: PRICE_BOUNDS[0],
+  priceMax: PRICE_BOUNDS[1],
+  presetId: null,
+};
 
 interface FilterSortPanelProps {
   filters: FilterState;
   onFilterChange: (filters: FilterState) => void;
   totalCount: number;
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
+}
+
+const SORT_OPTIONS = [
+  { value: "latest", label: "Latest Added" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
+  { value: "weight_asc", label: "Weight: Low to High" },
+  { value: "weight_desc", label: "Weight: High to Low" },
+  { value: "lot_asc", label: "Lot Qty: Min to Max" },
+  { value: "lot_desc", label: "Lot Qty: Max to Min" },
+  { value: "name_asc", label: "Name: A to Z" },
+  { value: "name_desc", label: "Name: Z to A" },
+];
+
+function countActiveFilters(f: FilterState): number {
+  let n = 0;
+  if (f.name) n++;
+  if (f.origin) n++;
+  if (f.shape) n++;
+  if (f.colorName) n++;
+  if (f.size) n++;
+  if (f.clarityType) n++;
+  if (f.condition) n++;
+  if (f.availability !== "all" && f.availability !== "") n++;
+  if (f.weightMin > WEIGHT_BOUNDS[0] || f.weightMax < WEIGHT_BOUNDS[1]) n++;
+  if (f.priceMin > PRICE_BOUNDS[0] || f.priceMax < PRICE_BOUNDS[1]) n++;
+  return n;
 }
 
 export function FilterSortPanel({
   filters,
   onFilterChange,
   totalCount,
+  viewMode,
+  onViewModeChange,
 }: FilterSortPanelProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeFiltersCount, setActiveFiltersCount] = useState(0);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const activeFiltersCount = useMemo(
+    () => countActiveFilters(filters),
+    [filters],
+  );
 
+  // Lock body scroll while the mobile filter sheet is open
   useEffect(() => {
-    const count = Object.entries(filters).filter(
-      ([key, val]) => key !== "sortBy" && val !== "" && val !== "all",
-    ).length;
-    setActiveFiltersCount(count);
-  }, [filters]);
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
 
-  function updateFilter(key: keyof FilterState, value: string) {
-    onFilterChange({ ...filters, [key]: value });
+  function update<K extends keyof FilterState>(key: K, value: FilterState[K]) {
+    onFilterChange({ ...filters, [key]: value, presetId: null });
   }
 
-  function clearAllFilters() {
+  function updateWeight(next: [number, number]) {
     onFilterChange({
-      name: "",
-      origin: "",
-      shape: "",
-      colorName: "",
-      size: "",
-      clarityType: "",
-      condition: "",
-      availability: "all",
-      sortBy: "latest",
+      ...filters,
+      weightMin: next[0],
+      weightMax: next[1],
+      presetId: null,
     });
   }
 
-  const sortOptions = [
-    { value: "latest", label: "Latest Added" },
-    { value: "oldest", label: "Oldest First" },
-    { value: "price_asc", label: "Price: Low to High" },
-    { value: "price_desc", label: "Price: High to Low" },
-    { value: "weight_asc", label: "Weight: Low to High" },
-    { value: "weight_desc", label: "Weight: High to Low" },
-    { value: "lot_asc", label: "Lot Qty: Min to Max" },
-    { value: "lot_desc", label: "Lot Qty: Max to Min" },
-    { value: "name_asc", label: "Name: A to Z" },
-    { value: "name_desc", label: "Name: Z to A" },
-  ];
+  function updatePrice(next: [number, number]) {
+    onFilterChange({
+      ...filters,
+      priceMin: next[0],
+      priceMax: next[1],
+      presetId: null,
+    });
+  }
 
-  const FilterContent = () => (
-    <div className="space-y-4">
-      <SmartDropdown
-        fieldType="gemName"
-        label="Gemstone Name"
+  function applyPreset(id: string | null, p: PresetFilter) {
+    onFilterChange({
+      ...DEFAULT_FILTERS,
+      sortBy: filters.sortBy,
+      availability: filters.availability,
+      name: p.name ?? "",
+      origin: p.origin ?? "",
+      shape: p.shape ?? "",
+      colorName: p.colorName ?? "",
+      condition: p.condition ?? "",
+      weightMin: p.weightMin ?? WEIGHT_BOUNDS[0],
+      weightMax: p.weightMax ?? WEIGHT_BOUNDS[1],
+      priceMin: p.priceMin ?? PRICE_BOUNDS[0],
+      priceMax: p.priceMax ?? PRICE_BOUNDS[1],
+      presetId: id,
+    });
+  }
+
+  function clearAllFilters() {
+    onFilterChange({ ...DEFAULT_FILTERS, sortBy: filters.sortBy });
+  }
+
+  /* ----- Sections used by both desktop expanded panel and mobile sheet ----- */
+  const SearchBar = (
+    <div className="relative">
+      <Search
+        size={14}
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#8f8b8f]"
+      />
+      <input
+        type="text"
         value={filters.name}
-        onChange={(val) => updateFilter("name", val)}
-        placeholder="All Gemstones"
-        showAllOption
-        readOnly
+        onChange={(e) => update("name", e.target.value)}
+        placeholder="Search by name, variety, or feature…"
+        className="w-full rounded-xl border border-[#dde2e8] bg-white py-2 pl-9 pr-3 text-sm text-[#1a1a2e] placeholder:text-[#8f8b8f] focus:border-[#3c74ae] focus:outline-none focus:ring-2 focus:ring-[#3c74ae]/20"
       />
-      <SmartDropdown
-        fieldType="origin"
-        label="Origin"
-        value={filters.origin}
-        onChange={(val) => updateFilter("origin", val)}
-        placeholder="All Origins"
-        showAllOption
-        readOnly
-      />
-      <SmartDropdown
-        fieldType="shape"
-        label="Shape"
+    </div>
+  );
+
+  const AdvancedSections = (
+    <div className="space-y-5">
+      <PresetChips activeId={filters.presetId} onApply={applyPreset} />
+
+      <ShapeFilterGrid
         value={filters.shape}
-        onChange={(val) => updateFilter("shape", val)}
-        placeholder="All Shapes"
-        showAllOption
-        readOnly
-      />
-      <SmartDropdown
-        fieldType="colorName"
-        label="Color Name"
-        value={filters.colorName}
-        onChange={(val) => updateFilter("colorName", val)}
-        placeholder="All Colors"
-        showAllOption
-        readOnly
-      />
-      <SmartDropdown
-        fieldType="size"
-        label="Size"
-        value={filters.size}
-        onChange={(val) => updateFilter("size", val)}
-        placeholder="All Sizes"
-        showAllOption
-        readOnly
-      />
-      <SmartDropdown
-        fieldType="clarityType"
-        label="Clarity Type"
-        value={filters.clarityType}
-        onChange={(val) => updateFilter("clarityType", val)}
-        placeholder="All Clarity Types"
-        showAllOption
-        readOnly
-      />
-      <SmartDropdown
-        fieldType="condition"
-        label="Condition"
-        value={filters.condition}
-        onChange={(val) => updateFilter("condition", val)}
-        placeholder="All Conditions"
-        showAllOption
-        readOnly
+        onChange={(v) => update("shape", v)}
       />
 
-      <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#1a1a2e]">
-          Availability
-        </label>
-        <div className="flex gap-2">
-          {[
-            { value: "all", label: "All" },
-            { value: "true", label: "Available" },
-            { value: "false", label: "Sold" },
-          ].map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => updateFilter("availability", opt.value)}
-              className={`flex-1 rounded-lg border px-2 py-2 text-xs font-semibold transition-all duration-200 ${
-                filters.availability === opt.value
-                  ? "border-[#3c74ae] bg-[#3c74ae] text-white"
-                  : "border-[#dde2e8] bg-white text-[#4a4a6a] hover:border-[#3c74ae]/50"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+      <ColorSwatchGrid
+        value={filters.colorName}
+        onChange={(v) => update("colorName", v)}
+      />
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <RangeSlider
+          label="Carat"
+          min={WEIGHT_BOUNDS[0]}
+          max={WEIGHT_BOUNDS[1]}
+          step={0.1}
+          value={[filters.weightMin, filters.weightMax]}
+          onChange={updateWeight}
+          format={(n) => `${n.toFixed(1)}ct`}
+        />
+        <RangeSlider
+          label="Price (USD)"
+          min={PRICE_BOUNDS[0]}
+          max={PRICE_BOUNDS[1]}
+          step={100}
+          value={[filters.priceMin, filters.priceMax]}
+          onChange={updatePrice}
+          format={(n) => `$${n.toLocaleString()}`}
+        />
       </div>
 
-      {activeFiltersCount > 0 ? (
-        <button
-          onClick={clearAllFilters}
-          className="w-full rounded-xl border border-red-200 py-2 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50"
-        >
-          Clear All Filters ({activeFiltersCount})
-        </button>
-      ) : null}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <SmartDropdown
+          fieldType="origin"
+          label="Origin"
+          value={filters.origin}
+          onChange={(val) => update("origin", val)}
+          placeholder="All Origins"
+          showAllOption
+          readOnly
+        />
+        <SmartDropdown
+          fieldType="condition"
+          label="Treatment"
+          value={filters.condition}
+          onChange={(val) => update("condition", val)}
+          placeholder="All Treatments"
+          showAllOption
+          readOnly
+        />
+        <SmartDropdown
+          fieldType="clarityType"
+          label="Clarity"
+          value={filters.clarityType}
+          onChange={(val) => update("clarityType", val)}
+          placeholder="All Clarities"
+          showAllOption
+          readOnly
+        />
+        <SmartDropdown
+          fieldType="size"
+          label="Size"
+          value={filters.size}
+          onChange={(val) => update("size", val)}
+          placeholder="All Sizes"
+          showAllOption
+          readOnly
+        />
+      </div>
     </div>
   );
 
   return (
     <>
-      <div className="sticky top-16 z-40 hidden border-b border-[#dde2e8] bg-white shadow-sm md:block">
+      {/* ---------- Desktop sticky toolbar ---------- */}
+      <div className="sticky top-16 z-40 hidden border-b border-[#dde2e8] bg-white/95 shadow-sm backdrop-blur md:block">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 max-w-md">{SearchBar}</div>
+
             <div className="flex items-center gap-2">
               <ArrowUpDown size={14} className="text-[#3c74ae]" />
               <select
                 value={filters.sortBy}
-                onChange={(event) => updateFilter("sortBy", event.target.value)}
-                className="text-sm text-[#1a1a2e] border border-[#dde2e8] rounded-lg pl-3 pr-8 py-1.5 bg-white focus:outline-none focus:border-[#3c74ae] cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%238f8b8f%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_10px_center]"
+                onChange={(e) => update("sortBy", e.target.value)}
+                className="cursor-pointer rounded-lg border border-[#dde2e8] bg-white py-1.5 pl-3 pr-8 text-sm text-[#1a1a2e] focus:border-[#3c74ae] focus:outline-none"
               >
-                {sortOptions.map((opt) => (
+                {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
@@ -192,10 +275,7 @@ export function FilterSortPanel({
               </select>
             </div>
 
-            <div
-              className="flex items-center gap-2"
-              data-total-count={totalCount}
-            >
+            <div className="hidden items-center gap-1.5 lg:flex">
               {[
                 { value: "all", label: "All" },
                 { value: "true", label: "Available" },
@@ -203,7 +283,8 @@ export function FilterSortPanel({
               ].map((opt) => (
                 <button
                   key={opt.value}
-                  onClick={() => updateFilter("availability", opt.value)}
+                  type="button"
+                  onClick={() => update("availability", opt.value)}
                   className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
                     filters.availability === opt.value
                       ? "border-[#3c74ae] bg-[#3c74ae] text-white"
@@ -213,111 +294,82 @@ export function FilterSortPanel({
                   {opt.label}
                 </button>
               ))}
+            </div>
 
-              <div className="mx-1 h-5 w-px bg-[#dde2e8]" />
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setAdvancedOpen((v) => !v)}
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
+                  advancedOpen
+                    ? "border-[#3c74ae] bg-[#e8f0f9] text-[#3c74ae]"
+                    : "border-[#dde2e8] bg-white text-[#4a4a6a] hover:border-[#3c74ae] hover:text-[#3c74ae]"
+                }`}
+              >
+                <SlidersHorizontal size={12} />
+                Filters
+                {activeFiltersCount > 0 ? (
+                  <span className="rounded-full bg-[#3c74ae] px-1.5 py-0.5 text-[9px] font-bold text-white">
+                    {activeFiltersCount}
+                  </span>
+                ) : null}
+                <ChevronDown
+                  size={12}
+                  className={`transition-transform ${advancedOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              <ViewToggle value={viewMode} onChange={onViewModeChange} />
 
               {activeFiltersCount > 0 ? (
                 <button
+                  type="button"
                   onClick={clearAllFilters}
-                  className="flex items-center gap-1 whitespace-nowrap rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50"
+                  className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50"
                 >
                   <X size={12} />
-                  Clear ({activeFiltersCount})
+                  Clear
                 </button>
               ) : null}
+
+              <span
+                className="hidden whitespace-nowrap text-xs font-semibold text-[#8f8b8f] xl:inline"
+                data-total-count={totalCount}
+              >
+                {totalCount.toLocaleString()} stones
+              </span>
             </div>
           </div>
 
-          <div className="mt-3 flex items-stretch gap-2 border-t border-[#dde2e8] pt-3 w-full">
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="gemName"
-                label=""
-                value={filters.name}
-                onChange={(val) => updateFilter("name", val)}
-                placeholder="Gemstone"
-                showAllOption
-                readOnly
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="origin"
-                label=""
-                value={filters.origin}
-                onChange={(val) => updateFilter("origin", val)}
-                placeholder="Origin"
-                showAllOption
-                readOnly
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="shape"
-                label=""
-                value={filters.shape}
-                onChange={(val) => updateFilter("shape", val)}
-                placeholder="Shape"
-                showAllOption
-                readOnly
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="colorName"
-                label=""
-                value={filters.colorName}
-                onChange={(val) => updateFilter("colorName", val)}
-                placeholder="Color"
-                showAllOption
-                readOnly
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="size"
-                label=""
-                value={filters.size}
-                onChange={(val) => updateFilter("size", val)}
-                placeholder="Size"
-                showAllOption
-                readOnly
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="clarityType"
-                label=""
-                value={filters.clarityType}
-                onChange={(val) => updateFilter("clarityType", val)}
-                placeholder="Clarity Type"
-                showAllOption
-                readOnly
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <SmartDropdown
-                fieldType="condition"
-                label=""
-                value={filters.condition}
-                onChange={(val) => updateFilter("condition", val)}
-                placeholder="Condition"
-                showAllOption
-                readOnly
-              />
-            </div>
-          </div>
+          <AnimatePresence>
+            {advancedOpen ? (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
+              >
+                <div className="border-t border-[#dde2e8] pt-5 mt-3">
+                  {AdvancedSections}
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </div>
       </div>
 
+      {/* ---------- Mobile bottom bar ---------- */}
       <div className="fixed bottom-0 left-0 right-0 z-[90] border-t border-[#dde2e8] bg-white px-4 py-3 shadow-lg md:hidden">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <ViewToggle value={viewMode} onChange={onViewModeChange} />
+
           <select
             value={filters.sortBy}
-            onChange={(event) => updateFilter("sortBy", event.target.value)}
+            onChange={(e) => update("sortBy", e.target.value)}
             className="flex-1 rounded-xl border border-[#dde2e8] bg-white px-3 py-2.5 text-sm text-[#1a1a2e] focus:border-[#3c74ae] focus:outline-none"
           >
-            {sortOptions.map((opt) => (
+            {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
@@ -325,10 +377,11 @@ export function FilterSortPanel({
           </select>
 
           <button
+            type="button"
             onClick={() => setMobileOpen(true)}
             className="relative flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#3c74ae] px-4 py-2.5 text-sm font-semibold text-white"
           >
-            <SlidersHorizontal size={16} />
+            <SlidersHorizontal size={14} />
             Filters
             {activeFiltersCount > 0 ? (
               <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
@@ -339,6 +392,7 @@ export function FilterSortPanel({
         </div>
       </div>
 
+      {/* ---------- Mobile filter sheet ---------- */}
       <AnimatePresence>
         {mobileOpen ? (
           <>
@@ -355,7 +409,7 @@ export function FilterSortPanel({
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 z-[101] flex max-h-[85vh] flex-col overflow-hidden rounded-t-3xl bg-white md:hidden"
+              className="fixed bottom-0 left-0 right-0 z-[101] flex max-h-[90vh] flex-col overflow-hidden rounded-t-3xl bg-white md:hidden"
             >
               <div className="flex flex-shrink-0 items-center justify-between border-b border-[#dde2e8] px-5 py-4">
                 <div className="flex items-center gap-2">
@@ -370,6 +424,7 @@ export function FilterSortPanel({
                   ) : null}
                 </div>
                 <button
+                  type="button"
                   onClick={() => setMobileOpen(false)}
                   className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-[#f5f7fa]"
                 >
@@ -377,16 +432,55 @@ export function FilterSortPanel({
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-5 py-4">
-                <FilterContent />
+              <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
+                {SearchBar}
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#1a1a2e]">
+                    Availability
+                  </label>
+                  <div className="flex gap-2">
+                    {[
+                      { value: "all", label: "All" },
+                      { value: "true", label: "Available" },
+                      { value: "false", label: "Sold" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => update("availability", opt.value)}
+                        className={`flex-1 rounded-lg border px-2 py-2 text-xs font-semibold transition-all duration-200 ${
+                          filters.availability === opt.value
+                            ? "border-[#3c74ae] bg-[#3c74ae] text-white"
+                            : "border-[#dde2e8] bg-white text-[#4a4a6a] hover:border-[#3c74ae]/50"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {AdvancedSections}
+
+                {activeFiltersCount > 0 ? (
+                  <button
+                    type="button"
+                    onClick={clearAllFilters}
+                    className="w-full rounded-xl border border-red-200 py-2 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50"
+                  >
+                    Clear All Filters ({activeFiltersCount})
+                  </button>
+                ) : null}
               </div>
 
               <div className="flex-shrink-0 border-t border-[#dde2e8] bg-white px-5 py-4">
                 <button
+                  type="button"
                   onClick={() => setMobileOpen(false)}
                   className="w-full rounded-xl bg-[#3c74ae] py-3 font-semibold text-white transition-colors hover:bg-[#2d5f96]"
                 >
-                  Apply Filters
+                  View {totalCount.toLocaleString()} Stones
                 </button>
               </div>
             </motion.div>

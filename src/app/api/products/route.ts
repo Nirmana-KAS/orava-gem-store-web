@@ -31,6 +31,8 @@ const querySchema = z.object({
   availability: z.enum(["true", "false", "all"]).optional(),
   weightMin: z.coerce.number().optional(),
   weightMax: z.coerce.number().optional(),
+  priceMin: z.coerce.number().optional(),
+  priceMax: z.coerce.number().optional(),
   createdFrom: z.string().optional(),
   createdTo: z.string().optional(),
   updatedFrom: z.string().optional(),
@@ -79,6 +81,8 @@ export async function GET(request: NextRequest): Promise<Response> {
         request.nextUrl.searchParams.get("availability") ?? undefined,
       weightMin: request.nextUrl.searchParams.get("weightMin") ?? undefined,
       weightMax: request.nextUrl.searchParams.get("weightMax") ?? undefined,
+      priceMin: request.nextUrl.searchParams.get("priceMin") ?? undefined,
+      priceMax: request.nextUrl.searchParams.get("priceMax") ?? undefined,
       createdFrom: request.nextUrl.searchParams.get("createdFrom") ?? undefined,
       createdTo: request.nextUrl.searchParams.get("createdTo") ?? undefined,
       updatedFrom: request.nextUrl.searchParams.get("updatedFrom") ?? undefined,
@@ -100,6 +104,8 @@ export async function GET(request: NextRequest): Promise<Response> {
       sortOrder,
       weightMin,
       weightMax,
+      priceMin,
+      priceMax,
       createdFrom,
       createdTo,
       updatedFrom,
@@ -126,6 +132,14 @@ export async function GET(request: NextRequest): Promise<Response> {
         ? {
             gte: weightMin,
             lte: weightMax,
+          }
+        : undefined;
+
+    const priceFilter: Prisma.FloatNullableFilter | undefined =
+      typeof priceMin === "number" || typeof priceMax === "number"
+        ? {
+            gte: priceMin,
+            lte: priceMax,
           }
         : undefined;
 
@@ -177,6 +191,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       condition: conditionValues.length ? { in: conditionValues } : undefined,
       availability: availabilityFilter,
       weight: weightFilter,
+      price: priceFilter,
       createdAt: createdAtFilter,
       updatedAt: updatedAtFilter,
     };
