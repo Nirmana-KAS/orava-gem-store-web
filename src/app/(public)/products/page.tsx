@@ -4,10 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2, PackageSearch, X } from "lucide-react";
 import {
+  DEFAULT_DIMENSIONS,
   DEFAULT_FILTERS,
   FilterSortPanel,
   PRICE_BOUNDS,
   WEIGHT_BOUNDS,
+  type DimensionState,
   type FilterState,
 } from "@/components/products/FilterSortPanel";
 import {
@@ -29,6 +31,8 @@ export default function ProductsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<ViewMode>("grid4");
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [dimensions, setDimensions] =
+    useState<DimensionState>(DEFAULT_DIMENSIONS);
 
   const totalPages = Math.ceil(totalCount / PRODUCTS_PER_PAGE);
 
@@ -155,15 +159,7 @@ export default function ProductsPage() {
 
       <FeaturedGem />
 
-      <FilterSortPanel
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        totalCount={totalCount}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
-
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pt-2 pb-2 sm:px-6 lg:px-8">
         <BirthstoneStrip
           activeStone={filters.name}
           onPick={(stone) =>
@@ -171,6 +167,16 @@ export default function ProductsPage() {
           }
         />
       </div>
+
+      <FilterSortPanel
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        totalCount={totalCount}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        dimensions={dimensions}
+        onDimensionsChange={setDimensions}
+      />
 
       <div className="mx-auto max-w-7xl px-4 pb-28 sm:px-6 lg:px-8 md:pb-12">
         {activeChips.length > 0 ? (

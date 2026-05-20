@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Gem, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { GemProfile3D } from "./GemProfile3D";
 
 interface FeaturedProduct {
   id: string;
@@ -102,26 +102,17 @@ export function FeaturedGem() {
             </div>
 
             <div className="relative">
-              <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-                {product.images?.[0] ? (
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 90vw, 40vw"
-                    priority
-                  />
-                ) : (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{
-                      background: `radial-gradient(circle at 35% 30%, ${product.colorHex}aa, ${product.colorHex}33)`,
-                    }}
-                  >
-                    <Gem size={64} className="text-white/40" />
-                  </div>
-                )}
+              <div className="relative mx-auto flex aspect-square max-w-md items-center justify-center">
+                <div
+                  className="absolute inset-0 rounded-full blur-3xl"
+                  style={{
+                    background: `radial-gradient(circle, ${product.colorHex}55, transparent 65%)`,
+                  }}
+                />
+                <GemProfile3D
+                  color={product.colorHex}
+                  className="relative h-full w-full drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+                />
               </div>
               <div className="pointer-events-none absolute -left-2 top-6 h-3 w-3 animate-pulse rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.9)]" />
               <div className="pointer-events-none absolute -right-3 top-1/3 h-2 w-2 animate-pulse rounded-full bg-[#6aa3d6] shadow-[0_0_10px_rgba(106,163,214,0.9)]" />

@@ -31,8 +31,13 @@ const querySchema = z.object({
   availability: z.enum(["true", "false", "all"]).optional(),
   weightMin: z.coerce.number().optional(),
   weightMax: z.coerce.number().optional(),
+  caratMin: z.coerce.number().optional(),
+  caratMax: z.coerce.number().optional(),
   priceMin: z.coerce.number().optional(),
   priceMax: z.coerce.number().optional(),
+  treatment: z
+    .union([z.nativeEnum(Condition), z.array(z.nativeEnum(Condition))])
+    .optional(),
   createdFrom: z.string().optional(),
   createdTo: z.string().optional(),
   updatedFrom: z.string().optional(),
@@ -81,8 +86,13 @@ export async function GET(request: NextRequest): Promise<Response> {
         request.nextUrl.searchParams.get("availability") ?? undefined,
       weightMin: request.nextUrl.searchParams.get("weightMin") ?? undefined,
       weightMax: request.nextUrl.searchParams.get("weightMax") ?? undefined,
+      caratMin: request.nextUrl.searchParams.get("caratMin") ?? undefined,
+      caratMax: request.nextUrl.searchParams.get("caratMax") ?? undefined,
       priceMin: request.nextUrl.searchParams.get("priceMin") ?? undefined,
       priceMax: request.nextUrl.searchParams.get("priceMax") ?? undefined,
+      treatment: request.nextUrl.searchParams.getAll("treatment").length
+        ? request.nextUrl.searchParams.getAll("treatment")
+        : (request.nextUrl.searchParams.get("treatment") ?? undefined),
       createdFrom: request.nextUrl.searchParams.get("createdFrom") ?? undefined,
       createdTo: request.nextUrl.searchParams.get("createdTo") ?? undefined,
       updatedFrom: request.nextUrl.searchParams.get("updatedFrom") ?? undefined,
@@ -104,8 +114,11 @@ export async function GET(request: NextRequest): Promise<Response> {
       sortOrder,
       weightMin,
       weightMax,
+      caratMin,
+      caratMax,
       priceMin,
       priceMax,
+      treatment,
       createdFrom,
       createdTo,
       updatedFrom,
@@ -114,9 +127,13 @@ export async function GET(request: NextRequest): Promise<Response> {
       ...filters
     } = parsed.data;
 
+    const effectiveWeightMin = weightMin ?? caratMin;
+    const effectiveWeightMax = weightMax ?? caratMax;
+    const effectiveCondition = filters.condition ?? treatment;
+
     const shapeValues = toArray(filters.shape);
     const originValues = toArray(filters.origin);
-    const conditionValues = toConditionArray(filters.condition);
+    const conditionValues = toConditionArray(effectiveCondition);
     const clarityValues = toArray(filters.clarityType);
 
     const createdAtFilter: Prisma.DateTimeFilter | undefined =
@@ -128,10 +145,11 @@ export async function GET(request: NextRequest): Promise<Response> {
         : undefined;
 
     const weightFilter: Prisma.FloatFilter | undefined =
-      typeof weightMin === "number" || typeof weightMax === "number"
+      typeof effectiveWeightMin === "number" ||
+      typeof effectiveWeightMax === "number"
         ? {
-            gte: weightMin,
-            lte: weightMax,
+            gte: effectiveWeightMin,
+            lte: effectiveWeightMax,
           }
         : undefined;
 

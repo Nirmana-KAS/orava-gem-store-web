@@ -4,7 +4,7 @@ import type { MouseEvent } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Gem, MapPin, ShoppingBag } from "lucide-react";
+import { ArrowRight, Gem, Heart, MapPin, ShoppingBag } from "lucide-react";
 import { useQuotationStore } from "@/store/quotationStore";
 import type { ViewMode } from "./ViewToggle";
 
@@ -192,7 +192,7 @@ export function ProductCard({
       onClick={navigate}
       className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[#dde2e8] bg-white transition-all duration-300 hover:border-[#3c74ae] hover:shadow-lg hover:shadow-[#3c74ae]/10"
     >
-      <div className="relative h-28 w-full overflow-hidden bg-[#f5f7fa] sm:h-36 md:h-40">
+      <div className="relative h-44 w-full overflow-hidden bg-[#f5f7fa] sm:h-48 md:h-52">
         {product.images?.[0] ? (
           <Image
             src={product.images[0]}
@@ -208,140 +208,83 @@ export function ProductCard({
               background: `linear-gradient(135deg, ${product.colorHex}33, ${product.colorHex}88)`,
             }}
           >
-            <Gem size={28} className="text-[#3c74ae] opacity-40" />
+            <Gem size={36} className="text-[#3c74ae] opacity-40" />
           </div>
         )}
 
-        <div className="absolute right-2 top-2">
-          {product.availability ? (
-            <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700">
-              Available
-            </span>
-          ) : (
-            <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-600">
+        {product.clarityType ? (
+          <span className="absolute left-2 top-2 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-[#1a1a2e] shadow-sm backdrop-blur-sm">
+            {product.clarityType}
+          </span>
+        ) : null}
+
+        <div
+          aria-hidden="true"
+          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[#8f8b8f] shadow-sm backdrop-blur-sm"
+        >
+          <Heart size={12} />
+        </div>
+
+        {!product.availability ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#1a1a2e]/55">
+            <span className="rounded-md bg-red-500 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
               Sold
             </span>
-          )}
-        </div>
-
-        <div className="pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-[#1a1a2e]/85 via-[#1a1a2e]/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="grid w-full grid-cols-2 gap-x-3 gap-y-1.5 p-3 text-white">
-            {product.clarityType ? (
-              <div>
-                <p className="text-[8px] uppercase tracking-wider text-white/60">
-                  Clarity
-                </p>
-                <p className="truncate text-[11px] font-semibold">
-                  {product.clarityType}
-                </p>
-              </div>
-            ) : null}
-            {conditionLabel(product.condition) ? (
-              <div>
-                <p className="text-[8px] uppercase tracking-wider text-white/60">
-                  Treatment
-                </p>
-                <p className="truncate text-[11px] font-semibold">
-                  {conditionLabel(product.condition)}
-                </p>
-              </div>
-            ) : null}
-            <div>
-              <p className="text-[8px] uppercase tracking-wider text-white/60">
-                Size
-              </p>
-              <p className="truncate text-[11px] font-semibold">{product.size}</p>
-            </div>
-            <div>
-              <p className="text-[8px] uppercase tracking-wider text-white/60">
-                Color
-              </p>
-              <p className="truncate text-[11px] font-semibold">
-                {product.colorName}
-              </p>
-            </div>
           </div>
-        </div>
+        ) : null}
       </div>
 
-      <div className="p-2.5 sm:p-3">
-        <div className="mb-1 flex items-center justify-between gap-1 text-[9px] text-[#8f8b8f] sm:text-[10px]">
+      <div className="p-4">
+        <div className="mb-1 flex items-center justify-between gap-2 text-[10px] text-[#8f8b8f]">
+          <span className="font-mono uppercase tracking-wider">
+            ORV-{product.id.slice(-4).toUpperCase()}
+          </span>
           <span className="inline-flex items-center gap-1">
-            <MapPin size={9} />
+            <MapPin size={10} />
             {product.origin}
           </span>
-          <span className="font-mono uppercase">{product.id.slice(0, 8)}</span>
         </div>
-        <p className="mb-2 line-clamp-1 text-xs font-semibold leading-tight text-[#1a1a2e] sm:text-sm">
+
+        <h3 className="mb-2 line-clamp-1 font-heading text-base italic text-[#1a1a2e] sm:text-lg">
           {product.name}
+        </h3>
+
+        <p className="mb-3 text-xs text-[#8f8b8f]">
+          <b className="text-[#1a1a2e]">{product.weight}</b> ct
+          <span className="mx-1.5 text-[#dde2e8]">·</span>
+          <b className="text-[#1a1a2e]">{product.shape}</b>
+          {product.clarityType ? (
+            <>
+              <span className="mx-1.5 text-[#dde2e8]">·</span>
+              <b className="text-[#1a1a2e]">{product.clarityType}</b>
+            </>
+          ) : null}
         </p>
 
-        <div className="mb-2.5 grid grid-cols-2 gap-x-2 gap-y-1">
-          <div>
-            <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
-              Weight
-            </p>
-            <p className="text-[10px] font-medium text-[#4a4a6a] sm:text-xs">
-              {product.weight}ct
-            </p>
-          </div>
-          <div>
-            <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
-              Shape
-            </p>
-            <p className="truncate text-[10px] font-medium text-[#4a4a6a] sm:text-xs">
-              {product.shape}
-            </p>
-          </div>
-          <div>
-            <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
-              Lot Qty
-            </p>
-            <p className="text-[10px] font-medium text-[#4a4a6a] sm:text-xs">
-              {product.lotQuantity}
-            </p>
-          </div>
-          <div>
-            <p className="text-[9px] uppercase tracking-wide text-[#8f8b8f] sm:text-[10px]">
-              Color
-            </p>
-            <div className="flex items-center gap-1">
-              <div
-                className="h-2.5 w-2.5 flex-shrink-0 rounded-full border border-white shadow-sm"
-                style={{ backgroundColor: product.colorHex }}
-              />
-              <p className="truncate text-[10px] text-[#4a4a6a] sm:text-xs">
-                {product.colorName}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-2.5 pb-2.5 sm:px-3 sm:pb-3">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
           {product.price ? (
-            <p className="text-sm font-bold text-[#3c74ae] sm:text-base">
-              ${product.price.toLocaleString()}
-              <span className="ml-1 text-[9px] font-normal text-[#8f8b8f]">
+            <p className="font-semibold text-[#1a1a2e]">
+              <span className="text-base sm:text-lg">
+                ${product.price.toLocaleString()}
+              </span>
+              <span className="ml-1 text-[10px] font-normal text-[#8f8b8f]">
                 USD
               </span>
             </p>
           ) : (
-            <p className="text-[10px] italic leading-tight text-[#8f8b8f] sm:text-xs">
-              Contact for Price
-            </p>
+            <p className="text-xs italic text-[#8f8b8f]">Contact for Price</p>
           )}
-          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-[#3c74ae] opacity-0 transition-opacity group-hover:opacity-100">
+
+          <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-[#3c74ae] transition-transform group-hover:translate-x-0.5">
             View
-            <ArrowRight size={10} />
+            <ArrowRight size={12} />
           </span>
         </div>
 
         <button
           type="button"
           onClick={handleAddToCart}
-          className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all duration-200 active:scale-95 sm:py-2.5 sm:text-xs ${
+          className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all duration-200 active:scale-95 ${
             inCart
               ? "border border-green-300 bg-green-50 text-green-700"
               : "bg-[#3c74ae] text-white shadow-sm shadow-[#3c74ae]/20 hover:bg-[#2d5f96]"
