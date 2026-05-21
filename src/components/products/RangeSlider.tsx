@@ -1,115 +1,66 @@
 "use client";
 
-import { useCallback } from "react";
-
 interface RangeSliderProps {
   label: string;
   min: number;
   max: number;
   step: number;
   value: [number, number];
-  onChange: (next: [number, number]) => void;
-  format?: (n: number) => string;
+  onChange: (v: [number, number]) => void;
+  format: (v: number) => string;
 }
 
-export function RangeSlider({
-  label,
-  min,
-  max,
-  step,
-  value,
-  onChange,
-  format = (n) => String(n),
-}: RangeSliderProps) {
+export function RangeSlider({ label, min, max, step, value, onChange, format }: RangeSliderProps) {
   const [lo, hi] = value;
-  const pct = useCallback(
-    (v: number) => ((v - min) / (max - min)) * 100,
-    [min, max],
-  );
+  const pct = (v: number) => ((v - min) / (max - min)) * 100;
 
   return (
-    <div>
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wide text-[#1a1a2e]">
-          {label}
-        </span>
-        <span className="text-xs text-[#8f8b8f]">
-          <span className="text-[#3c74ae] font-semibold">{format(lo)}</span>
-          {" – "}
-          <span className="text-[#3c74ae] font-semibold">{format(hi)}</span>
-        </span>
+    <div className="flex flex-col gap-2.5">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">{label}</span>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex justify-between text-xs text-navy">
+          <span>min <b className="font-semibold text-primary">{format(lo)}</b></span>
+          <span>max <b className="font-semibold text-primary">{format(hi)}</b></span>
+        </div>
+        <div className="relative mt-1 h-1 rounded-full bg-line">
+          <div
+            className="absolute inset-y-0 rounded-full bg-primary"
+            style={{ left: `${pct(lo)}%`, width: `${pct(hi) - pct(lo)}%` }}
+          />
+          <div
+            className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-full border-2 border-primary bg-white shadow-sm"
+            style={{ left: `${pct(lo)}%` }}
+          />
+          <div
+            className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-full border-2 border-primary bg-white shadow-sm"
+            style={{ left: `${pct(hi)}%` }}
+          />
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={lo}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              if (v <= hi) onChange([v, hi]);
+            }}
+            className="absolute -inset-y-2 left-0 right-0 z-[2] w-full cursor-pointer appearance-none bg-transparent opacity-0"
+          />
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={hi}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              if (v >= lo) onChange([lo, v]);
+            }}
+            className="absolute -inset-y-2 left-0 right-0 z-[3] w-full cursor-pointer appearance-none bg-transparent opacity-0"
+          />
+        </div>
       </div>
-
-      <div className="relative h-8 select-none">
-        <div className="absolute left-0 right-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-[#dde2e8]" />
-        <div
-          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-[#3c74ae]"
-          style={{
-            left: `${pct(lo)}%`,
-            width: `${Math.max(0, pct(hi) - pct(lo))}%`,
-          }}
-        />
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={lo}
-          onChange={(e) => {
-            const v = Number(e.target.value);
-            if (v <= hi) onChange([v, hi]);
-          }}
-          className="range-thumb absolute inset-0 h-full w-full appearance-none bg-transparent"
-          style={{ zIndex: 2 }}
-        />
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={hi}
-          onChange={(e) => {
-            const v = Number(e.target.value);
-            if (v >= lo) onChange([lo, v]);
-          }}
-          className="range-thumb absolute inset-0 h-full w-full appearance-none bg-transparent"
-          style={{ zIndex: 3 }}
-        />
-      </div>
-
-      <style jsx>{`
-        .range-thumb {
-          pointer-events: none;
-        }
-        .range-thumb::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          pointer-events: auto;
-          width: 18px;
-          height: 18px;
-          border-radius: 9999px;
-          background: #ffffff;
-          border: 2px solid #3c74ae;
-          box-shadow: 0 2px 6px rgba(60, 116, 174, 0.35);
-          cursor: pointer;
-          transition: transform 0.15s ease;
-        }
-        .range-thumb::-webkit-slider-thumb:hover {
-          transform: scale(1.1);
-        }
-        .range-thumb::-moz-range-thumb {
-          pointer-events: auto;
-          width: 18px;
-          height: 18px;
-          border-radius: 9999px;
-          background: #ffffff;
-          border: 2px solid #3c74ae;
-          box-shadow: 0 2px 6px rgba(60, 116, 174, 0.35);
-          cursor: pointer;
-        }
-        .range-thumb::-moz-range-track {
-          background: transparent;
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,365 +1,290 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
-import { Loader2, PackageSearch, X } from "lucide-react";
-import {
-  DEFAULT_DIMENSIONS,
-  DEFAULT_FILTERS,
-  FilterSortPanel,
-  PRICE_BOUNDS,
-  WEIGHT_BOUNDS,
-  type DimensionState,
-  type FilterState,
-} from "@/components/products/FilterSortPanel";
-import {
-  ProductCard,
-  type ProductCardData,
-} from "@/components/products/ProductCard";
-import { ProductsHero } from "@/components/products/ProductsHero";
-import { ActivityTicker } from "@/components/products/ActivityTicker";
-import { FeaturedGem } from "@/components/products/FeaturedGem";
-import { BirthstoneStrip } from "@/components/products/BirthstoneStrip";
-import type { ViewMode } from "@/components/products/ViewToggle";
+import "./products.css";
 
-const PRODUCTS_PER_PAGE = 16;
+import { useMemo, useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowUpDown,
+  Grid2x2,
+  Grid3x3,
+  List as ListIcon,
+  Search as SearchIcon,
+  X,
+  Loader2,
+} from "lucide-react";
+
+import { Hero } from "@/components/products/Hero";
+import { Featured } from "@/components/products/Featured";
+import { Dropdown } from "@/components/products/Dropdown";
+import { ShapeFilter } from "@/components/products/ShapeFilter";
+import { ColorFilter } from "@/components/products/ColorFilter";
+import { RangeSlider } from "@/components/products/RangeSlider";
+import { GemCard } from "@/components/products/GemCard";
+import { EmptyState } from "@/components/products/EmptyState";
+import { Pagination } from "@/components/products/Pagination";
+import { FilterChips, type ActiveChip } from "@/components/products/FilterChips";
+
+import { useProducts } from "@/lib/products/store";
+import { applyFilters } from "@/lib/products/filter";
+import { productsToGems } from "@/lib/products/adapter";
+import {
+  VARIETIES,
+  ORIGINS,
+  CLARITIES,
+  CONDITIONS,
+  SORT_OPTIONS,
+  type Gem,
+} from "@/lib/products/data";
+
+const PAGE_SIZE = 16;
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<ProductCardData[]>([]);
+  const [gems, setGems] = useState<Gem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalCount, setTotalCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid4");
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-  const [dimensions, setDimensions] =
-    useState<DimensionState>(DEFAULT_DIMENSIONS);
 
-  const totalPages = Math.ceil(totalCount / PRODUCTS_PER_PAGE);
-
-  const fetchProducts = useCallback(async () => {
+  useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set("page", currentPage.toString());
-      params.set("limit", PRODUCTS_PER_PAGE.toString());
+    fetch("/api/products?limit=100&sortBy=createdAt&sortOrder=desc")
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        const products = data?.data?.products || data?.data?.items || [];
+        setGems(productsToGems(products));
+      })
+      .catch(() => {
+        if (!cancelled) setGems([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-      if (filters.name) params.set("search", filters.name);
-      if (filters.origin) params.set("origin", filters.origin);
-      if (filters.shape) params.set("shape", filters.shape);
-      if (filters.colorName) params.set("colorName", filters.colorName);
-      if (filters.size) params.set("size", filters.size);
-      if (filters.clarityType) params.set("clarityType", filters.clarityType);
-      if (filters.condition) params.set("condition", filters.condition);
-      if (filters.availability !== "all")
-        params.set("availability", filters.availability);
-      if (filters.weightMin > WEIGHT_BOUNDS[0])
-        params.set("weightMin", String(filters.weightMin));
-      if (filters.weightMax < WEIGHT_BOUNDS[1])
-        params.set("weightMax", String(filters.weightMax));
-      if (filters.priceMin > PRICE_BOUNDS[0])
-        params.set("priceMin", String(filters.priceMin));
-      if (filters.priceMax < PRICE_BOUNDS[1])
-        params.set("priceMax", String(filters.priceMax));
+  const f = useProducts();
+  const featured = useMemo(() => gems[0], [gems]);
 
-      const sortMap: Record<string, { sortBy: string; sortOrder: string }> = {
-        latest: { sortBy: "createdAt", sortOrder: "desc" },
-        oldest: { sortBy: "createdAt", sortOrder: "asc" },
-        price_asc: { sortBy: "price", sortOrder: "asc" },
-        price_desc: { sortBy: "price", sortOrder: "desc" },
-        weight_asc: { sortBy: "weight", sortOrder: "asc" },
-        weight_desc: { sortBy: "weight", sortOrder: "desc" },
-        lot_asc: { sortBy: "lotQuantity", sortOrder: "asc" },
-        lot_desc: { sortBy: "lotQuantity", sortOrder: "desc" },
-        name_asc: { sortBy: "name", sortOrder: "asc" },
-        name_desc: { sortBy: "name", sortOrder: "desc" },
-      };
-      const sort = sortMap[filters.sortBy] ?? sortMap.latest;
-      params.set("sortBy", sort.sortBy);
-      params.set("sortOrder", sort.sortOrder);
+  const filtered = useMemo(() => applyFilters(gems, f), [gems, f]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const page = Math.min(f.page, totalPages);
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-      const res = await fetch(`/api/products?${params.toString()}`);
-      const data = await res.json();
-      if (data.success) {
-        setProducts(data.data?.products || []);
-        setTotalCount(data.data?.total || 0);
-      }
-    } catch {
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, currentPage]);
-
+  const gridTopRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    void fetchProducts();
-  }, [fetchProducts]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
-
-  function handleFilterChange(next: FilterState) {
-    setFilters(next);
-  }
-
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  const activeChips = useMemo(
-    () => buildActiveChips(filters),
-    [filters],
-  );
-
-  function removeChip(key: ChipKey) {
-    switch (key) {
-      case "name":
-      case "origin":
-      case "shape":
-      case "colorName":
-      case "size":
-      case "clarityType":
-      case "condition":
-        setFilters({ ...filters, [key]: "", presetId: null });
-        break;
-      case "availability":
-        setFilters({ ...filters, availability: "all", presetId: null });
-        break;
-      case "weight":
-        setFilters({
-          ...filters,
-          weightMin: WEIGHT_BOUNDS[0],
-          weightMax: WEIGHT_BOUNDS[1],
-          presetId: null,
-        });
-        break;
-      case "price":
-        setFilters({
-          ...filters,
-          priceMin: PRICE_BOUNDS[0],
-          priceMax: PRICE_BOUNDS[1],
-          presetId: null,
-        });
-        break;
+    if (gridTopRef.current) {
+      window.scrollTo({ top: gridTopRef.current.offsetTop - 80, behavior: "smooth" });
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
-  const gridClass =
-    viewMode === "list"
-      ? "flex flex-col gap-3"
-      : viewMode === "grid3"
-      ? "grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5"
-      : "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-5";
+  const gridCols =
+    f.view === "list" ? "grid-cols-1"
+    : f.view === "grid3" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+    : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
+
+  const chips: ActiveChip[] = [
+    f.variety && { key: "variety", label: f.variety, clear: () => f.set("variety", null) },
+    f.origin  && { key: "origin",  label: f.origin,  clear: () => f.set("origin",  null) },
+    f.shape   && { key: "shape",   label: `Shape: ${f.shape}`,   clear: () => f.set("shape",   null) },
+    f.color   && { key: "color",   label: `Color: ${f.color}`,   clear: () => f.set("color",   null) },
+    f.clarity && { key: "clarity", label: `Clarity: ${f.clarity}`, clear: () => f.set("clarity", null) },
+    f.certified && { key: "cert", label: `Cert: ${f.certified}`, clear: () => f.set("certified", null) },
+    f.availability !== "All" && { key: "cond", label: f.availability, clear: () => f.set("availability", "All") },
+    (f.carat[0] > 0 || f.carat[1] < 10)    && { key: "carat",  label: `${f.carat[0]}–${f.carat[1]}ct`,           clear: () => f.set("carat",  [0, 10]) },
+    (f.price[0] > 0 || f.price[1] < 15000) && { key: "price",  label: `$${f.price[0]}–$${f.price[1]}`,           clear: () => f.set("price",  [0, 15000]) },
+    (f.length[0] > 0 || f.length[1] < 20)  && { key: "length", label: `L: ${f.length[0]}–${f.length[1]}mm`,      clear: () => f.set("length", [0, 20]) },
+    (f.width[0] > 0  || f.width[1]  < 15)  && { key: "width",  label: `W: ${f.width[0]}–${f.width[1]}mm`,        clear: () => f.set("width",  [0, 15]) },
+    (f.height[0] > 0 || f.height[1] < 10)  && { key: "height", label: `H: ${f.height[0]}–${f.height[1]}mm`,      clear: () => f.set("height", [0, 10]) },
+  ].filter(Boolean) as ActiveChip[];
 
   return (
-    <div className="min-h-screen bg-white">
-      <ProductsHero totalCount={totalCount} loading={loading} />
+    <main>
+      <Hero totalCount={gems.length} />
 
-      <ActivityTicker />
+      {featured && <Featured gem={featured} />}
 
-      <FeaturedGem />
-
-      <div className="mx-auto max-w-7xl px-4 pt-2 pb-2 sm:px-6 lg:px-8">
-        <BirthstoneStrip
-          activeStone={filters.name}
-          onPick={(stone) =>
-            setFilters({ ...filters, name: stone, presetId: null })
-          }
-        />
-      </div>
-
-      <FilterSortPanel
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        totalCount={totalCount}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        dimensions={dimensions}
-        onDimensionsChange={setDimensions}
-      />
-
-      <div className="mx-auto max-w-7xl px-4 pb-28 sm:px-6 lg:px-8 md:pb-12">
-        {activeChips.length > 0 ? (
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-[#8f8b8f]">
-              Active:
-            </span>
-            {activeChips.map((c) => (
-              <button
-                key={c.key}
-                type="button"
-                onClick={() => removeChip(c.key)}
-                className="inline-flex items-center gap-1 rounded-full border border-[#3c74ae]/30 bg-[#e8f0f9] px-3 py-1 text-xs font-semibold text-[#3c74ae] transition-colors hover:bg-[#3c74ae] hover:text-white"
-              >
-                {c.label}
-                <X size={11} />
+      <section className="mx-auto mt-7 max-w-[1300px] px-8">
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-white p-3.5 px-4 shadow-sm">
+          <div className="flex h-10 min-w-[220px] flex-1 items-center gap-2.5 rounded-[10px] border border-transparent bg-primary-softer px-3 focus-within:border-primary focus-within:bg-white">
+            <SearchIcon className="h-4 w-4 text-muted" />
+            <input
+              type="text"
+              value={f.search}
+              onChange={(e) => f.set("search", e.target.value)}
+              placeholder="Search by name, ID, or variety..."
+              className="flex-1 border-none bg-transparent text-sm text-navy outline-none placeholder:text-muted"
+            />
+            {f.search && (
+              <button type="button" onClick={() => f.set("search", "")} className="text-muted">
+                <X className="h-3.5 w-3.5" strokeWidth={2.5} />
               </button>
-            ))}
+            )}
           </div>
-        ) : null}
 
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-24">
-            <Loader2 size={32} className="mb-4 animate-spin text-[#3c74ae]" />
-            <p className="text-sm text-[#8f8b8f]">Loading gemstones...</p>
-          </div>
-        ) : products.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center py-24 text-center"
-          >
-            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[#e8f0f9]">
-              <PackageSearch size={32} className="text-[#3c74ae]" />
-            </div>
-            <h3 className="mb-2 font-heading text-xl font-bold text-[#1a1a2e]">
-              No Gemstones Found
-            </h3>
-            <p className="max-w-sm text-sm text-[#8f8b8f]">
-              Try adjusting your filters or search terms to discover our full
-              collection.
-            </p>
-          </motion.div>
-        ) : (
-          <>
-            <div className={gridClass}>
-              {products.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  viewMode={viewMode}
-                />
+          <div className="flex h-10 items-center gap-2 rounded-[10px] border border-line bg-white px-3.5 text-sm text-navy">
+            <ArrowUpDown className="h-4 w-4" />
+            <select
+              value={f.sort}
+              onChange={(e) => f.set("sort", e.target.value as typeof f.sort)}
+              className="border-none bg-transparent font-medium outline-none"
+            >
+              {SORT_OPTIONS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
               ))}
-            </div>
+            </select>
+          </div>
 
-            {totalPages > 1 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-12 flex flex-col items-center gap-4"
-              >
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCurrentPage((page) => Math.max(1, page - 1));
-                      scrollToTop();
-                    }}
-                    disabled={currentPage === 1}
-                    className="rounded-xl border border-[#dde2e8] px-4 py-2 text-sm font-semibold text-[#4a4a6a] transition-all hover:border-[#3c74ae] hover:text-[#3c74ae] disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Previous
-                  </button>
+          <div className="flex gap-0.5 rounded-[10px] bg-primary-softer p-0.5">
+            <ViewBtn active={f.view === "grid4"} onClick={() => f.set("view", "grid4")} label="Grid">
+              <Grid2x2 className="h-3.5 w-3.5" />
+            </ViewBtn>
+            <ViewBtn active={f.view === "grid3"} onClick={() => f.set("view", "grid3")} label="Larger Grid">
+              <Grid3x3 className="h-3.5 w-3.5" />
+            </ViewBtn>
+            <ViewBtn active={f.view === "list"} onClick={() => f.set("view", "list")} label="Detail List">
+              <ListIcon className="h-3.5 w-3.5" />
+            </ViewBtn>
+          </div>
+        </div>
 
-                  {Array.from({ length: totalPages }, (_, i) => {
-                    const pageNum = i + 1;
-                    const isActive = pageNum === currentPage;
-                    const show =
-                      pageNum === 1 ||
-                      pageNum === totalPages ||
-                      Math.abs(pageNum - currentPage) <= 1;
+        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <Dropdown
+            label="Gemstone"
+            value={f.variety}
+            options={VARIETIES}
+            onChange={(v) => f.set("variety", v)}
+            placeholder="All Varieties"
+          />
+          <Dropdown
+            label="Origin"
+            value={f.origin}
+            options={ORIGINS}
+            onChange={(v) => f.set("origin", v)}
+            placeholder="All Origins"
+          />
+          <Dropdown
+            label="Clarity"
+            value={f.clarity}
+            options={CLARITIES}
+            onChange={(v) => f.set("clarity", v)}
+            placeholder="Any Clarity"
+          />
+          <Dropdown
+            label="Condition"
+            value={f.availability === "All" ? null : f.availability}
+            options={CONDITIONS}
+            onChange={(v) => f.set("availability", (v as typeof f.availability) ?? "All")}
+            placeholder="Any Condition"
+          />
+        </div>
 
-                    if (!show) {
-                      if (
-                        (pageNum === 2 && currentPage > 3) ||
-                        (pageNum === totalPages - 1 &&
-                          currentPage < totalPages - 2)
-                      ) {
-                        return (
-                          <span key={pageNum} className="px-1 text-[#8f8b8f]">
-                            ...
-                          </span>
-                        );
-                      }
-                      return null;
-                    }
+        <div className="mt-4 grid items-start gap-x-6 gap-y-4 rounded-2xl border border-line bg-white p-5 shadow-sm
+                        [grid-template-areas:'shape_color_carat_price_._''shape_color_length_width_height']
+                        [grid-template-columns:1.6fr_1.3fr_1fr_1fr_1fr]
+                        max-[1100px]:[grid-template-areas:'shape_shape_color''carat_price_.''length_width_height']
+                        max-[1100px]:[grid-template-columns:1fr_1fr_1fr]
+                        max-[640px]:[grid-template-areas:'shape''color''carat''price''length''width''height']
+                        max-[640px]:[grid-template-columns:1fr]">
+          <div style={{ gridArea: "shape" }}>
+            <ShapeFilter value={f.shape} onChange={(v) => f.set("shape", v)} />
+          </div>
+          <div style={{ gridArea: "color" }}>
+            <ColorFilter value={f.color} onChange={(v) => f.set("color", v)} />
+          </div>
+          <div style={{ gridArea: "carat" }}>
+            <RangeSlider
+              label="Carat Weight" min={0} max={10} step={0.1}
+              value={f.carat} onChange={(v) => f.set("carat", v)}
+              format={(v) => v.toFixed(1) + "ct"}
+            />
+          </div>
+          <div style={{ gridArea: "price" }}>
+            <RangeSlider
+              label="Price (USD)" min={0} max={15000} step={100}
+              value={f.price} onChange={(v) => f.set("price", v)}
+              format={(v) => "$" + (v >= 1000 ? (v / 1000).toFixed(1) + "k" : v)}
+            />
+          </div>
+          <div style={{ gridArea: "length" }}>
+            <RangeSlider
+              label="Length (mm)" min={0} max={20} step={0.1}
+              value={f.length} onChange={(v) => f.set("length", v)}
+              format={(v) => v.toFixed(1) + "mm"}
+            />
+          </div>
+          <div style={{ gridArea: "width" }}>
+            <RangeSlider
+              label="Width (mm)" min={0} max={15} step={0.1}
+              value={f.width} onChange={(v) => f.set("width", v)}
+              format={(v) => v.toFixed(1) + "mm"}
+            />
+          </div>
+          <div style={{ gridArea: "height" }}>
+            <RangeSlider
+              label="Height (mm)" min={0} max={10} step={0.1}
+              value={f.height} onChange={(v) => f.set("height", v)}
+              format={(v) => v.toFixed(1) + "mm"}
+            />
+          </div>
+        </div>
 
-                    return (
-                      <button
-                        key={pageNum}
-                        type="button"
-                        onClick={() => {
-                          setCurrentPage(pageNum);
-                          scrollToTop();
-                        }}
-                        className={`h-9 w-9 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                          isActive
-                            ? "bg-[#3c74ae] text-white shadow-md shadow-[#3c74ae]/30"
-                            : "border border-[#dde2e8] text-[#4a4a6a] hover:border-[#3c74ae] hover:text-[#3c74ae]"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
+        <FilterChips chips={chips} onClearAll={f.reset} />
+      </section>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCurrentPage((page) => Math.min(totalPages, page + 1));
-                      scrollToTop();
-                    }}
-                    disabled={currentPage === totalPages}
-                    className="rounded-xl border border-[#dde2e8] px-4 py-2 text-sm font-semibold text-[#4a4a6a] transition-all hover:border-[#3c74ae] hover:text-[#3c74ae] disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Next
-                  </button>
-                </div>
-
-                <p className="text-center text-xs text-[#8f8b8f]">
-                  Page {currentPage} of {totalPages} - Showing{" "}
-                  {Math.min(
-                    (currentPage - 1) * PRODUCTS_PER_PAGE + 1,
-                    totalCount,
-                  )}
-                  - {Math.min(currentPage * PRODUCTS_PER_PAGE, totalCount)} of{" "}
-                  {totalCount.toLocaleString()} gemstones
-                </p>
-              </motion.div>
-            ) : null}
-          </>
-        )}
+      <div ref={gridTopRef} className="mx-auto mb-3 mt-7 flex max-w-[1300px] items-center justify-between px-8">
+        <div className="text-sm text-navy-2">
+          <b className="font-serif text-xl italic text-primary">{filtered.length}</b> gemstones match
+        </div>
       </div>
-    </div>
+
+      {loading ? (
+        <div className="mx-auto flex max-w-[1300px] flex-col items-center justify-center px-8 py-24">
+          <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted">Loading gemstones...</p>
+        </div>
+      ) : paged.length === 0 ? (
+        <EmptyState onClear={f.reset} />
+      ) : (
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={`${f.view}-${page}`}
+            className={`mx-auto grid max-w-[1300px] gap-5 px-8 pb-20 ${gridCols}`}
+          >
+            {paged.map((g) => (
+              <GemCard key={g.id} gem={g} view={f.view} />
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      <Pagination current={page} total={totalPages} onChange={(p) => f.set("page", p)} />
+    </main>
   );
 }
 
-type ChipKey =
-  | "name"
-  | "origin"
-  | "shape"
-  | "colorName"
-  | "size"
-  | "clarityType"
-  | "condition"
-  | "availability"
-  | "weight"
-  | "price";
-
-function buildActiveChips(f: FilterState): Array<{ key: ChipKey; label: string }> {
-  const chips: Array<{ key: ChipKey; label: string }> = [];
-  if (f.name) chips.push({ key: "name", label: `Search: ${f.name}` });
-  if (f.origin) chips.push({ key: "origin", label: f.origin });
-  if (f.shape) chips.push({ key: "shape", label: f.shape });
-  if (f.colorName) chips.push({ key: "colorName", label: f.colorName });
-  if (f.size) chips.push({ key: "size", label: `Size: ${f.size}` });
-  if (f.clarityType) chips.push({ key: "clarityType", label: f.clarityType });
-  if (f.condition) chips.push({ key: "condition", label: f.condition });
-  if (f.availability !== "all" && f.availability !== "")
-    chips.push({
-      key: "availability",
-      label: f.availability === "true" ? "Available" : "Sold",
-    });
-  if (f.weightMin > WEIGHT_BOUNDS[0] || f.weightMax < WEIGHT_BOUNDS[1])
-    chips.push({
-      key: "weight",
-      label: `${f.weightMin.toFixed(1)}–${f.weightMax.toFixed(1)}ct`,
-    });
-  if (f.priceMin > PRICE_BOUNDS[0] || f.priceMax < PRICE_BOUNDS[1])
-    chips.push({
-      key: "price",
-      label: `$${f.priceMin.toLocaleString()}–$${f.priceMax.toLocaleString()}`,
-    });
-  return chips;
+function ViewBtn({
+  children,
+  active,
+  onClick,
+  label,
+}: {
+  children: React.ReactNode;
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={`grid h-[34px] w-[34px] place-items-center rounded-[7px] transition-colors
+        ${active ? "bg-white text-primary shadow-sm" : "text-navy-2 hover:text-primary"}`}
+    >
+      {children}
+    </button>
+  );
 }

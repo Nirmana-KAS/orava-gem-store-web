@@ -32,10 +32,34 @@ const config: Config = {
         border: {
           DEFAULT: "#dde2e8",
         },
+        primary: {
+          DEFAULT: "#3c74ae",
+          deep: "#2a5a8c",
+          soft: "#eaf2fa",
+          softer: "#f4f8fc",
+          100: "#eaf2fa",
+        },
+        navy: {
+          DEFAULT: "#1a2942",
+          2: "#324562",
+        },
+        ink: "#0e1a2e",
+        muted: "#6b7a90",
+        line: {
+          DEFAULT: "#e5eaf1",
+          2: "#eef1f6",
+        },
       },
       fontFamily: {
-        heading: ["Cormorant Garamond", "serif"],
-        body: ["Inter", "sans-serif"],
+        heading: ["var(--font-cormorant)", "Cormorant Garamond", "serif"],
+        body: ["var(--font-inter)", "Inter", "sans-serif"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        serif: ["var(--font-cormorant)", "Georgia", "serif"],
+      },
+      boxShadow: {
+        sm: "0 1px 2px rgba(15,30,60,.04), 0 1px 1px rgba(15,30,60,.03)",
+        md: "0 8px 24px -10px rgba(28,52,90,.18), 0 2px 6px rgba(28,52,90,.05)",
+        lg: "0 30px 60px -25px rgba(28,52,90,.25), 0 8px 20px -10px rgba(28,52,90,.12)",
       },
       keyframes: {
         float: {
