@@ -39,6 +39,30 @@ import {
 
 const PAGE_SIZE = 16;
 
+const SAMPLE_FEATURED: Gem = {
+  id: "sample-featured",
+  _realId: "sample-featured",
+  name: "Ceylon Royal Blue Sapphire",
+  variety: "Sapphire",
+  origin: "Sri Lanka",
+  shape: "Oval",
+  color: "#1f3a8a",
+  colorName: "Royal Blue",
+  carat: 3.42,
+  clarity: "VVS",
+  cut: "Brilliant",
+  condition: "Available",
+  certified: "GIA",
+  price: 8400,
+  ri: 1.762,
+  treated: "Heat",
+  length: 9.8,
+  width: 7.6,
+  height: 4.8,
+  images: [],
+  featured: true,
+};
+
 export default function ProductsPage() {
   const [gems, setGems] = useState<Gem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +89,18 @@ export default function ProductsPage() {
   }, []);
 
   const f = useProducts();
-  const featured = useMemo(() => gems[0], [gems]);
+  const featured = useMemo(
+    () => gems.find((g) => g.featured) ?? gems[0] ?? SAMPLE_FEATURED,
+    [gems],
+  );
+
+  const stats = useMemo(() => {
+    const variants = new Set(gems.map((g) => g.variety)).size;
+    const origins = new Set(gems.map((g) => g.origin)).size;
+    const shapesCuts = new Set(gems.map((g) => g.shape)).size;
+    const colours = new Set(gems.map((g) => g.colorName)).size;
+    return { variants, origins, shapesCuts, colours };
+  }, [gems]);
 
   const filtered = useMemo(() => applyFilters(gems, f), [gems, f]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -102,9 +137,9 @@ export default function ProductsPage() {
 
   return (
     <main>
-      <Hero totalCount={gems.length} />
+      <Hero totalCount={gems.length} stats={stats} />
 
-      {featured && <Featured gem={featured} />}
+      <Featured gem={featured} />
 
       <section className="mx-auto mt-7 max-w-[1300px] px-8">
         <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-white p-3.5 px-4 shadow-sm">

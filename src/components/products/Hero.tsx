@@ -10,19 +10,23 @@ const TAGLINES = [
   "Stones with provenance, prices with proof.",
 ];
 
-const STATS = [
-  { v: "7",    k: "Origins" },
-  { v: "8",    k: "Cuts" },
-  { v: "12",   k: "Varieties" },
-  { v: "100%", k: "Certified" },
-  { v: "24h",  k: "Worldwide" },
-];
-
 interface HeroProps {
   totalCount: number;
+  stats?: {
+    variants: number;
+    origins: number;
+    shapesCuts: number;
+    colours: number;
+  };
 }
 
-export function Hero({ totalCount }: HeroProps) {
+export function Hero({ totalCount, stats }: HeroProps) {
+  const statRows = [
+    { v: stats?.variants ?? 0,   k: "Variants" },
+    { v: stats?.origins ?? 0,    k: "Origins" },
+    { v: stats?.shapesCuts ?? 0, k: "Shapes & Cuts" },
+    { v: stats?.colours ?? 0,    k: "Colours" },
+  ];
   const [tagIdx, setTagIdx] = useState(0);
   useEffect(() => {
     const id = setInterval(() => setTagIdx((i) => (i + 1) % TAGLINES.length), 4500);
@@ -70,10 +74,10 @@ export function Hero({ totalCount }: HeroProps) {
         </div>
 
         <div className="mx-auto mt-7 flex max-w-3xl rounded-2xl border border-line bg-white p-3.5 px-2 shadow-sm">
-          {STATS.map((s, i) => (
+          {statRows.map((s, i) => (
             <div
               key={s.k}
-              className={`flex-1 px-2 py-1 text-center ${i < STATS.length - 1 ? "border-r border-line-2" : ""}`}
+              className={`flex-1 px-2 py-1 text-center ${i < statRows.length - 1 ? "border-r border-line-2" : ""}`}
             >
               <div className="font-serif text-2xl font-semibold text-navy">{s.v}</div>
               <div className="mt-0.5 text-[11px] font-medium uppercase tracking-widest text-muted">{s.k}</div>
