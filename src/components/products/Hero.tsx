@@ -73,13 +73,13 @@ export function Hero({ totalCount, stats }: HeroProps) {
           </span>
         </div>
 
-        <div className="mx-auto mt-7 flex max-w-3xl rounded-2xl border border-line bg-white p-3.5 px-2 shadow-sm">
-          {statRows.map((s, i) => (
+        <div className="mx-auto mt-7 grid max-w-3xl grid-cols-2 gap-0 rounded-2xl border border-line bg-white p-3.5 px-2 shadow-sm sm:grid-cols-4">
+          {statRows.map((s) => (
             <div
               key={s.k}
-              className={`flex-1 px-2 py-1 text-center ${i < statRows.length - 1 ? "border-r border-line-2" : ""}`}
+              className="px-2 py-2 text-center sm:border-r sm:border-line-2 sm:last:border-r-0"
             >
-              <div className="font-serif text-2xl font-semibold text-navy">{s.v}</div>
+              <div className="font-serif text-2xl font-semibold text-navy sm:text-2xl">{s.v}</div>
               <div className="mt-0.5 text-[11px] font-medium uppercase tracking-widest text-muted">{s.k}</div>
             </div>
           ))}

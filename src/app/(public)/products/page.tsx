@@ -12,6 +12,8 @@ import {
   Search as SearchIcon,
   X,
   Loader2,
+  SlidersHorizontal,
+  ChevronDown,
 } from "lucide-react";
 
 import { Hero } from "@/components/products/Hero";
@@ -66,6 +68,7 @@ const SAMPLE_FEATURED: Gem = {
 export default function ProductsPage() {
   const [gems, setGems] = useState<Gem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,11 +138,100 @@ export default function ProductsPage() {
     (f.height[0] > 0 || f.height[1] < 10)  && { key: "height", label: `H: ${f.height[0]}–${f.height[1]}mm`,      clear: () => f.set("height", [0, 10]) },
   ].filter(Boolean) as ActiveChip[];
 
+  const activeFilterCount = chips.length;
+
+  const filterContent = (
+    <>
+      <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Dropdown
+          label="Gemstone"
+          value={f.variety}
+          options={VARIETIES}
+          onChange={(v) => f.set("variety", v)}
+          placeholder="All Varieties"
+        />
+        <Dropdown
+          label="Origin"
+          value={f.origin}
+          options={ORIGINS}
+          onChange={(v) => f.set("origin", v)}
+          placeholder="All Origins"
+        />
+        <Dropdown
+          label="Clarity"
+          value={f.clarity}
+          options={CLARITIES}
+          onChange={(v) => f.set("clarity", v)}
+          placeholder="Any Clarity"
+        />
+        <Dropdown
+          label="Condition"
+          value={f.availability === "All" ? null : f.availability}
+          options={CONDITIONS}
+          onChange={(v) => f.set("availability", (v as typeof f.availability) ?? "All")}
+          placeholder="Any Condition"
+        />
+      </div>
+
+      <div className="mt-4 grid items-start gap-x-6 gap-y-4 rounded-2xl border border-line bg-white p-5 shadow-sm
+                      [grid-template-areas:'shape_color_carat_price_._''shape_color_length_width_height']
+                      [grid-template-columns:1.6fr_1.3fr_1fr_1fr_1fr]
+                      max-[1100px]:[grid-template-areas:'shape_shape_color''carat_price_.''length_width_height']
+                      max-[1100px]:[grid-template-columns:1fr_1fr_1fr]
+                      max-[640px]:[grid-template-areas:'shape''color''carat''price''length''width''height']
+                      max-[640px]:[grid-template-columns:1fr]">
+        <div style={{ gridArea: "shape" }}>
+          <ShapeFilter value={f.shape} onChange={(v) => f.set("shape", v)} />
+        </div>
+        <div style={{ gridArea: "color" }}>
+          <ColorFilter value={f.color} onChange={(v) => f.set("color", v)} />
+        </div>
+        <div style={{ gridArea: "carat" }}>
+          <RangeSlider
+            label="Carat Weight" min={0} max={10} step={0.1}
+            value={f.carat} onChange={(v) => f.set("carat", v)}
+            format={(v) => v.toFixed(1) + "ct"}
+          />
+        </div>
+        <div style={{ gridArea: "price" }}>
+          <RangeSlider
+            label="Price (USD)" min={0} max={15000} step={100}
+            value={f.price} onChange={(v) => f.set("price", v)}
+            format={(v) => "$" + (v >= 1000 ? (v / 1000).toFixed(1) + "k" : v)}
+          />
+        </div>
+        <div style={{ gridArea: "length" }}>
+          <RangeSlider
+            label="Length (mm)" min={0} max={20} step={0.1}
+            value={f.length} onChange={(v) => f.set("length", v)}
+            format={(v) => v.toFixed(1) + "mm"}
+          />
+        </div>
+        <div style={{ gridArea: "width" }}>
+          <RangeSlider
+            label="Width (mm)" min={0} max={15} step={0.1}
+            value={f.width} onChange={(v) => f.set("width", v)}
+            format={(v) => v.toFixed(1) + "mm"}
+          />
+        </div>
+        <div style={{ gridArea: "height" }}>
+          <RangeSlider
+            label="Height (mm)" min={0} max={10} step={0.1}
+            value={f.height} onChange={(v) => f.set("height", v)}
+            format={(v) => v.toFixed(1) + "mm"}
+          />
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <main>
       <Hero totalCount={gems.length} stats={stats} />
 
-      <Featured gem={featured} />
+      <div className="hidden md:block">
+        <Featured gem={featured} />
+      </div>
 
       <section className="mx-auto mt-7 max-w-[1300px] px-8">
         <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-white p-3.5 px-4 shadow-sm">
@@ -185,86 +277,42 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <Dropdown
-            label="Gemstone"
-            value={f.variety}
-            options={VARIETIES}
-            onChange={(v) => f.set("variety", v)}
-            placeholder="All Varieties"
+        <button
+          type="button"
+          onClick={() => setMobileFiltersOpen((o) => !o)}
+          className="mt-3 flex w-full items-center justify-between rounded-2xl border border-line bg-white px-4 py-3.5 text-sm font-semibold text-navy shadow-sm md:hidden"
+        >
+          <span className="flex items-center gap-2">
+            <SlidersHorizontal className="h-4 w-4 text-primary" />
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-muted transition-transform duration-200 ${mobileFiltersOpen ? "rotate-180" : ""}`}
           />
-          <Dropdown
-            label="Origin"
-            value={f.origin}
-            options={ORIGINS}
-            onChange={(v) => f.set("origin", v)}
-            placeholder="All Origins"
-          />
-          <Dropdown
-            label="Clarity"
-            value={f.clarity}
-            options={CLARITIES}
-            onChange={(v) => f.set("clarity", v)}
-            placeholder="Any Clarity"
-          />
-          <Dropdown
-            label="Condition"
-            value={f.availability === "All" ? null : f.availability}
-            options={CONDITIONS}
-            onChange={(v) => f.set("availability", (v as typeof f.availability) ?? "All")}
-            placeholder="Any Condition"
-          />
-        </div>
+        </button>
 
-        <div className="mt-4 grid items-start gap-x-6 gap-y-4 rounded-2xl border border-line bg-white p-5 shadow-sm
-                        [grid-template-areas:'shape_color_carat_price_._''shape_color_length_width_height']
-                        [grid-template-columns:1.6fr_1.3fr_1fr_1fr_1fr]
-                        max-[1100px]:[grid-template-areas:'shape_shape_color''carat_price_.''length_width_height']
-                        max-[1100px]:[grid-template-columns:1fr_1fr_1fr]
-                        max-[640px]:[grid-template-areas:'shape''color''carat''price''length''width''height']
-                        max-[640px]:[grid-template-columns:1fr]">
-          <div style={{ gridArea: "shape" }}>
-            <ShapeFilter value={f.shape} onChange={(v) => f.set("shape", v)} />
-          </div>
-          <div style={{ gridArea: "color" }}>
-            <ColorFilter value={f.color} onChange={(v) => f.set("color", v)} />
-          </div>
-          <div style={{ gridArea: "carat" }}>
-            <RangeSlider
-              label="Carat Weight" min={0} max={10} step={0.1}
-              value={f.carat} onChange={(v) => f.set("carat", v)}
-              format={(v) => v.toFixed(1) + "ct"}
-            />
-          </div>
-          <div style={{ gridArea: "price" }}>
-            <RangeSlider
-              label="Price (USD)" min={0} max={15000} step={100}
-              value={f.price} onChange={(v) => f.set("price", v)}
-              format={(v) => "$" + (v >= 1000 ? (v / 1000).toFixed(1) + "k" : v)}
-            />
-          </div>
-          <div style={{ gridArea: "length" }}>
-            <RangeSlider
-              label="Length (mm)" min={0} max={20} step={0.1}
-              value={f.length} onChange={(v) => f.set("length", v)}
-              format={(v) => v.toFixed(1) + "mm"}
-            />
-          </div>
-          <div style={{ gridArea: "width" }}>
-            <RangeSlider
-              label="Width (mm)" min={0} max={15} step={0.1}
-              value={f.width} onChange={(v) => f.set("width", v)}
-              format={(v) => v.toFixed(1) + "mm"}
-            />
-          </div>
-          <div style={{ gridArea: "height" }}>
-            <RangeSlider
-              label="Height (mm)" min={0} max={10} step={0.1}
-              value={f.height} onChange={(v) => f.set("height", v)}
-              format={(v) => v.toFixed(1) + "mm"}
-            />
-          </div>
-        </div>
+        {/* Desktop — always visible */}
+        <div className="hidden md:block">{filterContent}</div>
+
+        {/* Mobile — collapsible */}
+        <AnimatePresence initial={false}>
+          {mobileFiltersOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden md:hidden"
+            >
+              {filterContent}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <FilterChips chips={chips} onClearAll={f.reset} />
       </section>
