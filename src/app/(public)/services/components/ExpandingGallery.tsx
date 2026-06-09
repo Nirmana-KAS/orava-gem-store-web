@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import Image from "next/image";
 
 /* ================================================================
    ExpandingGallery — Hover-to-expand tile layout with per-tile
    photo album (prev/next arrows, dots, counter).
 
-   NOTE: Real photos are not uploaded yet. Each slide renders a
-   gray placeholder box. When real photos are added to
-   /public/images/services/, swap the placeholder back for <Image>.
+   Images are served from Cloudinary (res.cloudinary.com is
+   allowlisted in next.config.js).
    ================================================================ */
 
 interface SlideData {
@@ -29,28 +29,28 @@ const TILES: TileData[] = [
     title: "The cutting floor",
     defaultBig: true,
     slides: [
-      { src: "/images/services/cutting-1.jpg", alt: "Cutting floor wide" },
-      { src: "/images/services/cutting-2.jpg", alt: "Faceting wheel close-up" },
-      { src: "/images/services/cutting-3.jpg", alt: "Dop and stone alignment" },
-      { src: "/images/services/cutting-4.jpg", alt: "Finished cut stone" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781002761/The-Cutting-Floor-01_njvl6y.png", alt: "Cutting floor wide" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781002730/The-Cutting-Floor-02_e5ecyb.png", alt: "Faceting wheel close-up" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781002742/The-Cutting-Floor-03_rufgmb.png", alt: "Dop and stone alignment" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781002742/The-Cutting-Floor-04_eroboq.png", alt: "Finished cut stone" },
     ],
   },
   {
     tag: "Calibration",
     title: "Calibration and inspection",
     slides: [
-      { src: "/images/services/calib-1.jpg", alt: "Inspection bench" },
-      { src: "/images/services/calib-2.jpg", alt: "Micrometer measurement" },
-      { src: "/images/services/calib-3.jpg", alt: "Calibrated stone set" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781003910/Calibration-and-Inspection-01_kbjjc8.png", alt: "Inspection bench" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781003930/Calibration-and-Inspection-02_nw3fje.png", alt: "Micrometer measurement" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781003890/Calibration-and-Inspection-03_ngnhhv.png", alt: "Calibrated stone set" },
     ],
   },
   {
     tag: "Bespoke",
     title: "The design studio",
     slides: [
-      { src: "/images/services/studio-1.jpg", alt: "CAD workstation" },
-      { src: "/images/services/studio-2.jpg", alt: "3D stone model" },
-      { src: "/images/services/studio-3.jpg", alt: "Bespoke finished piece" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781005901/The-Design-Studio-01_mqzcak.png", alt: "CAD workstation" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781005941/The-Design-Studio-02_jxihbh.png", alt: "3D stone model" },
+      { src: "https://res.cloudinary.com/dafsnkkux/image/upload/v1781005962/The-Design-Studio-03_nykx5f.png", alt: "Bespoke finished piece" },
     ],
   },
 ];
@@ -64,15 +64,6 @@ const ChevRight = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"
     strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-);
-
-const PlaceholderIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="1.5">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <circle cx="8.5" cy="8.5" r="1.5" />
-    <polyline points="21 15 16 10 5 21" />
-  </svg>
 );
 
 function GalleryTile({ tile }: { tile: TileData }) {
@@ -89,10 +80,13 @@ function GalleryTile({ tile }: { tile: TileData }) {
         <div className="slides">
           {tile.slides.map((sl, i) => (
             <div key={i} className={`slide${i === idx ? " active" : ""}`}>
-              <div className="slide-placeholder">
-                <PlaceholderIcon />
-                <span>Drop: {sl.alt}</span>
-              </div>
+              <Image
+                src={sl.src}
+                alt={sl.alt}
+                fill
+                style={{ objectFit: "cover" }}
+                sizes="(max-width: 820px) 100vw, 50vw"
+              />
             </div>
           ))}
         </div>

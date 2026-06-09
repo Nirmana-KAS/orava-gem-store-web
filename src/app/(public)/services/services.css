@@ -410,28 +410,7 @@
 .cta-actions .btn-outline:hover{background: rgba(255,255,255,.12); border-color:#fff}
 
 /* ============================================================
-   STEP 3 — Gallery placeholder boxes (no real photos yet)
-   ============================================================ */
-.slide-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: linear-gradient(135deg, #e8eef5, #d8e1ec);
-  color: #8090a8;
-}
-.slide-placeholder span {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: #6b7a90;
-}
-
-/* ============================================================
-   STEP 7 — Mobile gem sizing
+   Mobile gem sizing
    ============================================================ */
 @media (max-width: 900px) {
   .gem-stage {
