@@ -39,24 +39,6 @@ export default function ServicesPage() {
             {/* Interactive rough-to-finished gem (client component) */}
             <HeroGem />
           </div>
-
-          {/* Credential stats */}
-          <div className="cred-row" style={{ maxWidth: 420 }}>
-            <div className="cred">
-              <div className="v">2006</div>
-              <div className="k">Cutting since</div>
-            </div>
-            <div className="cred">
-              <div className="v">
-                &plusmn;0.02<span style={{ fontSize: 16 }}>mm</span>
-              </div>
-              <div className="k">Tolerance</div>
-            </div>
-            <div className="cred">
-              <div className="v">100%</div>
-              <div className="k">In-house</div>
-            </div>
-          </div>
         </div>
       </header>
 

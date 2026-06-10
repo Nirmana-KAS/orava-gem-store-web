@@ -129,6 +129,20 @@ export default function HeroGem() {
       ctx.stroke();
     }
 
+    /* Hue journey that skips the muddy green band between amber
+       and blue: amber -> violet -> settled blue. `base` adds
+       per-facet variety. */
+    function stageHue(t: number, base: number): number {
+      if (t < 0.3) {
+        return 35 + base;
+      } else if (t < 0.6) {
+        const localT = (t - 0.3) / 0.3;
+        return 35 + base + localT * 180;
+      } else {
+        return 215 + base;
+      }
+    }
+
     function draw() {
       ctx.clearRect(0, 0, s.W, s.H);
 
@@ -148,25 +162,38 @@ export default function HeroGem() {
 
       const nAmt = s.R * 0.3;
 
+      /* Solid base gem shape so any inter-facet gaps blend in
+         instead of reading as a star/snowflake. */
+      ctx.beginPath();
+      for (let i = 0; i < SEG; i++) {
+        const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
+        const v = vtx(a, s.R * 1.02, nAmt, i * 4, s);
+        if (i === 0) ctx.moveTo(v[0], v[1]);
+        else ctx.lineTo(v[0], v[1]);
+      }
+      ctx.closePath();
+      const baseHue = stageHue(s.t, 0);
+      const baseSat = 14 + (52 - 14) * s.t;
+      const baseLight = 40 + (54 - 40) * s.t;
+      ctx.fillStyle = `hsl(${baseHue},${baseSat}%,${baseLight}%)`;
+      ctx.fill();
+
       for (let i = 0; i < SEG; i++) {
         const a1 = (i / SEG) * Math.PI * 2 - Math.PI / 2;
         const a2 = ((i + 1) / SEG) * Math.PI * 2 - Math.PI / 2;
         const am = (a1 + a2) / 2;
 
-        const o1 = vtx(a1, s.R, nAmt, i * 4, s);
-        const o2 = vtx(a2, s.R, nAmt, i * 4 + 1, s);
-        const m = vtx(am, s.R * 0.6, nAmt * 0.55, i * 4 + 2, s);
-        const t1 = vtx(a1, s.R * 0.34, nAmt * 0.28, i * 4 + 10, s);
-        const t2 = vtx(a2, s.R * 0.34, nAmt * 0.28, i * 4 + 11, s);
+        const o1 = vtx(a1, s.R * 1.01, nAmt, i * 4, s);
+        const o2 = vtx(a2, s.R * 1.01, nAmt, i * 4 + 1, s);
+        const m = vtx(am, s.R * 0.62, nAmt * 0.55, i * 4 + 2, s);
+        const t1 = vtx(a1, s.R * 0.36, nAmt * 0.28, i * 4 + 10, s);
+        const t2 = vtx(a2, s.R * 0.36, nAmt * 0.28, i * 4 + 11, s);
         const c: [number, number] = [s.cx, s.cy];
-
-        const rH = 35 + sn(i) * 15;
-        const fH = 215 + sn(i) * 22;
 
         /* bezel kite left */
         const p1: [number, number][] = [o1, m, t1];
         let li = facetLight(p1, s);
-        let h = rH + (fH - rH) * s.t;
+        let h = stageHue(s.t, sn(i) * 15);
         let sat = 16 + (58 - 16) * s.t + li * 22 * s.t;
         let l = 37 + (53 - 37) * s.t + li * 28 * s.t;
         if (s.t > 0.55 && li > 0.35)
@@ -176,7 +203,7 @@ export default function HeroGem() {
         /* bezel kite right */
         const p2: [number, number][] = [o2, t2, m];
         li = facetLight(p2, s);
-        h = rH + 6 + (fH + 10 - rH - 6) * s.t;
+        h = stageHue(s.t, sn(i) * 15 + 6);
         sat = 18 + (62 - 18) * s.t + li * 20 * s.t;
         l = 35 + (50 - 35) * s.t + li * 30 * s.t;
         if (s.t > 0.55 && li > 0.35)
@@ -186,7 +213,7 @@ export default function HeroGem() {
         /* star facet */
         const p3: [number, number][] = [m, t2, t1];
         li = facetLight(p3, s);
-        h = rH - 4 + (fH + 18 - rH + 4) * s.t;
+        h = stageHue(s.t, sn(i) * 15 - 4);
         sat = 14 + (68 - 14) * s.t + li * 16 * s.t;
         l = 40 + (60 - 40) * s.t + li * 24 * s.t;
         if (s.t > 0.55 && li > 0.35)
@@ -196,7 +223,7 @@ export default function HeroGem() {
         /* table triangle */
         const p4: [number, number][] = [t1, t2, c];
         li = facetLight(p4, s);
-        h = rH + 3 + (fH + 6 - rH - 3) * s.t;
+        h = stageHue(s.t, sn(i) * 15 + 3);
         sat = 10 + (42 - 10) * s.t + li * 14 * s.t;
         l = 46 + (72 - 46) * s.t + li * 18 * s.t;
         if (s.t > 0.45 && li > 0.25)
@@ -208,7 +235,7 @@ export default function HeroGem() {
       ctx.beginPath();
       for (let i = 0; i < SEG; i++) {
         const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
-        const v = vtx(a, s.R, nAmt, i * 4, s);
+        const v = vtx(a, s.R * 1.01, nAmt, i * 4, s);
         if (i === 0) ctx.moveTo(v[0], v[1]);
         else ctx.lineTo(v[0], v[1]);
       }
