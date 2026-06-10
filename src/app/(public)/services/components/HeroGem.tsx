@@ -1,12 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState, useCallback } from "react";
-
-/* ================================================================
-   HeroGem — Interactive faceted gem: rough -> finished
-   Canvas-based. Cursor tracks light, scrubber controls cutting stage.
-   Auto-plays cutting animation on mount. Click gem to replay.
-   ================================================================ */
+import React, { useRef, useEffect, useState } from "react";
 
 export default function HeroGem() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -15,24 +9,16 @@ export default function HeroGem() {
   const scrubberRef = useRef<HTMLInputElement>(null);
   const isVisibleRef = useRef(true);
 
-  interface Sparkle {
-    x: number;
-    y: number;
-    sz: number;
-    life: number;
-    dec: number;
-    rot: number;
-  }
-
-  /* all mutable animation state lives in a ref so the rAF loop
-     doesn't depend on React renders */
   const state = useRef({
     t: 0,
     targetT: 0,
     lightX: 0.6,
     lightY: 0.3,
     time: 0,
-    sparkles: [] as Sparkle[],
+    sparkles: [] as Array<{
+      x: number; y: number; sz: number;
+      life: number; dec: number; rot: number;
+    }>,
     isHovering: false,
     autoLightAngle: 0,
     userDrag: false,
@@ -43,57 +29,13 @@ export default function HeroGem() {
     R: 0,
   });
 
-  const SEG = 8; // octagonal silhouette (cushion cut)
-
-  /* ---------- deterministic noise ---------- */
-  const sn = (s: number) => Math.sin(s * 127.1) * Math.cos(s * 311.7);
-
-  const vtx = useCallback(
-    (
-      angle: number,
-      radius: number,
-      noiseScale: number,
-      seed: number,
-      s: typeof state.current
-    ): [number, number] => {
-      const rough = 1 - s.t;
-      const n =
-        rough *
-        noiseScale *
-        (Math.sin(seed * 12.98 + angle * 3.5 + s.time * 0.45) * 0.55 +
-          Math.sin(seed * 78.23 + angle * 7.1 + s.time * 0.28) * 0.45);
-      const r = radius + n;
-      return [s.cx + Math.cos(angle) * r, s.cy + Math.sin(angle) * r];
-    },
-    []
-  );
-
-  const facetLight = useCallback(
-    (pts: [number, number][], s: typeof state.current) => {
-      let mx = 0,
-        my = 0;
-      for (const p of pts) {
-        mx += p[0];
-        my += p[1];
-      }
-      mx /= pts.length;
-      my /= pts.length;
-      const lx = s.lightX * s.W,
-        ly = s.lightY * s.H;
-      const dx = lx - mx,
-        dy = ly - my;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      const inf = Math.max(0, 1 - d / (s.R * 1.8));
-      return Math.pow(inf, 1.5);
-    },
-    []
-  );
-
   useEffect(() => {
     const canvas = canvasRef.current;
     const stage = stageRef.current;
     if (!canvas || !stage) return;
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const s = state.current;
     let raf: number;
@@ -106,264 +48,306 @@ export default function HeroGem() {
       canvas!.height = s.H * dpr;
       canvas!.style.width = s.W + "px";
       canvas!.style.height = s.H + "px";
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       s.cx = s.W / 2;
       s.cy = s.H / 2;
-      s.R = Math.min(s.W, s.H) * 0.37;
+      s.R = Math.min(s.W, s.H) * 0.38;
     }
 
-    function drawFacet(
-      pts: [number, number][],
-      h: number,
-      sat: number,
-      l: number
-    ) {
-      ctx.beginPath();
-      ctx.moveTo(pts[0][0], pts[0][1]);
-      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-      ctx.closePath();
-      ctx.fillStyle = `hsl(${h},${Math.min(100, sat)}%,${Math.min(97, l)}%)`;
-      ctx.fill();
-      ctx.strokeStyle = `rgba(255,255,255,${0.05 + s.t * 0.2})`;
-      ctx.lineWidth = 0.35 + s.t * 0.7;
-      ctx.stroke();
-    }
-
-    /* Hue journey that skips the muddy green band between amber
-       and blue: amber -> violet -> settled blue. `base` adds
-       per-facet variety. */
-    function stageHue(t: number, base: number): number {
+    // Cushion cut color transition
+    function stageHue(t: number, offset: number): number {
       if (t < 0.3) {
-        return 35 + base;
+        return 35 + offset;
       } else if (t < 0.6) {
         const localT = (t - 0.3) / 0.3;
-        return 35 + base + localT * 180;
+        return 35 + offset + localT * 180;
       } else {
-        return 215 + base;
+        return 215 + offset;
       }
+    }
+
+    // Cushion cut outline — rounded square (top-down with 3/4 tilt)
+    function cushionOutline(scale: number): [number, number][] {
+      const pts: [number, number][] = [];
+      const N = 40;
+      const R = s.R * scale;
+      const corner = 0.35;
+      const tiltY = 0.85;
+
+      for (let i = 0; i < N; i++) {
+        const angle = (i / N) * Math.PI * 2 - Math.PI / 2;
+        const cosA = Math.cos(angle);
+        const sinA = Math.sin(angle);
+        const absC = Math.abs(cosA);
+        const absS = Math.abs(sinA);
+        const power = 4 + (1 - corner) * 4;
+        const r = R / Math.pow(
+          Math.pow(absC, power) + Math.pow(absS, power),
+          1 / power
+        );
+        pts.push([s.cx + cosA * r, s.cy + sinA * r * tiltY]);
+      }
+      return pts;
+    }
+
+    // Table outline (smaller cushion shape, the flat top)
+    function tableOutline(): [number, number][] {
+      return cushionOutline(0.55);
+    }
+
+    function drawShape(pts: [number, number][]) {
+      ctx!.beginPath();
+      ctx!.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) {
+        ctx!.lineTo(pts[i][0], pts[i][1]);
+      }
+      ctx!.closePath();
+    }
+
+    function facetLight(cx: number, cy: number): number {
+      const lx = s.lightX * s.W;
+      const ly = s.lightY * s.H;
+      const dx = lx - cx;
+      const dy = ly - cy;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      const inf = Math.max(0, 1 - d / (s.R * 1.6));
+      return Math.pow(inf, 1.4);
     }
 
     function draw() {
-      ctx.clearRect(0, 0, s.W, s.H);
+      ctx!.clearRect(0, 0, s.W, s.H);
 
-      /* premium outer halo */
+      // Outer glow halo
       if (s.t > 0.1) {
-        const a = ((s.t - 0.1) / 0.9) * 0.5;
-        const g = ctx.createRadialGradient(
-          s.cx, s.cy, s.R * 0.4,
-          s.cx, s.cy, s.R * 2.2
+        const a = ((s.t - 0.1) / 0.9) * 0.55;
+        const g = ctx!.createRadialGradient(
+          s.cx, s.cy, s.R * 0.5,
+          s.cx, s.cy, s.R * 2.3
         );
         g.addColorStop(0, `rgba(60,116,174,${a})`);
-        g.addColorStop(0.3, `rgba(74,134,200,${a * 0.6})`);
-        g.addColorStop(0.7, `rgba(60,116,174,${a * 0.2})`);
+        g.addColorStop(0.4, `rgba(74,134,200,${a * 0.5})`);
         g.addColorStop(1, "rgba(60,116,174,0)");
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, s.W, s.H);
+        ctx!.fillStyle = g;
+        ctx!.fillRect(0, 0, s.W, s.H);
       }
 
-      const nAmt = s.R * 0.3;
-
-      /* Solid base gem shape so any inter-facet gaps blend in
-         instead of reading as a star/snowflake. */
-      ctx.beginPath();
-      for (let i = 0; i < SEG; i++) {
-        const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
-        const v = vtx(a, s.R * 1.02, nAmt, i * 4, s);
-        if (i === 0) ctx.moveTo(v[0], v[1]);
-        else ctx.lineTo(v[0], v[1]);
-      }
-      ctx.closePath();
-      const baseHue = stageHue(s.t, 0);
-      const baseSat = 14 + (52 - 14) * s.t;
-      const baseLight = 40 + (54 - 40) * s.t;
-      ctx.fillStyle = `hsl(${baseHue},${baseSat}%,${baseLight}%)`;
-      ctx.fill();
-
-      for (let i = 0; i < SEG; i++) {
-        const a1 = (i / SEG) * Math.PI * 2 - Math.PI / 2;
-        const a2 = ((i + 1) / SEG) * Math.PI * 2 - Math.PI / 2;
-        const am = (a1 + a2) / 2;
-
-        const o1 = vtx(a1, s.R * 1.01, nAmt, i * 4, s);
-        const o2 = vtx(a2, s.R * 1.01, nAmt, i * 4 + 1, s);
-        const m = vtx(am, s.R * 0.62, nAmt * 0.55, i * 4 + 2, s);
-        const t1 = vtx(a1, s.R * 0.36, nAmt * 0.28, i * 4 + 10, s);
-        const t2 = vtx(a2, s.R * 0.36, nAmt * 0.28, i * 4 + 11, s);
-        const c: [number, number] = [s.cx, s.cy];
-
-        /* bezel kite left */
-        const p1: [number, number][] = [o1, m, t1];
-        let li = facetLight(p1, s);
-        let h = stageHue(s.t, sn(i) * 18);
-        let sat = 18 + (72 - 18) * s.t + li * 35 * s.t;
-        let l = 32 + (50 - 32) * s.t + li * 45 * s.t;
-        if (s.t > 0.5 && li > 0.4) {
-          l += ((s.t - 0.5) / 0.5) * ((li - 0.4) / 0.6) * 55;
-        }
-        drawFacet(p1, h, Math.min(95, sat), Math.min(92, l));
-
-        /* bezel kite right */
-        const p2: [number, number][] = [o2, t2, m];
-        li = facetLight(p2, s);
-        h = stageHue(s.t, sn(i) * 18 + 8);
-        sat = 20 + (74 - 20) * s.t + li * 32 * s.t;
-        l = 28 + (46 - 28) * s.t + li * 50 * s.t;
-        if (s.t > 0.5 && li > 0.4) {
-          l += ((s.t - 0.5) / 0.5) * ((li - 0.4) / 0.6) * 58;
-        }
-        drawFacet(p2, h, Math.min(95, sat), Math.min(95, l));
-
-        /* star facet */
-        const p3: [number, number][] = [m, t2, t1];
-        li = facetLight(p3, s);
-        h = stageHue(s.t, sn(i) * 18 - 5);
-        sat = 14 + (78 - 14) * s.t + li * 28 * s.t;
-        l = 38 + (62 - 38) * s.t + li * 38 * s.t;
-        if (s.t > 0.5 && li > 0.4) {
-          l += ((s.t - 0.5) / 0.5) * ((li - 0.4) / 0.6) * 48;
-        }
-        drawFacet(p3, h, Math.min(95, sat), Math.min(96, l));
-
-        /* pavilion shadow triangle (table now drawn separately) */
-        const p4: [number, number][] = [t1, t2, c];
-        li = facetLight(p4, s);
-        h = stageHue(s.t, sn(i) * 18 + 4);
-        sat = 10 + (52 - 10) * s.t + li * 20 * s.t;
-        l = 42 + (60 - 42) * s.t + li * 30 * s.t;
-        drawFacet(p4, h, Math.min(85, sat), Math.min(88, l));
-      }
-
-      /* central table (flat top of cushion cut) */
-      const tableR = s.R * 0.42;
-      ctx.beginPath();
-      for (let i = 0; i < SEG; i++) {
-        const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
-        const v = vtx(a, tableR, nAmt * 0.15, i * 4 + 50, s);
-        if (i === 0) ctx.moveTo(v[0], v[1]);
-        else ctx.lineTo(v[0], v[1]);
-      }
-      ctx.closePath();
-
-      const lx = s.lightX * s.W;
-      const ly = s.lightY * s.H;
-      const tableGrad = ctx.createRadialGradient(
-        lx, ly, 0,
-        s.cx, s.cy, tableR * 1.5
+      // Drop shadow underneath
+      const shadowGrad = ctx!.createRadialGradient(
+        s.cx, s.cy + s.R * 0.9, 0,
+        s.cx, s.cy + s.R * 0.9, s.R * 0.8
       );
-      const tHue = stageHue(s.t, 0);
-      const tSat = 14 + (62 - 14) * s.t;
-      tableGrad.addColorStop(0, `hsla(${tHue},${tSat}%,${85 - s.t * 5}%,${0.6 + s.t * 0.3})`);
-      tableGrad.addColorStop(0.5, `hsla(${tHue},${tSat}%,${65 - s.t * 5}%,${0.4 + s.t * 0.2})`);
-      tableGrad.addColorStop(1, `hsla(${tHue},${tSat}%,${45 - s.t * 5}%,0)`);
-      ctx.fillStyle = tableGrad;
-      ctx.fill();
+      shadowGrad.addColorStop(0, `rgba(15,30,60,${0.18 + s.t * 0.12})`);
+      shadowGrad.addColorStop(1, "rgba(15,30,60,0)");
+      ctx!.fillStyle = shadowGrad;
+      ctx!.beginPath();
+      ctx!.ellipse(s.cx, s.cy + s.R * 0.95, s.R * 0.7, s.R * 0.15, 0, 0, Math.PI * 2);
+      ctx!.fill();
 
-      ctx.strokeStyle = `rgba(255,255,255,${0.15 + s.t * 0.35})`;
-      ctx.lineWidth = 0.8 + s.t * 0.6;
-      ctx.stroke();
+      const outerPts = cushionOutline(1.0);
+      const tablePts = tableOutline();
+      const baseHue = stageHue(s.t, 0);
+      const baseSat = 18 + (62 - 18) * s.t;
+      const baseLight = 32 + (45 - 32) * s.t;
 
-      /* outer girdle edge */
-      ctx.beginPath();
-      for (let i = 0; i < SEG; i++) {
-        const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
-        const v = vtx(a, s.R * 1.01, nAmt, i * 4, s);
-        if (i === 0) ctx.moveTo(v[0], v[1]);
-        else ctx.lineTo(v[0], v[1]);
+      // Base gem fill (solid color, no gaps)
+      drawShape(outerPts);
+      const baseGrad = ctx!.createLinearGradient(
+        s.cx, s.cy - s.R,
+        s.cx, s.cy + s.R
+      );
+      baseGrad.addColorStop(0, `hsl(${baseHue},${baseSat}%,${baseLight + 12}%)`);
+      baseGrad.addColorStop(0.5, `hsl(${baseHue},${baseSat}%,${baseLight}%)`);
+      baseGrad.addColorStop(1, `hsl(${baseHue},${baseSat}%,${baseLight - 10}%)`);
+      ctx!.fillStyle = baseGrad;
+      ctx!.fill();
+
+      // Crown facets — 8 around the table connecting outer edge to table edge
+      const N = 8;
+      const outerLen = outerPts.length;
+      const tableLen = tablePts.length;
+
+      for (let i = 0; i < N; i++) {
+        const oStartIdx = Math.floor((i / N) * outerLen);
+        const oEndIdx = Math.floor(((i + 1) / N) * outerLen);
+        const tStartIdx = Math.floor((i / N) * tableLen);
+        const tEndIdx = Math.floor(((i + 1) / N) * tableLen);
+
+        const oStart = outerPts[oStartIdx];
+        const oEnd = outerPts[oEndIdx % outerLen];
+        const tStart = tablePts[tStartIdx];
+        const tEnd = tablePts[tEndIdx % tableLen];
+
+        const cx = (oStart[0] + oEnd[0] + tStart[0] + tEnd[0]) / 4;
+        const cy = (oStart[1] + oEnd[1] + tStart[1] + tEnd[1]) / 4;
+        const li = facetLight(cx, cy);
+
+        const variation = Math.sin(i * 1.7) * 0.5;
+        const hueOffset = variation * 12;
+        const h = stageHue(s.t, hueOffset);
+        const isTopFacet = cy < s.cy;
+        const baseBoost = isTopFacet ? 8 : -5;
+
+        let sat = baseSat + li * 30 * s.t + variation * 8;
+        let light = baseLight + baseBoost + li * 38 * s.t + variation * 4;
+
+        if (s.t > 0.5 && li > 0.35) {
+          light += ((s.t - 0.5) / 0.5) * ((li - 0.35) / 0.65) * 48;
+        }
+
+        sat = Math.max(8, Math.min(92, sat));
+        light = Math.max(20, Math.min(94, light));
+
+        ctx!.beginPath();
+        ctx!.moveTo(oStart[0], oStart[1]);
+        ctx!.lineTo(oEnd[0], oEnd[1]);
+        ctx!.lineTo(tEnd[0], tEnd[1]);
+        ctx!.lineTo(tStart[0], tStart[1]);
+        ctx!.closePath();
+        ctx!.fillStyle = `hsl(${h},${sat}%,${light}%)`;
+        ctx!.fill();
+        ctx!.strokeStyle = `rgba(15,30,60,${0.12 + s.t * 0.18})`;
+        ctx!.lineWidth = 0.6 + s.t * 0.5;
+        ctx!.stroke();
       }
-      ctx.closePath();
-      ctx.strokeStyle = `rgba(26,41,66,${0.1 + s.t * 0.24})`;
-      ctx.lineWidth = 1.2 + s.t;
-      ctx.stroke();
 
-      /* bright sparkle highlights at facet edges near the cursor */
+      // Table (flat top) with bright reflection
+      drawShape(tablePts);
       const lxPos = s.lightX * s.W;
       const lyPos = s.lightY * s.H;
-      for (let i = 0; i < SEG; i++) {
-        const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
-        const v = vtx(a, s.R * 0.95, nAmt, i * 4, s);
-        const dx = lxPos - v[0];
-        const dy = lyPos - v[1];
-        const d = Math.sqrt(dx * dx + dy * dy);
-        const inf = Math.max(0, 1 - d / (s.R * 1.2));
-        if (inf > 0.3 && s.t > 0.4) {
-          const r = 2 + inf * 3 * s.t;
-          ctx.beginPath();
-          ctx.arc(v[0], v[1], r, 0, Math.PI * 2);
-          const sparkleGrad = ctx.createRadialGradient(
-            v[0], v[1], 0,
-            v[0], v[1], r
-          );
-          sparkleGrad.addColorStop(0, `rgba(255,255,255,${inf * s.t})`);
-          sparkleGrad.addColorStop(0.5, `rgba(255,255,255,${inf * 0.4 * s.t})`);
-          sparkleGrad.addColorStop(1, "rgba(255,255,255,0)");
-          ctx.fillStyle = sparkleGrad;
-          ctx.fill();
+      const tableGrad = ctx!.createRadialGradient(
+        lxPos, lyPos - s.R * 0.1, 0,
+        s.cx, s.cy, s.R * 0.7
+      );
+      tableGrad.addColorStop(0, `hsla(${baseHue},${baseSat - 10}%,${88 - s.t * 8}%,${0.85})`);
+      tableGrad.addColorStop(0.4, `hsla(${baseHue},${baseSat}%,${65}%,${0.75})`);
+      tableGrad.addColorStop(1, `hsla(${baseHue},${baseSat}%,${baseLight + 8}%,${0.7})`);
+      ctx!.fillStyle = tableGrad;
+      ctx!.fill();
+      ctx!.strokeStyle = `rgba(255,255,255,${0.25 + s.t * 0.35})`;
+      ctx!.lineWidth = 1 + s.t * 0.8;
+      ctx!.stroke();
+
+      // Inner pavilion reflection lines visible through table
+      ctx!.save();
+      ctx!.clip();
+      const innerLines = 6;
+      for (let i = 0; i < innerLines; i++) {
+        const ang = (i / innerLines) * Math.PI * 2 + s.time * 0.1;
+        const x1 = s.cx + Math.cos(ang) * s.R * 0.45 * 0.85;
+        const y1 = s.cy + Math.sin(ang) * s.R * 0.45 * 0.85 * 0.85;
+        ctx!.beginPath();
+        ctx!.moveTo(s.cx, s.cy);
+        ctx!.lineTo(x1, y1);
+        ctx!.strokeStyle = `rgba(255,255,255,${0.15 + s.t * 0.2})`;
+        ctx!.lineWidth = 0.4;
+        ctx!.stroke();
+      }
+      ctx!.restore();
+
+      // Bright center highlight on table
+      if (s.t > 0.4) {
+        const hlGrad = ctx!.createRadialGradient(
+          lxPos, lyPos - s.R * 0.05, 0,
+          lxPos, lyPos - s.R * 0.05, s.R * 0.25
+        );
+        hlGrad.addColorStop(0, `rgba(255,255,255,${0.4 * s.t})`);
+        hlGrad.addColorStop(0.5, `rgba(255,255,255,${0.15 * s.t})`);
+        hlGrad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx!.fillStyle = hlGrad;
+        drawShape(tablePts);
+        ctx!.fill();
+      }
+
+      // Outer outline (sharp edge of gem)
+      drawShape(outerPts);
+      ctx!.strokeStyle = `rgba(15,30,60,${0.25 + s.t * 0.25})`;
+      ctx!.lineWidth = 1.5 + s.t * 0.8;
+      ctx!.stroke();
+
+      // Edge sparkles near cursor when finished
+      if (s.t > 0.5) {
+        for (let i = 0; i < outerPts.length; i += 4) {
+          const p = outerPts[i];
+          const li = facetLight(p[0], p[1]);
+          if (li > 0.4) {
+            const sz = 1.5 + li * 3.5 * s.t;
+            const spGrad = ctx!.createRadialGradient(
+              p[0], p[1], 0,
+              p[0], p[1], sz
+            );
+            spGrad.addColorStop(0, `rgba(255,255,255,${li * s.t * 0.9})`);
+            spGrad.addColorStop(0.5, `rgba(255,255,255,${li * s.t * 0.3})`);
+            spGrad.addColorStop(1, "rgba(255,255,255,0)");
+            ctx!.fillStyle = spGrad;
+            ctx!.beginPath();
+            ctx!.arc(p[0], p[1], sz, 0, Math.PI * 2);
+            ctx!.fill();
+          }
         }
       }
 
-      /* sparkles */
-      if (s.t > 0.3 && Math.random() < (s.t - 0.3) * 0.22) {
+      // Cursor light blob (visible light source when hovering)
+      if (s.isHovering && s.t > 0.4) {
+        const dist = Math.sqrt(
+          (lxPos - s.cx) ** 2 + (lyPos - s.cy) ** 2
+        );
+        if (dist < s.R * 1.4) {
+          const blob = ctx!.createRadialGradient(
+            lxPos, lyPos, 0,
+            lxPos, lyPos, s.R * 0.45
+          );
+          blob.addColorStop(0, `rgba(255,255,255,${0.32 * s.t})`);
+          blob.addColorStop(0.5, `rgba(200,220,255,${0.12 * s.t})`);
+          blob.addColorStop(1, "rgba(255,255,255,0)");
+          ctx!.fillStyle = blob;
+          ctx!.globalCompositeOperation = "screen";
+          ctx!.fillRect(0, 0, s.W, s.H);
+          ctx!.globalCompositeOperation = "source-over";
+        }
+      }
+
+      // Sparkle particles floating around
+      if (s.t > 0.3 && Math.random() < (s.t - 0.3) * 0.18) {
         const sa = Math.random() * Math.PI * 2;
-        const sd = s.R * (0.12 + Math.random() * 1.15);
+        const sd = s.R * (0.3 + Math.random() * 0.9);
         s.sparkles.push({
           x: s.cx + Math.cos(sa) * sd,
-          y: s.cy + Math.sin(sa) * sd,
-          sz: 1.5 + Math.random() * 5.5 * s.t,
+          y: s.cy + Math.sin(sa) * sd * 0.85,
+          sz: 1.5 + Math.random() * 4.5 * s.t,
           life: 1,
-          dec: 0.01 + Math.random() * 0.028,
+          dec: 0.012 + Math.random() * 0.025,
           rot: Math.random() * Math.PI,
         });
       }
+
       for (let j = s.sparkles.length - 1; j >= 0; j--) {
         const sp = s.sparkles[j];
         sp.life -= sp.dec;
-        sp.rot += 0.04;
+        sp.rot += 0.05;
         if (sp.life <= 0) {
           s.sparkles.splice(j, 1);
           continue;
         }
-        ctx.save();
-        ctx.translate(sp.x, sp.y);
-        ctx.rotate(sp.rot);
-        ctx.globalAlpha = sp.life * Math.min(1, s.t * 1.6);
-        ctx.fillStyle = "#fff";
+        ctx!.save();
+        ctx!.translate(sp.x, sp.y);
+        ctx!.rotate(sp.rot);
+        ctx!.globalAlpha = sp.life * Math.min(1, s.t * 1.5);
+        ctx!.fillStyle = "#fff";
         const sz = sp.sz;
-        ctx.beginPath();
-        ctx.moveTo(0, -sz);
-        ctx.lineTo(sz * 0.2, -sz * 0.2);
-        ctx.lineTo(sz, 0);
-        ctx.lineTo(sz * 0.2, sz * 0.2);
-        ctx.lineTo(0, sz);
-        ctx.lineTo(-sz * 0.2, sz * 0.2);
-        ctx.lineTo(-sz, 0);
-        ctx.lineTo(-sz * 0.2, -sz * 0.2);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
+        ctx!.beginPath();
+        ctx!.moveTo(0, -sz);
+        ctx!.lineTo(sz * 0.25, -sz * 0.25);
+        ctx!.lineTo(sz, 0);
+        ctx!.lineTo(sz * 0.25, sz * 0.25);
+        ctx!.lineTo(0, sz);
+        ctx!.lineTo(-sz * 0.25, sz * 0.25);
+        ctx!.lineTo(-sz, 0);
+        ctx!.lineTo(-sz * 0.25, -sz * 0.25);
+        ctx!.closePath();
+        ctx!.fill();
+        ctx!.restore();
       }
-      ctx.globalAlpha = 1;
-
-      /* soft light blob following the cursor while hovering */
-      if (s.isHovering && s.t > 0.4) {
-        const lxFinal = s.lightX * s.W;
-        const lyFinal = s.lightY * s.H;
-        const dist = Math.sqrt(
-          (lxFinal - s.cx) ** 2 + (lyFinal - s.cy) ** 2
-        );
-        if (dist < s.R * 1.3) {
-          const blob = ctx.createRadialGradient(
-            lxFinal, lyFinal, 0,
-            lxFinal, lyFinal, s.R * 0.5
-          );
-          blob.addColorStop(0, `rgba(255,255,255,${0.3 * s.t})`);
-          blob.addColorStop(0.5, `rgba(255,255,255,${0.1 * s.t})`);
-          blob.addColorStop(1, "rgba(255,255,255,0)");
-          ctx.fillStyle = blob;
-          ctx.globalCompositeOperation = "screen";
-          ctx.fillRect(0, 0, s.W, s.H);
-          ctx.globalCompositeOperation = "source-over";
-        }
-      }
+      ctx!.globalAlpha = 1;
     }
 
     function loop() {
@@ -378,15 +362,14 @@ export default function HeroGem() {
 
       if (!s.isHovering) {
         s.autoLightAngle += 0.004;
-        s.lightX = 0.5 + Math.cos(s.autoLightAngle) * 0.36;
-        s.lightY = 0.4 + Math.sin(s.autoLightAngle * 0.72) * 0.26;
+        s.lightX = 0.5 + Math.cos(s.autoLightAngle) * 0.32;
+        s.lightY = 0.4 + Math.sin(s.autoLightAngle * 0.72) * 0.22;
       }
 
       if (scrubberRef.current && !s.userDrag) {
         scrubberRef.current.value = String(Math.round(s.t * 100));
       }
 
-      /* label */
       let newLabel: string;
       if (s.t < 0.15) newLabel = "Rough stone";
       else if (s.t < 0.45) newLabel = "Shaping…";
@@ -399,7 +382,6 @@ export default function HeroGem() {
       raf = requestAnimationFrame(loop);
     }
 
-    /* events */
     const onEnter = () => { s.isHovering = true; };
     const onLeave = () => { s.isHovering = false; };
     const onMove = (e: MouseEvent) => {
@@ -426,11 +408,8 @@ export default function HeroGem() {
     stage.addEventListener("touchmove", onTouch, { passive: true });
     canvas.addEventListener("click", onClick);
 
-    /* pause the rAF draw work when the gem is scrolled out of view */
     const io = new IntersectionObserver(
-      ([entry]) => {
-        isVisibleRef.current = entry.isIntersecting;
-      },
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
       { threshold: 0.1 }
     );
     io.observe(stage);
@@ -444,15 +423,15 @@ export default function HeroGem() {
 
     return () => {
       cancelAnimationFrame(raf);
-      io.disconnect();
       window.removeEventListener("resize", resize);
       stage.removeEventListener("mouseenter", onEnter);
       stage.removeEventListener("mouseleave", onLeave);
       stage.removeEventListener("mousemove", onMove);
       stage.removeEventListener("touchmove", onTouch);
       canvas.removeEventListener("click", onClick);
+      io.disconnect();
     };
-  }, [vtx, facetLight]);
+  }, []);
 
   const handleScrubInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const s = state.current;

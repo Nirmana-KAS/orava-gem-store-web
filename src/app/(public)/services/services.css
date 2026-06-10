@@ -509,38 +509,58 @@
     grid-template-columns: auto auto 1fr;
     grid-template-areas: none;
     gap: 12px;
-    padding: 16px 0;
+    padding: 18px 0;
+    align-items: start;
     transition: background 0.2s ease;
   }
 
   .svc-num {
     font-size: 1.2rem;
     min-width: 28px;
+    align-self: start;
+    margin-top: 2px;
   }
 
   .svc-icon {
     width: 36px;
     height: 36px;
+    align-self: start;
+    margin-top: 2px;
     background: var(--primary-soft);
     color: var(--primary);
   }
 
+  .svc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .svc-body h3 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    margin: 0;
   }
 
   .svc-body p {
     font-size: 0.85rem;
     line-height: 1.5;
+    margin: 0;
+  }
+
+  .svc-chips {
+    margin: 0;
   }
 
   .svc-cta {
-    grid-column: 1 / -1;
+    grid-column: 3;
+    grid-row: 1;
     justify-self: end;
+    align-self: start;
+    margin-top: 0;
+    font-size: 0.78rem;
+    padding: 7px 14px;
     width: auto;
-    margin-top: 8px;
-    font-size: 0.85rem;
-    padding: 8px 16px;
+    white-space: nowrap;
   }
 
   /* Tap feedback in place of broken hover (FIX 6) */
@@ -639,9 +659,22 @@
 
 @media (max-width: 480px) {
   .svc-cta {
-    justify-self: end;
-    width: auto;
-    font-size: 0.8rem;
-    padding: 7px 14px;
+    font-size: 0.72rem;
+    padding: 6px 12px;
+  }
+
+  .svc-num {
+    font-size: 1rem;
+    min-width: 24px;
+  }
+
+  .svc-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .svc-icon svg {
+    width: 18px;
+    height: 18px;
   }
 }
