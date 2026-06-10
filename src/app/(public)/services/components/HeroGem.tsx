@@ -43,7 +43,7 @@ export default function HeroGem() {
     R: 0,
   });
 
-  const SEG = 10;
+  const SEG = 8; // octagonal silhouette (cushion cut)
 
   /* ---------- deterministic noise ---------- */
   const sn = (s: number) => Math.sin(s * 127.1) * Math.cos(s * 311.7);
@@ -83,8 +83,8 @@ export default function HeroGem() {
       const dx = lx - mx,
         dy = ly - my;
       const d = Math.sqrt(dx * dx + dy * dy);
-      const inf = Math.max(0, 1 - d / (s.R * 2.8));
-      return inf * inf;
+      const inf = Math.max(0, 1 - d / (s.R * 1.8));
+      return Math.pow(inf, 1.5);
     },
     []
   );
@@ -146,15 +146,16 @@ export default function HeroGem() {
     function draw() {
       ctx.clearRect(0, 0, s.W, s.H);
 
-      /* glow */
-      if (s.t > 0.2) {
-        const a = ((s.t - 0.2) / 0.8) * 0.32;
+      /* premium outer halo */
+      if (s.t > 0.1) {
+        const a = ((s.t - 0.1) / 0.9) * 0.5;
         const g = ctx.createRadialGradient(
-          s.cx, s.cy, s.R * 0.2,
-          s.cx, s.cy, s.R * 1.7
+          s.cx, s.cy, s.R * 0.4,
+          s.cx, s.cy, s.R * 2.2
         );
         g.addColorStop(0, `rgba(60,116,174,${a})`);
-        g.addColorStop(0.6, `rgba(74,134,200,${a * 0.35})`);
+        g.addColorStop(0.3, `rgba(74,134,200,${a * 0.6})`);
+        g.addColorStop(0.7, `rgba(60,116,174,${a * 0.2})`);
         g.addColorStop(1, "rgba(60,116,174,0)");
         ctx.fillStyle = g;
         ctx.fillRect(0, 0, s.W, s.H);
@@ -193,43 +194,73 @@ export default function HeroGem() {
         /* bezel kite left */
         const p1: [number, number][] = [o1, m, t1];
         let li = facetLight(p1, s);
-        let h = stageHue(s.t, sn(i) * 15);
-        let sat = 16 + (58 - 16) * s.t + li * 22 * s.t;
-        let l = 37 + (53 - 37) * s.t + li * 28 * s.t;
-        if (s.t > 0.55 && li > 0.35)
-          l += ((s.t - 0.55) / 0.45) * ((li - 0.35) / 0.65) * 32;
-        drawFacet(p1, h, sat, l);
+        let h = stageHue(s.t, sn(i) * 18);
+        let sat = 18 + (72 - 18) * s.t + li * 35 * s.t;
+        let l = 32 + (50 - 32) * s.t + li * 45 * s.t;
+        if (s.t > 0.5 && li > 0.4) {
+          l += ((s.t - 0.5) / 0.5) * ((li - 0.4) / 0.6) * 55;
+        }
+        drawFacet(p1, h, Math.min(95, sat), Math.min(92, l));
 
         /* bezel kite right */
         const p2: [number, number][] = [o2, t2, m];
         li = facetLight(p2, s);
-        h = stageHue(s.t, sn(i) * 15 + 6);
-        sat = 18 + (62 - 18) * s.t + li * 20 * s.t;
-        l = 35 + (50 - 35) * s.t + li * 30 * s.t;
-        if (s.t > 0.55 && li > 0.35)
-          l += ((s.t - 0.55) / 0.45) * ((li - 0.35) / 0.65) * 34;
-        drawFacet(p2, h, sat, l);
+        h = stageHue(s.t, sn(i) * 18 + 8);
+        sat = 20 + (74 - 20) * s.t + li * 32 * s.t;
+        l = 28 + (46 - 28) * s.t + li * 50 * s.t;
+        if (s.t > 0.5 && li > 0.4) {
+          l += ((s.t - 0.5) / 0.5) * ((li - 0.4) / 0.6) * 58;
+        }
+        drawFacet(p2, h, Math.min(95, sat), Math.min(95, l));
 
         /* star facet */
         const p3: [number, number][] = [m, t2, t1];
         li = facetLight(p3, s);
-        h = stageHue(s.t, sn(i) * 15 - 4);
-        sat = 14 + (68 - 14) * s.t + li * 16 * s.t;
-        l = 40 + (60 - 40) * s.t + li * 24 * s.t;
-        if (s.t > 0.55 && li > 0.35)
-          l += ((s.t - 0.55) / 0.45) * ((li - 0.35) / 0.65) * 28;
-        drawFacet(p3, h, sat, l);
+        h = stageHue(s.t, sn(i) * 18 - 5);
+        sat = 14 + (78 - 14) * s.t + li * 28 * s.t;
+        l = 38 + (62 - 38) * s.t + li * 38 * s.t;
+        if (s.t > 0.5 && li > 0.4) {
+          l += ((s.t - 0.5) / 0.5) * ((li - 0.4) / 0.6) * 48;
+        }
+        drawFacet(p3, h, Math.min(95, sat), Math.min(96, l));
 
-        /* table triangle */
+        /* pavilion shadow triangle (table now drawn separately) */
         const p4: [number, number][] = [t1, t2, c];
         li = facetLight(p4, s);
-        h = stageHue(s.t, sn(i) * 15 + 3);
-        sat = 10 + (42 - 10) * s.t + li * 14 * s.t;
-        l = 46 + (72 - 46) * s.t + li * 18 * s.t;
-        if (s.t > 0.45 && li > 0.25)
-          l += ((s.t - 0.45) / 0.55) * ((li - 0.25) / 0.75) * 22;
-        drawFacet(p4, h, sat, l);
+        h = stageHue(s.t, sn(i) * 18 + 4);
+        sat = 10 + (52 - 10) * s.t + li * 20 * s.t;
+        l = 42 + (60 - 42) * s.t + li * 30 * s.t;
+        drawFacet(p4, h, Math.min(85, sat), Math.min(88, l));
       }
+
+      /* central table (flat top of cushion cut) */
+      const tableR = s.R * 0.42;
+      ctx.beginPath();
+      for (let i = 0; i < SEG; i++) {
+        const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
+        const v = vtx(a, tableR, nAmt * 0.15, i * 4 + 50, s);
+        if (i === 0) ctx.moveTo(v[0], v[1]);
+        else ctx.lineTo(v[0], v[1]);
+      }
+      ctx.closePath();
+
+      const lx = s.lightX * s.W;
+      const ly = s.lightY * s.H;
+      const tableGrad = ctx.createRadialGradient(
+        lx, ly, 0,
+        s.cx, s.cy, tableR * 1.5
+      );
+      const tHue = stageHue(s.t, 0);
+      const tSat = 14 + (62 - 14) * s.t;
+      tableGrad.addColorStop(0, `hsla(${tHue},${tSat}%,${85 - s.t * 5}%,${0.6 + s.t * 0.3})`);
+      tableGrad.addColorStop(0.5, `hsla(${tHue},${tSat}%,${65 - s.t * 5}%,${0.4 + s.t * 0.2})`);
+      tableGrad.addColorStop(1, `hsla(${tHue},${tSat}%,${45 - s.t * 5}%,0)`);
+      ctx.fillStyle = tableGrad;
+      ctx.fill();
+
+      ctx.strokeStyle = `rgba(255,255,255,${0.15 + s.t * 0.35})`;
+      ctx.lineWidth = 0.8 + s.t * 0.6;
+      ctx.stroke();
 
       /* outer girdle edge */
       ctx.beginPath();
@@ -243,6 +274,32 @@ export default function HeroGem() {
       ctx.strokeStyle = `rgba(26,41,66,${0.1 + s.t * 0.24})`;
       ctx.lineWidth = 1.2 + s.t;
       ctx.stroke();
+
+      /* bright sparkle highlights at facet edges near the cursor */
+      const lxPos = s.lightX * s.W;
+      const lyPos = s.lightY * s.H;
+      for (let i = 0; i < SEG; i++) {
+        const a = (i / SEG) * Math.PI * 2 - Math.PI / 2;
+        const v = vtx(a, s.R * 0.95, nAmt, i * 4, s);
+        const dx = lxPos - v[0];
+        const dy = lyPos - v[1];
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const inf = Math.max(0, 1 - d / (s.R * 1.2));
+        if (inf > 0.3 && s.t > 0.4) {
+          const r = 2 + inf * 3 * s.t;
+          ctx.beginPath();
+          ctx.arc(v[0], v[1], r, 0, Math.PI * 2);
+          const sparkleGrad = ctx.createRadialGradient(
+            v[0], v[1], 0,
+            v[0], v[1], r
+          );
+          sparkleGrad.addColorStop(0, `rgba(255,255,255,${inf * s.t})`);
+          sparkleGrad.addColorStop(0.5, `rgba(255,255,255,${inf * 0.4 * s.t})`);
+          sparkleGrad.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = sparkleGrad;
+          ctx.fill();
+        }
+      }
 
       /* sparkles */
       if (s.t > 0.3 && Math.random() < (s.t - 0.3) * 0.22) {
@@ -285,6 +342,28 @@ export default function HeroGem() {
         ctx.restore();
       }
       ctx.globalAlpha = 1;
+
+      /* soft light blob following the cursor while hovering */
+      if (s.isHovering && s.t > 0.4) {
+        const lxFinal = s.lightX * s.W;
+        const lyFinal = s.lightY * s.H;
+        const dist = Math.sqrt(
+          (lxFinal - s.cx) ** 2 + (lyFinal - s.cy) ** 2
+        );
+        if (dist < s.R * 1.3) {
+          const blob = ctx.createRadialGradient(
+            lxFinal, lyFinal, 0,
+            lxFinal, lyFinal, s.R * 0.5
+          );
+          blob.addColorStop(0, `rgba(255,255,255,${0.3 * s.t})`);
+          blob.addColorStop(0.5, `rgba(255,255,255,${0.1 * s.t})`);
+          blob.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = blob;
+          ctx.globalCompositeOperation = "screen";
+          ctx.fillRect(0, 0, s.W, s.H);
+          ctx.globalCompositeOperation = "source-over";
+        }
+      }
     }
 
     function loop() {
@@ -298,7 +377,7 @@ export default function HeroGem() {
       if (Math.abs(s.t - s.targetT) < 0.0008) s.t = s.targetT;
 
       if (!s.isHovering) {
-        s.autoLightAngle += 0.007;
+        s.autoLightAngle += 0.004;
         s.lightX = 0.5 + Math.cos(s.autoLightAngle) * 0.36;
         s.lightY = 0.4 + Math.sin(s.autoLightAngle * 0.72) * 0.26;
       }
