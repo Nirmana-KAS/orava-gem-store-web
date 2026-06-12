@@ -81,10 +81,9 @@
    ============================================================ */
 .hero-gem-parade{
   position:relative; width:100%; height:76px; margin-top:26px;
-  border-radius:10px; overflow:hidden;
-  background:linear-gradient(135deg,
-    rgba(232,238,255,0.62) 0%, rgba(240,234,255,0.62) 100%);
-  border:1px solid rgba(155,145,220,0.16);
+  border-radius:0; overflow:visible;
+  background:transparent !important;
+  border:none !important;
 }
 .hero-gem-parade::before,
 .hero-gem-parade::after{
@@ -93,11 +92,11 @@
 }
 .hero-gem-parade::before{
   left:0;
-  background:linear-gradient(90deg, rgba(234,237,252,1) 0%, rgba(234,237,252,0) 100%);
+  background:linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
 }
 .hero-gem-parade::after{
   right:0;
-  background:linear-gradient(-90deg, rgba(234,237,252,1) 0%, rgba(234,237,252,0) 100%);
+  background:linear-gradient(-90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
 }
 .hero-gem-parade canvas{
   display:block; position:absolute; top:0; left:0; width:100%; height:100%;
@@ -108,10 +107,12 @@
    ============================================================ */
 .gem-stage{
   position:relative; width:100%; max-width:320px;
-  aspect-ratio:1; margin:0 auto;
-  border-radius:var(--radius-lg); cursor:crosshair;
+  aspect-ratio:1; margin:0 auto; cursor:crosshair;
+  background:transparent !important;
+  box-shadow:none !important;
+  border:none !important;
 }
-.gem-stage canvas{ display:block; }
+.gem-stage canvas{ display:block; background:transparent; }
 
 .gem-scrubber-wrap{
   display:flex; align-items:center; gap:14px;
@@ -326,13 +327,43 @@
   clip-path: polygon(50% 0%, 100% 38%, 80% 100%, 20% 100%, 0% 38%);
 }
 .svc-cta{
-  display:inline-flex; align-items:center; gap: 8px;
-  padding: 11px 20px; border-radius: 10px;
-  border: 1px solid var(--line); color: var(--navy);
-  font-size: 13.5px; font-weight: 600; background:#fff;
-  white-space: nowrap; transition: all .18s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  background: #3c74ae;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid #3c74ae;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(60, 116, 174, 0.12);
+  cursor: pointer;
+  white-space: nowrap;
 }
-.svc-cta svg{transition: transform .18s}
+
+.svc-cta svg {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.svc-cta:hover {
+  background: #2a5a8c;
+  border-color: #2a5a8c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(60, 116, 174, 0.28);
+}
+
+.svc-cta:hover svg {
+  transform: translateX(4px);
+}
+
+.svc-cta:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(60, 116, 174, 0.22);
+}
 
 /* Hover effects only on devices with a real pointer (FIX 6) */
 @media (hover: hover) and (pointer: fine){
@@ -341,9 +372,10 @@
   .svc:hover .svc-num{color: var(--primary-deep)}
   .svc:hover .svc-icon{background: var(--primary); color:#fff}
   .svc:hover .svc-chip{border-color: #d6e2f0}
-  .svc:hover .svc-cta{background: var(--primary); color:#fff; border-color: var(--primary)}
-  .svc:hover .svc-cta svg{transform: translateX(3px)}
 }
+
+/* Desktop / mobile CTA visibility split (FIX 5) */
+.svc-cta-mobile{ display: none; }
 
 @media (max-width: 860px) and (min-width: 761px){
   .svc{
@@ -358,7 +390,8 @@
   .svc-icon{grid-area: icon; width:44px; height:44px}
   .svc-icon svg{width:20px; height:20px}
   .svc-body{grid-area: body}
-  .svc-cta{grid-area: cta; justify-content:center}
+  .svc-cta-desktop{grid-area: cta; justify-self: start}
+  .svc-cta-mobile{display: none !important}
 }
 
 /* ============================================================
@@ -435,17 +468,71 @@
 .cta-band p{position:relative; z-index:1; color:#dbe7f5; font-size: 15px; margin: 0 auto 28px; max-width: 480px}
 .cta-actions{position:relative; z-index:1; display:flex; gap: 14px; justify-content:center; flex-wrap: wrap}
 .cta-actions .btn-white{
-  padding: 13px 28px; border-radius: 10px; font-weight: 600; font-size: 14.5px;
-  background:#fff; color: var(--navy); display:inline-flex; align-items:center; gap:8px;
-  transition: transform .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #3c74ae;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid #ffffff;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  white-space: nowrap;
 }
-.cta-actions .btn-white:hover{transform: translateY(-2px)}
+.cta-actions .btn-white svg{
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cta-actions .btn-white:hover{
+  background: #3c74ae;
+  color: #ffffff;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+.cta-actions .btn-white:hover svg{
+  transform: translateX(4px);
+}
+.cta-actions .btn-white:active{
+  transform: translateY(-1px);
+}
 .cta-actions .btn-outline{
-  padding: 13px 28px; border-radius: 10px; font-weight: 600; font-size: 14.5px;
-  background: transparent; color:#fff; border: 1px solid rgba(255,255,255,.5);
-  display:inline-flex; align-items:center; gap:8px; transition: all .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  white-space: nowrap;
 }
-.cta-actions .btn-outline:hover{background: rgba(255,255,255,.12); border-color:#fff}
+.cta-actions .btn-outline svg{
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cta-actions .btn-outline:hover{
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+.cta-actions .btn-outline:hover svg{
+  transform: translateX(4px);
+}
+.cta-actions .btn-outline:active{
+  transform: translateY(-1px);
+}
 
 /* ============================================================
    MOBILE — hero tighten & gem scale-up (FIX 3 + FIX 4)
@@ -478,9 +565,7 @@
     margin-top: 4px;
   }
   .hero-gem-parade {
-    height: 60px;
-    margin-top: 18px;
-    max-width: 100%;
+    display: none !important;
   }
   .gem-stage {
     max-width: 280px;
@@ -504,10 +589,6 @@
 @media (max-width: 480px) {
   .s-header {
     padding: 16px 0 12px;
-  }
-  .hero-gem-parade {
-    height: 52px;
-    margin-top: 14px;
   }
   .gem-stage {
     max-width: 240px;
@@ -550,77 +631,90 @@
   }
 
   .svc {
+    display: grid;
     grid-template-columns: auto auto 1fr;
-    grid-template-areas: none;
+    grid-template-areas: "num icon body";
     gap: 12px;
-    padding: 18px 0;
+    padding: 20px 0;
     align-items: start;
-    transition: background 0.2s ease;
   }
 
   .svc-num {
-    font-size: 1.2rem;
-    min-width: 28px;
+    grid-area: num;
     align-self: start;
-    margin-top: 2px;
+    margin-top: 4px;
+    font-size: 1rem;
+    min-width: 28px;
   }
 
   .svc-icon {
-    width: 36px;
-    height: 36px;
+    grid-area: icon;
     align-self: start;
     margin-top: 2px;
+    width: 32px;
+    height: 32px;
     background: var(--primary-soft);
     color: var(--primary);
   }
 
+  .svc-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .svc-body {
+    grid-area: body;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    min-width: 0;
   }
 
   .svc-body h3 {
     font-size: 1.05rem;
     margin: 0;
+    line-height: 1.3;
   }
 
   .svc-body p {
     font-size: 0.85rem;
     line-height: 1.5;
     margin: 0;
+    color: var(--muted);
   }
 
   .svc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     margin: 0;
   }
 
-  .svc-cta {
-    grid-column: 3;
-    grid-row: 1;
-    justify-self: end;
+  .svc-chip {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+
+  /* Show the mobile CTA below the chips; hide the desktop one */
+  .svc-cta-desktop {
+    display: none !important;
+  }
+
+  .svc-cta-mobile {
+    display: inline-flex !important;
+    justify-self: start;
     align-self: start;
-    margin-top: 0;
-    font-size: 0.78rem;
-    padding: 7px 14px;
+    margin-top: 12px;
     width: auto;
+    min-width: 140px;
+    padding: 9px 18px;
+    font-size: 0.82rem;
     white-space: nowrap;
   }
 
   /* Tap feedback in place of broken hover (FIX 6) */
   .svc:active {
     background: var(--primary-softer);
-  }
-  .svc-cta:active {
-    background: var(--primary-deep);
-    color: #fff;
-    border-color: var(--primary-deep);
-    transform: scale(0.97);
-  }
-
-  .svc-chip {
-    font-size: 0.7rem;
-    padding: 3px 8px;
   }
 
   .gallery-hint {
@@ -702,23 +796,8 @@
 }
 
 @media (max-width: 480px) {
-  .svc-cta {
-    font-size: 0.72rem;
-    padding: 6px 12px;
-  }
-
   .svc-num {
     font-size: 1rem;
     min-width: 24px;
-  }
-
-  .svc-icon {
-    width: 32px;
-    height: 32px;
-  }
-
-  .svc-icon svg {
-    width: 18px;
-    height: 18px;
   }
 }

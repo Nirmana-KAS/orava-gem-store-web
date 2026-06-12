@@ -131,9 +131,9 @@ export default function HeroGem() {
       if (t > 0.15) {
         const ga = ((t - 0.15) / 0.85) * 0.26;
         const grd = ctx.createRadialGradient(cx, cy, R * 0.08, cx, cy, R * 1.95);
-        grd.addColorStop(0, `rgba(40,90,200,${ga})`);
-        grd.addColorStop(0.45, `rgba(60,116,174,${ga * 0.5})`);
-        grd.addColorStop(1, "rgba(40,90,200,0)");
+        grd.addColorStop(0, `rgba(30,60,180,${ga * 1.2})`);
+        grd.addColorStop(0.45, `rgba(60,116,200,${ga * 0.6})`);
+        grd.addColorStop(1, "rgba(30,60,180,0)");
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, W, H);
       }
@@ -148,8 +148,11 @@ export default function HeroGem() {
 
       /* Royal blue color path: warm grey rough -> deep royal blue finished
          Skips pink/purple, goes through neutral gray to blue smoothly */
-      const bH = 32 + (220 - 32) * t;  // 32° warm grey → 220° royal blue
-      const bS = 8 + (78 - 8) * t;     // 8% sat (rough) → 78% sat (vivid blue)
+      // Royal blue sapphire color path — matches real sapphire
+      // reference photo. Hue stays in pure blue range, very high
+      // saturation, deeper darks
+      const bH = 32 + (222 - 32) * t;  // 32° warm grey → 222° royal blue
+      const bS = 8 + (92 - 8) * t;     // 8% (rough) → 92% (vivid royal sapphire)
 
       const list: { f: Face; z: number }[] = [];
       for (const fc of faces) {
@@ -169,16 +172,20 @@ export default function HeroGem() {
 
         let base: number, amp: number, sat: number, hue = bH;
         if (fc.type === "table") {
-          base = 52; amp = 18; sat = bS * 0.35; hue = bH - 4 * t;
+          // Table: bright sky-blue with white center reflection
+          base = 58; amp = 22; sat = bS * 0.5; hue = bH - 2 * t;
         }
         else if (fc.type === "bezel") {
-          base = 26; amp = 56; sat = bS * 1.05; hue = bH + alt * 3 * t;
+          // Crown bezel: classic royal blue medium tone
+          base = 30; amp = 58; sat = bS * 1.0; hue = bH + alt * 2 * t;
         }
         else if (fc.type === "star") {
-          base = 46; amp = 32; sat = bS * 0.6; hue = bH + 6 * t;
+          // Star facets: brighter medium blue
+          base = 48; amp = 36; sat = bS * 0.75; hue = bH + 4 * t;
         }
         else {
-          base = 18; amp = 54; sat = bS * 1.1; hue = bH + alt * 4 * t;
+          // Pavilion: deep dark navy (the sapphire heart)
+          base = 14; amp = 50; sat = bS * 1.15; hue = bH + alt * 3 * t;
         }
 
         const roughL = 40 + alt * 3;
@@ -197,8 +204,9 @@ export default function HeroGem() {
           for (const q of idx) { ctr[0] += P[q][0]; ctr[1] += P[q][1]; }
           ctr[0] = cx + ctr[0] / idx.length; ctr[1] = cy - ctr[1] / idx.length;
           const tg = ctx.createRadialGradient(ctr[0] - R * 0.12, ctr[1] - R * 0.12, 0, ctr[0], ctr[1], R * 0.7);
-          tg.addColorStop(0, `hsl(${Math.round(hue)},${Math.round(sat)}%,${Math.min(96, lgt + 26)}%)`);
-          tg.addColorStop(1, `hsl(${Math.round(hue)},${Math.round(sat)}%,${Math.min(92, lgt + 8)}%)`);
+          tg.addColorStop(0, `hsl(${Math.round(hue)},${Math.round(sat * 0.4)}%,${Math.min(98, lgt + 38)}%)`);
+          tg.addColorStop(0.4, `hsl(${Math.round(hue)},${Math.round(sat * 0.7)}%,${Math.min(94, lgt + 18)}%)`);
+          tg.addColorStop(1, `hsl(${Math.round(hue)},${Math.round(sat)}%,${Math.min(90, lgt + 4)}%)`);
           ctx.fillStyle = tg;
         } else {
           ctx.fillStyle = `hsl(${Math.round(((hue % 360) + 360) % 360)},${Math.round(

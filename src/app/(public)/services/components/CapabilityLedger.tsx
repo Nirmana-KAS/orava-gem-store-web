@@ -130,9 +130,15 @@ export default function CapabilityLedger() {
                   </span>
                 ))}
               </div>
+              <Link
+                className="svc-cta svc-cta-mobile"
+                href={`/quotation?type=${svc.inquiryType.toLowerCase()}`}
+              >
+                Make Inquiry <ArrowIcon />
+              </Link>
             </div>
             <Link
-              className="svc-cta"
+              className="svc-cta svc-cta-desktop"
               href={`/quotation?type=${svc.inquiryType.toLowerCase()}`}
             >
               Make Inquiry <ArrowIcon />
