@@ -1,5 +1,6 @@
 import React from "react";
 import HeroGem from "./components/HeroGem";
+import GemParade from "./components/GemParade";
 import ExpandingGallery from "./components/ExpandingGallery";
 import CapabilityLedger from "./components/CapabilityLedger";
 import ProcessTimeline from "./components/ProcessTimeline";
@@ -34,6 +35,9 @@ export default function ServicesPage() {
                 Five disciplines, one cutting house. Calibrated output and
                 luxury-grade consistency for global brands.
               </p>
+
+              {/* Colour-cycling gem parade strip (client component) */}
+              <GemParade />
             </div>
 
             {/* Interactive rough-to-finished gem (client component) */}
