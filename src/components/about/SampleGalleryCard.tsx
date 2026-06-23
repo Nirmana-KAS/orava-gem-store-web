@@ -52,7 +52,7 @@ export default function SampleGalleryCard() {
   return (
     <section className="w-full bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24 lg:py-32">
-        <div className="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-primary-soft via-primary-softer to-white p-8 md:p-12 lg:p-16">
+        <div className="relative min-h-[420px] overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-primary-soft via-primary-softer to-primary-soft/40 p-8 shadow-xl shadow-primary/10 md:min-h-[480px] md:p-12 lg:p-16">
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
             {/* LEFT — copy */}
             <div>
@@ -105,6 +105,12 @@ export default function SampleGalleryCard() {
 
             {/* RIGHT — visual */}
             <div className="relative h-[360px] md:h-[440px]">
+              {/* Decorative background anchor */}
+              <div
+                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/60 to-primary-soft/40 backdrop-blur-sm"
+                aria-hidden
+              />
+
               {/* 105+ samples floating pill */}
               <div className="absolute right-4 top-4 z-30 inline-flex items-center gap-2 rounded-full border border-line bg-white/95 px-3 py-1.5 shadow-sm backdrop-blur">
                 <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
