@@ -87,25 +87,49 @@ export default function HeritageTimeline() {
             return (
               <div
                 key={chapter.number}
-                className="grid grid-cols-[150px_24px_1fr] items-stretch gap-3 md:grid-cols-[210px_32px_1fr] md:gap-6"
+                className="flex flex-col gap-3 md:grid md:grid-cols-[210px_32px_1fr] md:items-stretch md:gap-6"
               >
-                {/* Period label — left of the rail, right-aligned */}
-                <div className="flex items-center justify-end pr-2">
+                {/* BLOCK A — period label (with inline dot on mobile) */}
+                <div className="flex items-center gap-3 md:block md:pr-2">
+                  {/* Mobile-only dot — replaces the hidden rail below md */}
+                  <div className="flex md:hidden">
+                    {isLive ? (
+                      <div className="relative flex h-4 w-4 items-center justify-center">
+                        <span
+                          className="absolute inset-0 -m-2 rounded-full bg-primary/30 animate-ping"
+                          aria-hidden
+                        />
+                        <span
+                          className="absolute inset-0 -m-1 rounded-full bg-primary/40 animate-pulse"
+                          aria-hidden
+                        />
+                        <span className="relative h-4 w-4 rounded-full border-2 border-white bg-primary shadow-md" />
+                      </div>
+                    ) : (
+                      <div
+                        className="h-3.5 w-3.5 rounded-full border-2 border-primary bg-white"
+                        aria-hidden
+                      />
+                    )}
+                  </div>
+
                   <span
-                    className={`whitespace-nowrap font-serif text-base font-medium italic tracking-wide md:text-lg lg:text-xl ${
-                      isLive ? 'text-primary' : 'text-muted'
-                    }`}
+                    className={[
+                      'whitespace-nowrap font-serif text-base font-medium italic tracking-wide md:text-lg lg:text-xl',
+                      isLive ? 'text-primary' : 'text-navy-2 md:text-muted',
+                      'md:flex md:h-full md:items-center md:justify-end',
+                    ].join(' ')}
                   >
                     {chapter.period}
                   </span>
                 </div>
 
-                {/* Rail cell — continuous line + open-ring / breathing dot */}
-                <div className="relative flex items-center justify-center">
+                {/* BLOCK B — desktop rail cell (continuous line + dot), hidden on mobile */}
+                <div className="relative hidden items-center justify-center md:flex">
                   <div
                     className={[
                       'pointer-events-none absolute left-1/2 w-px -translate-x-1/2',
-                      '-top-3 -bottom-3 md:-top-4 md:-bottom-4',
+                      '-top-4 -bottom-4',
                       lineGradient,
                     ].join(' ')}
                     aria-hidden
@@ -133,7 +157,7 @@ export default function HeritageTimeline() {
                   )}
                 </div>
 
-                {/* Chapter card */}
+                {/* BLOCK C — chapter card */}
                 <div
                   className={
                     isLive
