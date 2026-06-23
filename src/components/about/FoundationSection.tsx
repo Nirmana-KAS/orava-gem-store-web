@@ -27,9 +27,14 @@ export default function FoundationSection() {
             <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted">
               [ OUR STORY · OUR MISSION ]
             </p>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-navy-2">
+              From a Colombo workshop to a global supplier of precision-cut
+              coloured gemstones — every stone we ship is calibrated,
+              colour-matched, and traceable.
+            </p>
 
             {/* Spinning gem badge */}
-            <div className="mt-10 flex items-center gap-3 md:mt-12 lg:mt-16">
+            <div className="mt-8 flex items-center gap-3 md:mt-10 lg:mt-12">
               <div className="relative flex h-[50px] w-[50px] items-center justify-center">
                 <div
                   className="absolute inset-0 rounded-full border border-dashed border-primary/40 animate-gem-spin"
@@ -82,9 +87,9 @@ export default function FoundationSection() {
           </div>
 
           {/* RIGHT — Story + Mission cards */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5">
             {/* CARD 1 — Our Story */}
-            <div className="relative overflow-hidden rounded-2xl border border-line bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-xl hover:shadow-primary/10 md:p-10">
+            <div className="relative overflow-hidden rounded-2xl border border-line bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-xl hover:shadow-primary/10 md:p-9">
               <div
                 className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-primary via-primary/40 to-transparent"
                 aria-hidden
@@ -114,7 +119,7 @@ export default function FoundationSection() {
             </div>
 
             {/* CARD 2 — Our Mission */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary-deep p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/30 md:p-10">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary-deep p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/30 md:p-9">
               <div
                 className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl"
                 aria-hidden

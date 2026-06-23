@@ -7,19 +7,46 @@
  * Server Component — interactivity is CSS-only (hover effects).
  * Responsive grid: 1 col → 2 (sm) → 3 (md) → 5 (lg).
  */
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface Certification {
   title: string;
   subtitle: string;
+  image: string;
 }
 
 const certifications: Certification[] = [
-  { title: 'GIA Alumni Member', subtitle: 'Gemmological Institute' },
-  { title: 'ICA Member', subtitle: "Int'l Coloured Gemstones" },
-  { title: 'EDB Sri Lanka', subtitle: 'Registered Exporter' },
-  { title: 'SLGJA Member', subtitle: 'Gem & Jewellery Assn.' },
-  { title: 'NGJA Licensed', subtitle: 'National Gem Authority' },
+  {
+    title: 'GIA Alumni Member',
+    subtitle: 'Gemmological Institute',
+    image:
+      'https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/01-GIA-CQTS_jb0kld.png',
+  },
+  {
+    title: 'ICA Member',
+    subtitle: "Int'l Coloured Gemstones",
+    image:
+      'https://res.cloudinary.com/dafsnkkux/image/upload/v1776671011/02-ICA-CQTS_jdmajv.png',
+  },
+  {
+    title: 'EDB Sri Lanka',
+    subtitle: 'Registered Exporter',
+    image:
+      'https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/03-SLEDB-CQTS_ntxycj.png',
+  },
+  {
+    title: 'SLGJA Member',
+    subtitle: 'Gem & Jewellery Assn.',
+    image:
+      'https://res.cloudinary.com/dafsnkkux/image/upload/v1776671013/04-SLGJA-CQTS_bvpymm.png',
+  },
+  {
+    title: 'NGJA Licensed',
+    subtitle: 'National Gem Authority',
+    image:
+      'https://res.cloudinary.com/dafsnkkux/image/upload/v1776671037/05-NGJA-CQTS_bptjpk.png',
+  },
 ];
 
 export default function CertificationsSection() {
@@ -47,8 +74,14 @@ export default function CertificationsSection() {
               key={cert.title}
               className="group relative flex flex-col items-center rounded-2xl border border-line bg-white px-5 py-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-primary hover:bg-primary-soft hover:shadow-xl hover:shadow-primary/15 md:py-10"
             >
-              <div className="relative mb-5 flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-line text-[10px] uppercase tracking-[0.18em] text-muted transition-colors duration-300 group-hover:border-primary group-hover:text-primary">
-                LOGO
+              <div className="relative mb-5 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-line transition-colors duration-300 group-hover:border-primary">
+                <Image
+                  src={cert.image}
+                  alt={cert.title}
+                  fill
+                  className="object-contain p-2"
+                  sizes="80px"
+                />
               </div>
               <h3 className="font-serif text-lg text-navy md:text-xl">
                 {cert.title}
