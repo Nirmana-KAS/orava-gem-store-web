@@ -1,392 +1,145 @@
 /**
- * FoundationSection — "Two decades of precision craftsmanship"
+ * FoundationSection — Section 01 / FOUNDATION
  *
- * Section 01 of the About page redesign.
- * Left: sticky sidebar with heading + spinning gem badge + fact-sheet.
- * Right: Our Story card (white) + Our Mission card (gradient blue).
+ * Left: sticky fact-sheet sidebar with a spinning gem badge.
+ * Right: two stacked cards — Our Story (white) + Our Mission (gradient blue).
  *
- * Server Component — all interactivity is CSS-only (hover effects + keyframes).
- * Responsive: stacks to single column on mobile.
+ * Server Component — all interactivity is CSS-only (hover + keyframes).
+ * Responsive: single column below lg, two columns from lg up.
  */
 export default function FoundationSection() {
   return (
-    <section className="max-w-[1320px] mx-auto px-5 sm:px-8 lg:px-10 pt-8 pb-10 lg:pt-12 lg:pb-14">
-      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-12 lg:gap-20 items-start">
+    <section className="w-full bg-white">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24 lg:py-32">
+        {/* Eyebrow header */}
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
+          — 01 / FOUNDATION
+        </p>
+        <h2 className="mt-4 max-w-3xl font-serif text-4xl leading-tight text-navy md:text-5xl lg:text-6xl">
+          Two decades of <span className="italic text-primary">precision</span>{' '}
+          craftsmanship.
+        </h2>
+        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted">
+          [ OUR STORY · OUR MISSION ]
+        </p>
 
-        {/* ── LEFT: Sticky sidebar ── */}
-        <div className="lg:sticky lg:top-[120px]">
-          <div
-            className="o-mono"
-            style={{ fontSize: 11, color: '#3c74ae', textTransform: 'uppercase' }}
-          >
-            — 01 / Foundation
-          </div>
-
-          <h2
-            className="o-serif text-[36px] sm:text-[44px] lg:text-[56px]"
-            style={{
-              fontWeight: 500,
-              lineHeight: 1.04,
-              letterSpacing: '-0.5px',
-              margin: '14px 0 0',
-              color: '#2a5a8c',
-            }}
-          >
-            Two decades of{' '}
-            <span style={{ fontStyle: 'italic', color: '#3c74ae' }}>precision</span>{' '}
-            craftsmanship.
-          </h2>
-
-          <p
-            className="o-mono"
-            style={{
-              fontSize: 12,
-              color: '#8f8b8f',
-              marginTop: 18,
-              textTransform: 'uppercase',
-            }}
-          >
-            [ OUR STORY · OUR MISSION ]
-          </p>
-
-          <div style={{ marginTop: 38 }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 14,
-                marginBottom: 18,
-              }}
-            >
-              <div
-                style={{
-                  position: 'relative',
-                  width: 50,
-                  height: 50,
-                  flexShrink: 0,
-                }}
-              >
-                <span
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    border: '1px dashed #3c74ae',
-                    borderRadius: '50%',
-                    opacity: 0.5,
-                    animation: 'oravaGemSpin 18s linear infinite',
-                  }}
-                />
-                <span
-                  style={{
-                    position: 'absolute',
-                    inset: 9,
-                    background: 'linear-gradient(135deg, #3c74ae, #2a5a8c)',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" width="17" height="17" fill="#e7f0fa">
-                    <polygon points="12,4 5,10 19,10" />
-                    <polygon points="5,10 19,10 12,21" />
-                  </svg>
-                </span>
-              </div>
-
-              <div>
-                <div className="o-mono" style={{ fontSize: 10, color: '#8f8b8f' }}>
-                  CRAFTING SINCE
-                </div>
+        {/* Two-column grid */}
+        <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 lg:grid-cols-[360px_1fr] lg:gap-16">
+          {/* LEFT — sticky fact sheet */}
+          <div className="space-y-6 lg:sticky lg:top-32 lg:self-start">
+            {/* Spinning gem badge */}
+            <div className="flex items-center gap-3">
+              <div className="relative flex h-[50px] w-[50px] items-center justify-center">
                 <div
-                  className="o-serif"
-                  style={{
-                    fontSize: 26,
-                    color: '#000000',
-                    fontWeight: 600,
-                    lineHeight: 1,
-                  }}
-                >
-                  2006
+                  className="absolute inset-0 rounded-full border border-dashed border-primary/40 animate-gem-spin"
+                  aria-hidden
+                />
+                <div className="absolute inset-1 flex items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-deep">
+                  <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]">
+                    <polygon points="12,4 20,20 4,20" fill="white" />
+                  </svg>
                 </div>
               </div>
+              <span className="text-xs font-medium uppercase tracking-[0.18em] text-navy">
+                CRAFTING SINCE 2006
+              </span>
             </div>
 
-            <div
-              style={{
-                border: '1px solid #eaf2fa',
-                borderRadius: 16,
-                background: '#f4f8fc',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                className="oh-3"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '14px 18px',
-                  borderBottom: '1px solid #eaf2fa',
-                  transition: 'background .35s, padding-left .35s',
-                }}
-              >
-                <span className="o-mono" style={{ fontSize: 10, color: '#8f8b8f' }}>
+            {/* Fact-sheet card */}
+            <div className="overflow-hidden rounded-2xl border border-line bg-primary-softer">
+              <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 transition-all duration-300 hover:bg-primary-soft hover:pl-7">
+                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
                   FOUNDED
                 </span>
-                <span
-                  className="o-serif"
-                  style={{ fontSize: 17, color: '#2a5a8c', fontWeight: 500 }}
-                >
-                  2006
-                </span>
+                <span className="font-serif text-base text-navy">2006</span>
               </div>
-
-              <div
-                className="oh-4"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '14px 18px',
-                  borderBottom: '1px solid #eaf2fa',
-                  transition: 'background .35s, padding-left .35s',
-                }}
-              >
-                <span className="o-mono" style={{ fontSize: 10, color: '#8f8b8f' }}>
+              <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 transition-all duration-300 hover:bg-primary-soft hover:pl-7">
+                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
                   HEADQUARTERS
                 </span>
-                <span
-                  className="o-serif"
-                  style={{ fontSize: 17, color: '#2a5a8c', fontWeight: 500 }}
-                >
+                <span className="font-serif text-base text-navy">
                   Colombo, Sri Lanka
                 </span>
               </div>
-
-              <div
-                className="oh-5"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '14px 18px',
-                  borderBottom: '1px solid #eaf2fa',
-                  transition: 'background .35s, padding-left .35s',
-                }}
-              >
-                <span className="o-mono" style={{ fontSize: 10, color: '#8f8b8f' }}>
+              <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 transition-all duration-300 hover:bg-primary-soft hover:pl-7">
+                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
                   SPECIALTY
                 </span>
-                <span
-                  className="o-serif"
-                  style={{ fontSize: 17, color: '#2a5a8c', fontWeight: 500 }}
-                >
+                <span className="font-serif text-base text-navy">
                   Precision Gem Cutting
                 </span>
               </div>
-
-              <div
-                className="oh-6"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '14px 18px',
-                  transition: 'background .35s, padding-left .35s',
-                }}
-              >
-                <span className="o-mono" style={{ fontSize: 10, color: '#8f8b8f' }}>
+              <div className="flex items-center justify-between gap-4 px-5 py-4 transition-all duration-300 hover:bg-primary-soft hover:pl-7">
+                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
                   RECOGNITION
                 </span>
-                <span
-                  className="o-serif"
-                  style={{ fontSize: 17, color: '#3c74ae', fontWeight: 600 }}
-                >
+                <span className="font-serif text-base text-primary">
                   Presidential Award &apos;24/25
                 </span>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ── RIGHT: Story + Mission cards ── */}
-        <div className="grid grid-cols-1 gap-6">
-
-          <article
-            className="oh-7"
-            style={{
-              position: 'relative',
-              padding: '36px 36px 36px 40px',
-              border: '1px solid #eaf2fa',
-              borderRadius: 20,
-              background: '#ffffff',
-              overflow: 'hidden',
-              transition:
-                'transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s, border-color .45s',
-            }}
-          >
-            <span
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 36,
-                bottom: 36,
-                width: 3,
-                background: 'linear-gradient(180deg, #3c74ae, transparent)',
-                borderRadius: 3,
-              }}
-            />
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span
-                className="o-mono"
-                style={{ fontSize: 11, color: '#3c74ae', textTransform: 'uppercase' }}
-              >
-                Our Story
-              </span>
-              <span style={{ flex: 1, height: 1, background: '#eaf2fa' }} />
-              <span className="o-mono" style={{ fontSize: 11, color: '#8f8b8f' }}>
-                2006 →
-              </span>
-            </div>
-
-            <h3
-              className="o-serif text-[26px] sm:text-[30px] lg:text-[34px]"
-              style={{
-                fontWeight: 500,
-                lineHeight: 1.15,
-                margin: '14px 0 14px',
-                color: '#2a5a8c',
-              }}
-            >
-              Built on a promise — to{' '}
-              <span style={{ fontStyle: 'italic', color: '#3c74ae' }}>exceed</span>{' '}
-              every expectation.
-            </h3>
-
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.75,
-                color: '#2a5a8c',
-                margin: 0,
-              }}
-            >
-              Founded in 2006, ORAVA (Pvt) Ltd caters to the intricate needs of the
-              fine jewellery and watch sectors, with a mission to exceed the
-              expectations of discerning clients. We precision-cut coloured stones on
-              demand, serving prestigious watch and jewellery brands — a commitment to
-              excellence and integrity that defines our esteemed industry presence.
-            </p>
-          </article>
-
-          <article
-            className="oh-8"
-            style={{
-              position: 'relative',
-              padding: '36px 36px 36px 40px',
-              border: '1px solid #3c74ae',
-              borderRadius: 20,
-              background: 'linear-gradient(135deg, #3c74ae, #2a5a8c)',
-              color: '#ffffff',
-              overflow: 'hidden',
-              transition:
-                'transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s',
-            }}
-          >
-            <span
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                right: -120,
-                top: -120,
-                width: 280,
-                height: 280,
-                borderRadius: '50%',
-                background:
-                  'radial-gradient(closest-side, rgba(231,240,250,0.25), transparent 70%)',
-              }}
-            />
-
-            <span
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 36,
-                bottom: 36,
-                width: 3,
-                background: 'linear-gradient(180deg, #e7f0fa, transparent)',
-                borderRadius: 3,
-              }}
-            />
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                position: 'relative',
-              }}
-            >
-              <span
-                className="o-mono"
-                style={{
-                  fontSize: 11,
-                  color: '#e7f0fa',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Our Mission
-              </span>
-              <span
-                style={{
-                  flex: 1,
-                  height: 1,
-                  background: 'rgba(255,255,255,0.2)',
-                }}
+          {/* RIGHT — Story + Mission cards */}
+          <div className="flex flex-col gap-6">
+            {/* CARD 1 — Our Story */}
+            <div className="relative overflow-hidden rounded-2xl border border-line bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-xl hover:shadow-primary/10 md:p-10">
+              <div
+                className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-primary via-primary/40 to-transparent"
+                aria-hidden
               />
-              <span
-                className="o-mono"
-                style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}
-              >
-                → EVERY ORDER
-              </span>
+              <div className="mb-6 flex items-center gap-4">
+                <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+                  Our Story
+                </span>
+                <span className="h-px flex-1 bg-line" />
+                <span className="whitespace-nowrap font-serif text-xs text-muted">
+                  2006 →
+                </span>
+              </div>
+              <h3 className="font-serif text-2xl leading-snug text-navy md:text-3xl lg:text-4xl">
+                Built on a promise — to{' '}
+                <span className="italic text-primary">exceed</span> every
+                expectation.
+              </h3>
+              <p className="mt-5 text-base leading-relaxed text-navy-2">
+                Founded in 2006, ORAVA (Pvt) Ltd caters to the intricate needs of
+                the fine jewellery and watch sectors, with a mission to exceed the
+                expectations of discerning clients. We precision-cut coloured
+                stones on demand, serving prestigious watch and jewellery brands —
+                a commitment to excellence and integrity that defines our esteemed
+                industry presence.
+              </p>
             </div>
 
-            <h3
-              className="o-serif text-[26px] sm:text-[30px] lg:text-[34px]"
-              style={{
-                fontWeight: 500,
-                lineHeight: 1.15,
-                margin: '14px 0 14px',
-                position: 'relative',
-                color: '#ffffff',
-              }}
-            >
-              Exceeding expectations{' '}
-              <span style={{ fontStyle: 'italic', color: '#e7f0fa' }}>
-                — always.
-              </span>
-            </h3>
-
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.75,
-                color: 'rgba(255,255,255,0.9)',
-                margin: 0,
-                position: 'relative',
-              }}
-            >
-              ORAVA is dedicated to delivering exceptional quality and service —
-              striving to meet the demands of the most exacting customer in every
-              order. With a passion for excellence, we are committed to creating
-              timeless pieces that resonate with the discerning tastes of our clients.
-            </p>
-          </article>
+            {/* CARD 2 — Our Mission */}
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-primary-deep p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/30 md:p-10">
+              <div
+                className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl"
+                aria-hidden
+              />
+              <div className="mb-6 flex items-center gap-4">
+                <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
+                  Our Mission
+                </span>
+                <span className="h-px flex-1 bg-white/20" />
+                <span className="whitespace-nowrap font-serif text-xs text-white/70">
+                  Every order →
+                </span>
+              </div>
+              <h3 className="font-serif text-2xl leading-snug text-white md:text-3xl lg:text-4xl">
+                Exceeding expectations{' '}
+                <span className="italic text-white/90">— always.</span>
+              </h3>
+              <p className="mt-5 text-base leading-relaxed text-white/85">
+                ORAVA is dedicated to delivering exceptional quality and service —
+                striving to meet the demands of the most exacting customer in
+                every order. With a passion for excellence, we are committed to
+                creating timeless pieces that resonate with the discerning tastes
+                of our clients.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

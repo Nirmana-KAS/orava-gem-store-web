@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 // import AboutHero from '@/components/about/AboutHero';
-// import FoundationSection from '@/components/about/FoundationSection';
+import FoundationSection from '@/components/about/FoundationSection';
 // import HeritageTimeline from '@/components/about/HeritageTimeline';
 // import CapabilitiesSection from '@/components/about/CapabilitiesSection';
 // import SampleGalleryCard from '@/components/about/SampleGalleryCard';
@@ -25,23 +25,13 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* <AboutHero /> */}
-      {/* <FoundationSection /> */}
+      <FoundationSection />
       {/* <HeritageTimeline /> */}
       {/* <CapabilitiesSection /> */}
       {/* <SampleGalleryCard /> */}
       {/* <PresidentialAwardSection /> */}
       {/* <WhyOravaSection /> */}
       {/* <CertificationsSection /> */}
-
-      {/* Phase A placeholder — remove once first section ships */}
-      <div className="mx-auto max-w-7xl px-4 py-24 md:px-8 md:py-32">
-        <p className="font-serif text-3xl text-navy md:text-4xl">
-          About page — skeleton ready.
-        </p>
-        <p className="mt-3 text-sm uppercase tracking-widest text-muted">
-          Sections will be built in order — Foundation first, AboutHero last.
-        </p>
-      </div>
     </main>
   );
 }
