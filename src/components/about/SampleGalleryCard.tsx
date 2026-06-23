@@ -2,30 +2,32 @@
  * SampleGalleryCard — Section 04 / THE COLLECTION
  *
  * A single large CTA panel: copy on the left (eyebrow + heading + body +
- * button + caption) and a decorative right side with floating gem-shape
- * chips and two tilted preview cards.
+ * shape-tile row + button + caption) and a decorative right side with a
+ * faint grid texture and two tilted blue preview cards.
  *
  * Server Component — interactivity is CSS-only (hover + keyframes).
  * Responsive: two columns on lg+, stacks below.
  */
 import Link from 'next/link';
 
-interface ShapeChip {
+interface ShapeTile {
   label: string;
-  pos: string;
-  delay: string;
+  icon: 'diamond' | 'oval' | 'baguette' | 'beads';
 }
 
-const shapeChips: ShapeChip[] = [
-  { label: 'Round', pos: 'left-2 top-6', delay: '[animation-delay:0s]' },
-  { label: 'Cabochon', pos: 'left-20 top-32', delay: '[animation-delay:1.5s]' },
-  { label: 'Baguette', pos: 'left-4 bottom-10', delay: '[animation-delay:3s]' },
-  { label: 'Beads', pos: 'left-28 bottom-32', delay: '[animation-delay:4.5s]' },
+const shapeTiles: ShapeTile[] = [
+  { label: 'Round', icon: 'diamond' },
+  { label: 'Cabochon', icon: 'oval' },
+  { label: 'Baguette', icon: 'baguette' },
+  { label: 'Beads', icon: 'beads' },
 ];
 
 interface Sample {
   tag: string;
   title: string;
+  shape: string;
+  carat: string;
+  icon: 'diamond' | 'oval';
   rotation: string;
   position: string;
   z: string;
@@ -35,18 +37,90 @@ const samples: Sample[] = [
   {
     tag: 'REF · SP-0142',
     title: 'Ceylon Sapphire',
-    rotation: '-12deg',
-    position: 'right-16 top-12',
+    shape: 'ROUND',
+    carat: '2.12ct',
+    icon: 'diamond',
+    rotation: '-14deg',
+    position: 'right-24 top-8',
     z: 'z-10',
   },
   {
-    tag: 'REF · RB-0218',
+    tag: 'REF · RB-0089',
     title: 'Burma Ruby',
-    rotation: '8deg',
-    position: 'right-4 top-28',
+    shape: 'CABOCHON',
+    carat: '2.12ct',
+    icon: 'oval',
+    rotation: '10deg',
+    position: 'right-4 top-24',
     z: 'z-20',
   },
 ];
+
+function renderShapeIcon(icon: ShapeTile['icon']) {
+  switch (icon) {
+    case 'diamond':
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6 md:h-7 md:w-7"
+          fill="white"
+          aria-hidden
+        >
+          <polygon points="12,3 20,12 12,21 4,12" />
+        </svg>
+      );
+    case 'oval':
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6 md:h-7 md:w-7"
+          fill="white"
+          aria-hidden
+        >
+          <ellipse cx="12" cy="12" rx="9" ry="6" />
+        </svg>
+      );
+    case 'baguette':
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6 md:h-7 md:w-7"
+          fill="white"
+          aria-hidden
+        >
+          <rect x="4" y="9" width="16" height="6" rx="1.5" />
+        </svg>
+      );
+    case 'beads':
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6 md:h-7 md:w-7"
+          fill="white"
+          aria-hidden
+        >
+          <circle cx="8" cy="10" r="2.5" />
+          <circle cx="16" cy="10" r="2.5" />
+          <circle cx="12" cy="15" r="2.5" />
+        </svg>
+      );
+  }
+}
+
+function renderSampleIcon(icon: 'diamond' | 'oval') {
+  if (icon === 'diamond') {
+    return (
+      <svg viewBox="0 0 60 60" className="h-12 w-12 md:h-14 md:w-14" aria-hidden>
+        <polygon points="30,8 50,30 30,52 10,30" fill="white" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 60 40" className="h-10 w-14 md:h-12 md:w-16" aria-hidden>
+      <ellipse cx="30" cy="20" rx="22" ry="12" fill="white" />
+    </svg>
+  );
+}
 
 export default function SampleGalleryCard() {
   return (
@@ -69,6 +143,28 @@ export default function SampleGalleryCard() {
                 and semi-precious stones from the ORAVA workshop, organised by
                 cut, colour and origin.
               </p>
+
+              {/* Shape-tile row */}
+              <div className="mt-8 flex flex-wrap items-center gap-4 md:gap-6">
+                <div className="flex items-center gap-2">
+                  {shapeTiles.map((tile) => (
+                    <div
+                      key={tile.label}
+                      className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/30 md:h-16 md:w-16"
+                    >
+                      {renderShapeIcon(tile.icon)}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+                    Shown above
+                  </span>
+                  <span className="mt-1 font-serif text-base italic text-navy md:text-lg">
+                    Round · Cabochon · Baguette · Beads
+                  </span>
+                </div>
+              </div>
 
               <div className="mt-8">
                 <Link
@@ -99,7 +195,7 @@ export default function SampleGalleryCard() {
               </div>
 
               <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-muted">
-                105+ SAMPLES · SAPPHIRE · RUBY · EMERALD · SEMI-PRECIOUS
+                100+ SAMPLES · SAPPHIRE · RUBY · EMERALD · SEMI-PRECIOUS
               </p>
             </div>
 
@@ -111,50 +207,45 @@ export default function SampleGalleryCard() {
                 aria-hidden
               />
 
-              {/* 105+ samples floating pill */}
-              <div className="absolute right-4 top-4 z-30 inline-flex items-center gap-2 rounded-full border border-line bg-white/95 px-3 py-1.5 shadow-sm backdrop-blur">
+              {/* Faint grid texture */}
+              <div
+                className="pointer-events-none absolute inset-0 opacity-[0.15]"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(to right, rgba(60,116,174,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(60,116,174,0.5) 1px, transparent 1px)',
+                  backgroundSize: '32px 32px',
+                }}
+                aria-hidden
+              />
+
+              {/* 100+ samples floating pill */}
+              <div className="absolute right-6 top-2 z-30 inline-flex items-center gap-2 rounded-full border border-line bg-white/95 px-3 py-1.5 shadow-sm backdrop-blur">
                 <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy">
-                  105+ SAMPLES
+                  100+ SAMPLES
                 </span>
               </div>
 
-              {/* Layer A — floating gem-shape chips */}
-              {shapeChips.map((chip) => (
-                <div
-                  key={chip.label}
-                  className={`absolute ${chip.pos} ${chip.delay} animate-float-y`}
-                >
-                  <div className="flex items-center gap-2 rounded-full border border-line bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur">
-                    <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span className="text-xs font-medium text-navy">
-                      {chip.label}
-                    </span>
-                  </div>
-                </div>
-              ))}
-
-              {/* Layer B — tilted preview cards */}
+              {/* Tilted preview cards */}
               {samples.map((sample) => (
                 <div
                   key={sample.tag}
-                  className={`absolute ${sample.position} ${sample.z} w-44 md:w-52`}
+                  className={`absolute ${sample.position} ${sample.z} w-44 md:w-56`}
                   style={{ transform: `rotate(${sample.rotation})` }}
                 >
-                  <div className="rounded-2xl border border-line bg-white p-4 shadow-xl shadow-primary/10 transition-transform duration-500 hover:scale-105">
-                    <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+                  <div className="overflow-hidden rounded-2xl bg-primary p-4 shadow-2xl shadow-primary-deep/40 transition-transform duration-500 hover:scale-105 md:p-5">
+                    <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
                       {sample.tag}
                     </div>
-                    <div className="mt-2 font-serif text-xl italic text-navy">
+                    <div className="mt-1 font-serif text-lg italic text-white md:text-xl">
                       {sample.title}
                     </div>
-                    <div
-                      className="mt-4 h-20 rounded-lg bg-gradient-to-br from-primary-soft to-primary/30"
-                      aria-hidden
-                    />
-                    <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted">
-                      <span>Cabochon</span>
-                      <span>4.2ct</span>
+                    <div className="mt-4 flex h-20 items-center justify-center rounded-lg bg-white/10 md:h-24">
+                      {renderSampleIcon(sample.icon)}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-white/80">
+                      <span>{sample.shape}</span>
+                      <span>{sample.carat}</span>
                     </div>
                   </div>
                 </div>
