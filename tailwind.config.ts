@@ -75,8 +75,24 @@ const config: Config = {
           "100%": { transform: "translateX(-50%)" },
         },
         shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+          "0%": { transform: "translateX(-130%) skewX(-22deg)" },
+          "100%": { transform: "translateX(330%) skewX(-22deg)" },
+        },
+        "gem-spin": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        "gem-counter-spin": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(-360deg)" },
+        },
+        "float-y": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
+        "pulse-dot": {
+          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.15)" },
         },
       },
       animation: {
@@ -84,7 +100,11 @@ const config: Config = {
         "float-delayed": "float 6s ease-in-out 2s infinite",
         "pulse-blue": "pulse-blue 2s ease-in-out infinite",
         marquee: "marquee 30s linear infinite",
-        shimmer: "shimmer 2s linear infinite",
+        shimmer: "shimmer 1s ease-out",
+        "gem-spin": "gem-spin 60s linear infinite",
+        "gem-counter-spin": "gem-counter-spin 48s linear infinite",
+        "float-y": "float-y 6s ease-in-out infinite",
+        "pulse-dot": "pulse-dot 2s ease-in-out infinite",
       },
     },
   },
