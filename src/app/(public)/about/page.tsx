@@ -7,7 +7,7 @@ import FoundationSection from '@/components/about/FoundationSection';
 // import SampleGalleryCard from '@/components/about/SampleGalleryCard';
 // import PresidentialAwardSection from '@/components/about/PresidentialAwardSection';
 // import WhyOravaSection from '@/components/about/WhyOravaSection';
-// import CertificationsSection from '@/components/about/CertificationsSection';
+import CertificationsSection from '@/components/about/CertificationsSection';
 
 export const metadata: Metadata = {
   title: 'About — ORAVA (Pvt) Ltd',
@@ -31,7 +31,7 @@ export default function AboutPage() {
       {/* <SampleGalleryCard /> */}
       {/* <PresidentialAwardSection /> */}
       {/* <WhyOravaSection /> */}
-      {/* <CertificationsSection /> */}
+      <CertificationsSection />
     </main>
   );
 }
