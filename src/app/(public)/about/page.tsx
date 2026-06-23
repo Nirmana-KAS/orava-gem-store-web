@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 // import AboutHero from '@/components/about/AboutHero';
 import FoundationSection from '@/components/about/FoundationSection';
-// import HeritageTimeline from '@/components/about/HeritageTimeline';
+import HeritageTimeline from '@/components/about/HeritageTimeline';
 // import CapabilitiesSection from '@/components/about/CapabilitiesSection';
 // import SampleGalleryCard from '@/components/about/SampleGalleryCard';
 // import PresidentialAwardSection from '@/components/about/PresidentialAwardSection';
@@ -26,7 +26,7 @@ export default function AboutPage() {
     <main className="min-h-screen bg-white">
       {/* <AboutHero /> */}
       <FoundationSection />
-      {/* <HeritageTimeline /> */}
+      <HeritageTimeline />
       {/* <CapabilitiesSection /> */}
       {/* <SampleGalleryCard /> */}
       {/* <PresidentialAwardSection /> */}

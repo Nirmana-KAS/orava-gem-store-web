@@ -27,14 +27,9 @@ export default function FoundationSection() {
             <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted">
               [ OUR STORY · OUR MISSION ]
             </p>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-navy-2">
-              From a Colombo workshop to a global supplier of precision-cut
-              coloured gemstones — every stone we ship is calibrated,
-              colour-matched, and traceable.
-            </p>
 
             {/* Spinning gem badge */}
-            <div className="mt-8 flex items-center gap-3 md:mt-10 lg:mt-12">
+            <div className="mt-10 flex items-center gap-3 md:mt-12 lg:mt-16">
               <div className="relative flex h-[50px] w-[50px] items-center justify-center">
                 <div
                   className="absolute inset-0 rounded-full border border-dashed border-primary/40 animate-gem-spin"
