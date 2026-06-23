@@ -11,24 +11,25 @@ export default function FoundationSection() {
   return (
     <section className="w-full bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24 lg:py-32">
-        {/* Eyebrow header */}
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
-          — 01 / FOUNDATION
-        </p>
-        <h2 className="mt-4 max-w-3xl font-serif text-4xl leading-tight text-navy md:text-5xl lg:text-6xl">
-          Two decades of <span className="italic text-primary">precision</span>{' '}
-          craftsmanship.
-        </h2>
-        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted">
-          [ OUR STORY · OUR MISSION ]
-        </p>
-
         {/* Two-column grid */}
-        <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 lg:grid-cols-[360px_1fr] lg:gap-16">
-          {/* LEFT — sticky fact sheet */}
-          <div className="space-y-6 lg:sticky lg:top-32 lg:self-start">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
+          {/* LEFT — heading + sticky fact sheet */}
+          <div className="lg:sticky lg:top-32 lg:self-start">
+            {/* Eyebrow header */}
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
+              — 01 / FOUNDATION
+            </p>
+            <h2 className="mt-4 font-serif text-4xl leading-tight text-navy md:text-5xl lg:max-w-xl lg:text-6xl">
+              Two decades of{' '}
+              <span className="italic text-primary">precision</span>{' '}
+              craftsmanship.
+            </h2>
+            <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted">
+              [ OUR STORY · OUR MISSION ]
+            </p>
+
             {/* Spinning gem badge */}
-            <div className="flex items-center gap-3">
+            <div className="mt-10 flex items-center gap-3 md:mt-12 lg:mt-16">
               <div className="relative flex h-[50px] w-[50px] items-center justify-center">
                 <div
                   className="absolute inset-0 rounded-full border border-dashed border-primary/40 animate-gem-spin"
@@ -46,7 +47,7 @@ export default function FoundationSection() {
             </div>
 
             {/* Fact-sheet card */}
-            <div className="overflow-hidden rounded-2xl border border-line bg-primary-softer">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-line bg-primary-softer">
               <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 transition-all duration-300 hover:bg-primary-soft hover:pl-7">
                 <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
                   FOUNDED
