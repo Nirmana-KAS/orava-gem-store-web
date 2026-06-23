@@ -6,7 +6,7 @@ import FoundationSection from '@/components/about/FoundationSection';
 // import CapabilitiesSection from '@/components/about/CapabilitiesSection';
 // import SampleGalleryCard from '@/components/about/SampleGalleryCard';
 // import PresidentialAwardSection from '@/components/about/PresidentialAwardSection';
-// import WhyOravaSection from '@/components/about/WhyOravaSection';
+import WhyOravaSection from '@/components/about/WhyOravaSection';
 import CertificationsSection from '@/components/about/CertificationsSection';
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export default function AboutPage() {
       {/* <CapabilitiesSection /> */}
       {/* <SampleGalleryCard /> */}
       {/* <PresidentialAwardSection /> */}
-      {/* <WhyOravaSection /> */}
+      <WhyOravaSection />
       <CertificationsSection />
     </main>
   );
