@@ -87,12 +87,12 @@ export default function HeritageTimeline() {
             return (
               <div
                 key={chapter.number}
-                className="grid grid-cols-[110px_24px_1fr] items-stretch gap-3 md:grid-cols-[140px_32px_1fr] md:gap-6"
+                className="grid grid-cols-[130px_24px_1fr] items-stretch gap-3 md:grid-cols-[180px_32px_1fr] md:gap-6"
               >
                 {/* Period label — left of the rail, right-aligned */}
                 <div className="flex items-center justify-end pr-2">
                   <span
-                    className={`whitespace-nowrap font-serif text-[11px] font-medium italic uppercase tracking-[0.18em] md:text-xs ${
+                    className={`whitespace-nowrap font-serif text-sm font-medium italic tracking-wide md:text-base lg:text-lg ${
                       isLive ? 'text-primary' : 'text-muted'
                     }`}
                   >
