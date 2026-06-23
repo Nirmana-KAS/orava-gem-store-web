@@ -76,33 +76,60 @@ export default function HeritageTimeline() {
             const isLive = chapter.live;
             const isFirst = index === 0;
             const isLast = index === chapters.length - 1;
-            // Fade the rail line in on the first row and out on the last row;
-            // middle rows run a continuous segment so the rail reads as one line.
+            // Line extends past each row's top/bottom edges to bridge the gaps,
+            // fading in on the first row and out on the last so the rail reads
+            // as one continuous line.
             const lineGradient = isFirst
-              ? 'bg-gradient-to-b from-transparent via-primary/40 to-primary/40'
+              ? 'bg-gradient-to-b from-transparent via-primary/50 to-primary/50'
               : isLast
-                ? 'bg-gradient-to-b from-primary/40 via-primary/40 to-transparent'
-                : 'bg-gradient-to-b from-primary/40 to-primary/40';
+                ? 'bg-gradient-to-b from-primary/50 via-primary/50 to-transparent'
+                : 'bg-primary/50';
             return (
               <div
                 key={chapter.number}
-                className="grid grid-cols-[40px_1fr] items-stretch gap-4 md:grid-cols-[80px_1fr] md:gap-8"
+                className="grid grid-cols-[110px_24px_1fr] items-stretch gap-3 md:grid-cols-[140px_32px_1fr] md:gap-6"
               >
-                {/* Rail cell — vertical line segment + dot centered to the row */}
-                <div className="relative flex justify-center">
+                {/* Period label — left of the rail, right-aligned */}
+                <div className="flex items-center justify-end pr-2">
+                  <span
+                    className={`whitespace-nowrap font-serif text-[11px] font-medium italic uppercase tracking-[0.18em] md:text-xs ${
+                      isLive ? 'text-primary' : 'text-muted'
+                    }`}
+                  >
+                    {chapter.period}
+                  </span>
+                </div>
+
+                {/* Rail cell — continuous line + open-ring / breathing dot */}
+                <div className="relative flex items-center justify-center">
                   <div
-                    className={`pointer-events-none absolute bottom-0 top-0 w-px ${lineGradient}`}
+                    className={[
+                      'pointer-events-none absolute left-1/2 w-px -translate-x-1/2',
+                      '-top-3 -bottom-3 md:-top-4 md:-bottom-4',
+                      lineGradient,
+                    ].join(' ')}
                     aria-hidden
                   />
-                  {isLive ? (
-                    <span className="relative my-auto h-4 w-4 rounded-full border-2 border-white bg-primary shadow-md">
+
+                  {!isLive && (
+                    <div
+                      className="relative z-10 h-3.5 w-3.5 rounded-full border-2 border-primary bg-white"
+                      aria-hidden
+                    />
+                  )}
+
+                  {isLive && (
+                    <div className="relative z-10 flex h-4 w-4 items-center justify-center">
                       <span
-                        className="absolute inset-0 rounded-full bg-primary/40 animate-pulse-dot"
+                        className="absolute inset-0 -m-2 rounded-full bg-primary/30 animate-ping"
                         aria-hidden
                       />
-                    </span>
-                  ) : (
-                    <span className="relative my-auto h-3 w-3 rounded-full border-2 border-white bg-primary shadow-sm" />
+                      <span
+                        className="absolute inset-0 -m-1 rounded-full bg-primary/40 animate-pulse"
+                        aria-hidden
+                      />
+                      <span className="relative h-4 w-4 rounded-full border-2 border-white bg-primary shadow-md" />
+                    </div>
                   )}
                 </div>
 
@@ -120,11 +147,7 @@ export default function HeritageTimeline() {
                         className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/10 blur-3xl"
                         aria-hidden
                       />
-                      <span className="absolute right-5 top-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                        <span
-                          className="h-1.5 w-1.5 rounded-full bg-white animate-pulse-dot"
-                          aria-hidden
-                        />
+                      <span className="absolute right-5 top-5 inline-flex items-center rounded-full border border-white/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
                         Live Chapter
                       </span>
                     </>
@@ -134,11 +157,11 @@ export default function HeritageTimeline() {
                     <span
                       className={
                         isLive
-                          ? 'text-xs font-medium uppercase tracking-[0.18em] text-white/70'
-                          : 'text-xs font-medium uppercase tracking-[0.18em] text-muted'
+                          ? 'font-serif text-2xl italic text-white/80 md:text-3xl'
+                          : 'font-serif text-2xl italic text-primary md:text-3xl'
                       }
                     >
-                      {chapter.period}
+                      {chapter.number}
                     </span>
                     <h3
                       className={
