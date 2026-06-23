@@ -12,9 +12,13 @@ import "./services.css";
    ================================================================ */
 
 export const metadata = {
-  title: "Our Services — ORAVA",
+  title: "Services | ORAVA (Pvt) Ltd.",
   description:
     "Five disciplines, one cutting house. Precision cutting, calibration, colour grading, quality assurance, and bespoke design — all in-house.",
+  openGraph: {
+    title: "Services | ORAVA (Pvt) Ltd.",
+    type: "website",
+  },
 };
 
 export default function ServicesPage() {

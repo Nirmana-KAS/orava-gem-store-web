@@ -10,11 +10,11 @@ import WhyOravaSection from '@/components/about/WhyOravaSection';
 import CertificationsSection from '@/components/about/CertificationsSection';
 
 export const metadata: Metadata = {
-  title: 'About — ORAVA (Pvt) Ltd',
+  title: 'About | ORAVA (Pvt) Ltd.',
   description:
     'Two decades of precision-cut coloured gemstones from Colombo, Sri Lanka. Presidential Export Award 2024/25 — Gems Sector.',
   openGraph: {
-    title: 'About — ORAVA (Pvt) Ltd',
+    title: 'About | ORAVA (Pvt) Ltd.',
     description:
       'Two decades of precision-cut coloured gemstones from Colombo, Sri Lanka. Presidential Export Award 2024/25 — Gems Sector.',
     type: 'website',

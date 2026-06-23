@@ -9,9 +9,13 @@ import OurCapabilities from "@/components/home/OurCapabilities";
 import WhyOrava from "@/components/home/WhyOrava";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "Home | ORAVA (Pvt) Ltd.",
   description:
     "Premium precision-cut gemstone exporter from Sri Lanka since 2006.",
+  openGraph: {
+    title: "Home | ORAVA (Pvt) Ltd.",
+    type: "website",
+  },
 };
 
 export default function HomePage() {

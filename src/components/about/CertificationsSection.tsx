@@ -93,7 +93,7 @@ export default function CertificationsSection() {
 
         {/* Footer link */}
         <div className="mt-10 text-center md:mt-14">
-          <p className="text-sm text-muted">
+          <p className="text-base text-muted">
             Certification reports available on request —{' '}
             <Link
               href="/contact"

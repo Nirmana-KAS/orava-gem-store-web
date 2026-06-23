@@ -12,14 +12,14 @@ export default function FoundationSection() {
     <section className="w-full bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24 lg:py-32">
         {/* Two-column grid */}
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
           {/* LEFT — heading + sticky fact sheet */}
           <div className="lg:sticky lg:top-32 lg:self-start">
             {/* Eyebrow header */}
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
               — 01 / FOUNDATION
             </p>
-            <h2 className="mt-4 font-serif text-4xl leading-tight text-navy md:text-5xl lg:max-w-xl lg:text-6xl">
+            <h2 className="mt-4 font-serif text-4xl leading-tight text-navy md:text-5xl lg:max-w-xl lg:text-5xl">
               Two decades of{' '}
               <span className="italic text-primary">precision</span>{' '}
               craftsmanship.
@@ -99,7 +99,7 @@ export default function FoundationSection() {
                   Our Story
                 </span>
                 <span className="h-px flex-1 bg-line" />
-                <span className="whitespace-nowrap font-serif text-xs text-muted">
+                <span className="whitespace-nowrap font-serif text-sm text-muted">
                   2006 →
                 </span>
               </div>
@@ -129,7 +129,7 @@ export default function FoundationSection() {
                   Our Mission
                 </span>
                 <span className="h-px flex-1 bg-white/20" />
-                <span className="whitespace-nowrap font-serif text-xs text-white/70">
+                <span className="whitespace-nowrap font-serif text-sm text-white/80">
                   Every order →
                 </span>
               </div>
