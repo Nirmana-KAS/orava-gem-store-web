@@ -49,7 +49,7 @@ const samples: Sample[] = [
     rotationClass: '[transform:rotate(-14deg)]',
     hoverRotationClass:
       'hover:[transform:rotate(-22deg)_translate(-18px,-12px)_scale(1.05)]',
-    position: 'right-32 top-10',
+    position: 'right-40 top-20',
     z: 'z-0',
   },
   // MIDDLE CARD — Ceylon Sapphire
@@ -62,7 +62,7 @@ const samples: Sample[] = [
     rotationClass: '[transform:rotate(-8deg)]',
     hoverRotationClass:
       'hover:[transform:rotate(-17deg)_translate(-12px,-10px)_scale(1.05)]',
-    position: 'right-20 top-20',
+    position: 'right-28 top-32',
     z: 'z-10',
   },
   // FRONT CARD — Burma Ruby
@@ -75,7 +75,7 @@ const samples: Sample[] = [
     rotationClass: '[transform:rotate(6deg)]',
     hoverRotationClass:
       'hover:[transform:rotate(15deg)_translate(12px,-10px)_scale(1.05)]',
-    position: 'right-8 top-32',
+    position: 'right-16 top-44',
     z: 'z-20',
   },
 ];
@@ -281,7 +281,7 @@ export default function SampleGalleryCard() {
               {samples.map((sample) => (
                 <div
                   key={sample.tag}
-                  className={`absolute ${sample.position} ${sample.z} w-40 transition-transform duration-500 md:w-52 ${sample.rotationClass} ${sample.hoverRotationClass}`}
+                  className={`absolute ${sample.position} ${sample.z} w-32 transition-transform duration-500 md:w-52 ${sample.rotationClass} ${sample.hoverRotationClass}`}
                 >
                   <div className="overflow-hidden rounded-2xl border-[3px] border-white bg-primary p-4 shadow-2xl shadow-primary-deep/40 transition-all duration-500 hover:shadow-primary-deep/60 md:p-5">
                     <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
