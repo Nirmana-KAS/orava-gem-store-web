@@ -48,8 +48,8 @@ const samples: Sample[] = [
     icon: 'emerald',
     rotationClass: '[transform:rotate(-14deg)]',
     hoverRotationClass:
-      'hover:[transform:rotate(-22deg)_translate(-32px,-20px)_scale(1.05)]',
-    position: 'right-44 top-2',
+      'hover:[transform:rotate(-22deg)_translate(-18px,-12px)_scale(1.05)]',
+    position: 'right-32 top-10',
     z: 'z-0',
   },
   // MIDDLE CARD — Ceylon Sapphire
@@ -61,8 +61,8 @@ const samples: Sample[] = [
     icon: 'diamond',
     rotationClass: '[transform:rotate(-8deg)]',
     hoverRotationClass:
-      'hover:[transform:rotate(-17deg)_translate(-20px,-16px)_scale(1.05)]',
-    position: 'right-24 top-8',
+      'hover:[transform:rotate(-17deg)_translate(-12px,-10px)_scale(1.05)]',
+    position: 'right-20 top-20',
     z: 'z-10',
   },
   // FRONT CARD — Burma Ruby
@@ -74,8 +74,8 @@ const samples: Sample[] = [
     icon: 'oval',
     rotationClass: '[transform:rotate(6deg)]',
     hoverRotationClass:
-      'hover:[transform:rotate(15deg)_translate(20px,-16px)_scale(1.05)]',
-    position: 'right-4 top-24',
+      'hover:[transform:rotate(15deg)_translate(12px,-10px)_scale(1.05)]',
+    position: 'right-8 top-32',
     z: 'z-20',
   },
 ];
