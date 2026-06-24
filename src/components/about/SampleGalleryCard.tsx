@@ -8,18 +8,21 @@
  * Server Component — interactivity is CSS-only (hover + keyframes).
  * Responsive: two columns on lg+, stacks below.
  */
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 
 interface ShapeTile {
   label: string;
   icon: 'diamond' | 'oval' | 'baguette' | 'beads';
+  rotation: string;
+  delay: string;
 }
 
 const shapeTiles: ShapeTile[] = [
-  { label: 'Round', icon: 'diamond' },
-  { label: 'Cabochon', icon: 'oval' },
-  { label: 'Baguette', icon: 'baguette' },
-  { label: 'Beads', icon: 'beads' },
+  { label: 'Round', icon: 'diamond', rotation: '-10deg', delay: '[animation-delay:0s]' },
+  { label: 'Cabochon', icon: 'oval', rotation: '6deg', delay: '[animation-delay:0.5s]' },
+  { label: 'Baguette', icon: 'baguette', rotation: '-4deg', delay: '[animation-delay:1s]' },
+  { label: 'Beads', icon: 'beads', rotation: '8deg', delay: '[animation-delay:1.5s]' },
 ];
 
 interface Sample {
@@ -28,7 +31,11 @@ interface Sample {
   shape: string;
   carat: string;
   icon: 'diamond' | 'oval';
+  image?: string;
   rotation: string;
+  hoverRotation: string;
+  hoverTx: string;
+  hoverTy: string;
   position: string;
   z: string;
 }
@@ -38,9 +45,12 @@ const samples: Sample[] = [
     tag: 'REF · SP-0142',
     title: 'Ceylon Sapphire',
     shape: 'ROUND',
-    carat: '2.12ct',
+    carat: '1.84ct',
     icon: 'diamond',
-    rotation: '-14deg',
+    rotation: '-8deg',
+    hoverRotation: '-17deg',
+    hoverTx: '-20px',
+    hoverTy: '-16px',
     position: 'right-24 top-8',
     z: 'z-10',
   },
@@ -50,7 +60,10 @@ const samples: Sample[] = [
     shape: 'CABOCHON',
     carat: '2.12ct',
     icon: 'oval',
-    rotation: '10deg',
+    rotation: '6deg',
+    hoverRotation: '15deg',
+    hoverTx: '20px',
+    hoverTy: '-16px',
     position: 'right-4 top-24',
     z: 'z-20',
   },
@@ -146,13 +159,16 @@ export default function SampleGalleryCard() {
 
               {/* Shape-tile row */}
               <div className="mt-8 flex flex-wrap items-center gap-4 md:gap-6">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center">
                   {shapeTiles.map((tile) => (
                     <div
                       key={tile.label}
-                      className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/30 md:h-16 md:w-16"
+                      className={`group relative -mr-3 last:mr-0 animate-gallery-tilt ${tile.delay}`}
+                      style={{ ['--r' as string]: tile.rotation } as CSSProperties}
                     >
-                      {renderShapeIcon(tile.icon)}
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-[3px] border-white bg-gradient-to-br from-primary to-primary-deep shadow-lg shadow-primary/25 transition-all duration-300 group-hover:-translate-y-3 group-hover:scale-110 group-hover:brightness-110 md:h-[72px] md:w-[72px]">
+                        {renderShapeIcon(tile.icon)}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -177,19 +193,21 @@ export default function SampleGalleryCard() {
                   />
                   <span className="relative z-10 inline-flex items-center gap-3">
                     <span>Visit Sample Gallery</span>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                      aria-hidden
-                    >
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
+                    <span className="inline-flex animate-arrow-slide">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-4 w-4"
+                        aria-hidden
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </span>
                   </span>
                 </Link>
               </div>
@@ -207,13 +225,18 @@ export default function SampleGalleryCard() {
                 aria-hidden
               />
 
-              {/* Faint grid texture */}
+              {/* Faint grid texture with radial edge-fade mask */}
               <div
-                className="pointer-events-none absolute inset-0 opacity-[0.15]"
+                className="pointer-events-none absolute inset-0"
                 style={{
                   backgroundImage:
-                    'linear-gradient(to right, rgba(60,116,174,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(60,116,174,0.5) 1px, transparent 1px)',
-                  backgroundSize: '32px 32px',
+                    'linear-gradient(to right, rgba(60,116,174,0.35) 1px, transparent 1px), linear-gradient(to bottom, rgba(60,116,174,0.35) 1px, transparent 1px)',
+                  backgroundSize: '40px 40px',
+                  opacity: 0.5,
+                  maskImage:
+                    'radial-gradient(ellipse at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 40%, transparent 75%)',
+                  WebkitMaskImage:
+                    'radial-gradient(ellipse at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 40%, transparent 75%)',
                 }}
                 aria-hidden
               />
@@ -230,18 +253,34 @@ export default function SampleGalleryCard() {
               {samples.map((sample) => (
                 <div
                   key={sample.tag}
-                  className={`absolute ${sample.position} ${sample.z} w-44 md:w-56`}
-                  style={{ transform: `rotate(${sample.rotation})` }}
+                  className={`absolute ${sample.position} ${sample.z} w-44 transition-transform duration-500 hover:scale-105 hover:[transform:var(--hover-transform)] md:w-56`}
+                  style={
+                    {
+                      transform: `rotate(${sample.rotation})`,
+                      ['--hover-transform' as string]: `rotate(${sample.hoverRotation}) translate(${sample.hoverTx}, ${sample.hoverTy}) scale(1.05)`,
+                    } as CSSProperties
+                  }
                 >
-                  <div className="overflow-hidden rounded-2xl bg-primary p-4 shadow-2xl shadow-primary-deep/40 transition-transform duration-500 hover:scale-105 md:p-5">
+                  <div className="overflow-hidden rounded-2xl border-[3px] border-white bg-primary p-4 shadow-2xl shadow-primary-deep/40 transition-all duration-500 hover:shadow-primary-deep/60 md:p-5">
                     <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
                       {sample.tag}
                     </div>
                     <div className="mt-1 font-serif text-lg italic text-white md:text-xl">
                       {sample.title}
                     </div>
-                    <div className="mt-4 flex h-20 items-center justify-center rounded-lg bg-white/10 md:h-24">
-                      {renderSampleIcon(sample.icon)}
+                    <div className="relative mt-4 h-20 overflow-hidden rounded-lg bg-white/10 md:h-24">
+                      {sample.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={sample.image}
+                          alt={sample.title}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          {renderSampleIcon(sample.icon)}
+                        </div>
+                      )}
                     </div>
                     <div className="mt-3 flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-white/80">
                       <span>{sample.shape}</span>

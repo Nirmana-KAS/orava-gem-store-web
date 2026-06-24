@@ -94,6 +94,14 @@ const config: Config = {
           "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
           "50%": { opacity: "1", transform: "scale(1.15)" },
         },
+        "gallery-tilt": {
+          "0%, 100%": { transform: "translateY(0) rotate(var(--r, 0deg))" },
+          "50%": { transform: "translateY(-6px) rotate(var(--r, 0deg))" },
+        },
+        "arrow-slide": {
+          "0%, 100%": { transform: "translateX(0)" },
+          "50%": { transform: "translateX(4px)" },
+        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
@@ -105,6 +113,8 @@ const config: Config = {
         "gem-counter-spin": "gem-counter-spin 48s linear infinite",
         "float-y": "float-y 6s ease-in-out infinite",
         "pulse-dot": "pulse-dot 2s ease-in-out infinite",
+        "gallery-tilt": "gallery-tilt 4.5s ease-in-out infinite",
+        "arrow-slide": "arrow-slide 1.6s ease-in-out infinite",
       },
     },
   },
