@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 // import AboutHero from '@/components/about/AboutHero';
 import FoundationSection from '@/components/about/FoundationSection';
 import HeritageTimeline from '@/components/about/HeritageTimeline';
-// import CapabilitiesSection from '@/components/about/CapabilitiesSection';
+import CapabilitiesSection from '@/components/about/CapabilitiesSection';
 import SampleGalleryCard from '@/components/about/SampleGalleryCard';
 // import PresidentialAwardSection from '@/components/about/PresidentialAwardSection';
 import WhyOravaSection from '@/components/about/WhyOravaSection';
@@ -27,7 +27,7 @@ export default function AboutPage() {
       {/* <AboutHero /> */}
       <FoundationSection />
       <HeritageTimeline />
-      {/* <CapabilitiesSection /> */}
+      <CapabilitiesSection />
       <SampleGalleryCard />
       {/* <PresidentialAwardSection /> */}
       <WhyOravaSection />
