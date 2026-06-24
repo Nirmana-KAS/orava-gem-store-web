@@ -30,40 +30,51 @@ interface Sample {
   title: string;
   shape: string;
   carat: string;
-  icon: 'diamond' | 'oval';
+  icon: 'diamond' | 'oval' | 'emerald';
   image?: string;
-  rotation: string;
-  hoverRotation: string;
-  hoverTx: string;
-  hoverTy: string;
+  rotationClass: string;
+  hoverRotationClass: string;
   position: string;
   z: string;
 }
 
 const samples: Sample[] = [
+  // BACK CARD — Colombian Emerald
+  {
+    tag: 'REF · EM-0073',
+    title: 'Colombian Emerald',
+    shape: 'EMERALD',
+    carat: '1.45ct',
+    icon: 'emerald',
+    rotationClass: '[transform:rotate(-14deg)]',
+    hoverRotationClass:
+      'hover:[transform:rotate(-22deg)_translate(-32px,-20px)_scale(1.05)]',
+    position: 'right-44 top-2',
+    z: 'z-0',
+  },
+  // MIDDLE CARD — Ceylon Sapphire
   {
     tag: 'REF · SP-0142',
     title: 'Ceylon Sapphire',
     shape: 'ROUND',
     carat: '1.84ct',
     icon: 'diamond',
-    rotation: '-8deg',
-    hoverRotation: '-17deg',
-    hoverTx: '-20px',
-    hoverTy: '-16px',
+    rotationClass: '[transform:rotate(-8deg)]',
+    hoverRotationClass:
+      'hover:[transform:rotate(-17deg)_translate(-20px,-16px)_scale(1.05)]',
     position: 'right-24 top-8',
     z: 'z-10',
   },
+  // FRONT CARD — Burma Ruby
   {
     tag: 'REF · RB-0089',
     title: 'Burma Ruby',
     shape: 'CABOCHON',
     carat: '2.12ct',
     icon: 'oval',
-    rotation: '6deg',
-    hoverRotation: '15deg',
-    hoverTx: '20px',
-    hoverTy: '-16px',
+    rotationClass: '[transform:rotate(6deg)]',
+    hoverRotationClass:
+      'hover:[transform:rotate(15deg)_translate(20px,-16px)_scale(1.05)]',
     position: 'right-4 top-24',
     z: 'z-20',
   },
@@ -120,7 +131,7 @@ function renderShapeIcon(icon: ShapeTile['icon']) {
   }
 }
 
-function renderSampleIcon(icon: 'diamond' | 'oval') {
+function renderSampleIcon(icon: 'diamond' | 'oval' | 'emerald') {
   if (icon === 'diamond') {
     return (
       <svg viewBox="0 0 60 60" className="h-12 w-12 md:h-14 md:w-14" aria-hidden>
@@ -128,9 +139,17 @@ function renderSampleIcon(icon: 'diamond' | 'oval') {
       </svg>
     );
   }
+  if (icon === 'oval') {
+    return (
+      <svg viewBox="0 0 60 40" className="h-10 w-14 md:h-12 md:w-16" aria-hidden>
+        <ellipse cx="30" cy="20" rx="22" ry="12" fill="white" />
+      </svg>
+    );
+  }
+  // emerald cut — hexagon with chamfered corners
   return (
-    <svg viewBox="0 0 60 40" className="h-10 w-14 md:h-12 md:w-16" aria-hidden>
-      <ellipse cx="30" cy="20" rx="22" ry="12" fill="white" />
+    <svg viewBox="0 0 60 50" className="h-10 w-14 md:h-12 md:w-16" aria-hidden>
+      <polygon points="14,8 46,8 56,25 46,42 14,42 4,25" fill="white" />
     </svg>
   );
 }
@@ -243,7 +262,16 @@ export default function SampleGalleryCard() {
 
               {/* 100+ samples floating pill */}
               <div className="absolute right-6 top-2 z-30 inline-flex items-center gap-2 rounded-full border border-line bg-white/95 px-3 py-1.5 shadow-sm backdrop-blur">
-                <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
+                <span
+                  className="relative inline-flex h-2 w-2 items-center justify-center"
+                  aria-hidden
+                >
+                  <span
+                    className="absolute inset-0 -m-1 rounded-full bg-primary/30 animate-ping"
+                    aria-hidden
+                  />
+                  <span className="relative h-2 w-2 rounded-full bg-primary animate-pulse-dot" />
+                </span>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy">
                   100+ SAMPLES
                 </span>
@@ -253,13 +281,7 @@ export default function SampleGalleryCard() {
               {samples.map((sample) => (
                 <div
                   key={sample.tag}
-                  className={`absolute ${sample.position} ${sample.z} w-44 transition-transform duration-500 hover:scale-105 hover:[transform:var(--hover-transform)] md:w-56`}
-                  style={
-                    {
-                      transform: `rotate(${sample.rotation})`,
-                      ['--hover-transform' as string]: `rotate(${sample.hoverRotation}) translate(${sample.hoverTx}, ${sample.hoverTy}) scale(1.05)`,
-                    } as CSSProperties
-                  }
+                  className={`absolute ${sample.position} ${sample.z} w-40 transition-transform duration-500 md:w-52 ${sample.rotationClass} ${sample.hoverRotationClass}`}
                 >
                   <div className="overflow-hidden rounded-2xl border-[3px] border-white bg-primary p-4 shadow-2xl shadow-primary-deep/40 transition-all duration-500 hover:shadow-primary-deep/60 md:p-5">
                     <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
