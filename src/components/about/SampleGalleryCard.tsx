@@ -49,7 +49,7 @@ const samples: Sample[] = [
     rotationClass: '[transform:rotate(-14deg)]',
     hoverRotationClass:
       'hover:[transform:rotate(-22deg)_translate(-18px,-12px)_scale(1.05)]',
-    position: 'right-40 top-20',
+    position: 'left-1/2 -translate-x-[80%] top-4 md:left-auto md:translate-x-0 md:right-40 md:top-20',
     z: 'z-0',
   },
   // MIDDLE CARD — Ceylon Sapphire
@@ -62,7 +62,7 @@ const samples: Sample[] = [
     rotationClass: '[transform:rotate(-8deg)]',
     hoverRotationClass:
       'hover:[transform:rotate(-17deg)_translate(-12px,-10px)_scale(1.05)]',
-    position: 'right-28 top-32',
+    position: 'left-1/2 -translate-x-1/2 top-12 md:left-auto md:translate-x-0 md:right-28 md:top-32',
     z: 'z-10',
   },
   // FRONT CARD — Burma Ruby
@@ -75,7 +75,7 @@ const samples: Sample[] = [
     rotationClass: '[transform:rotate(6deg)]',
     hoverRotationClass:
       'hover:[transform:rotate(15deg)_translate(12px,-10px)_scale(1.05)]',
-    position: 'right-16 top-44',
+    position: 'left-1/2 -translate-x-[20%] top-20 md:left-auto md:translate-x-0 md:right-16 md:top-44',
     z: 'z-20',
   },
 ];
@@ -281,16 +281,16 @@ export default function SampleGalleryCard() {
               {samples.map((sample) => (
                 <div
                   key={sample.tag}
-                  className={`absolute ${sample.position} ${sample.z} w-32 transition-transform duration-500 md:w-52 ${sample.rotationClass} ${sample.hoverRotationClass}`}
+                  className={`absolute ${sample.position} ${sample.z} w-28 transition-transform duration-500 md:w-52 ${sample.rotationClass} ${sample.hoverRotationClass}`}
                 >
-                  <div className="overflow-hidden rounded-2xl border-[3px] border-white bg-primary p-4 shadow-2xl shadow-primary-deep/40 transition-all duration-500 hover:shadow-primary-deep/60 md:p-5">
+                  <div className="overflow-hidden rounded-2xl border-[3px] border-white bg-primary p-3 shadow-2xl shadow-primary-deep/40 transition-all duration-500 hover:shadow-primary-deep/60 md:p-5">
                     <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
                       {sample.tag}
                     </div>
-                    <div className="mt-1 font-serif text-lg italic text-white md:text-xl">
+                    <div className="mt-1 font-serif text-sm italic text-white md:text-xl">
                       {sample.title}
                     </div>
-                    <div className="relative mt-4 h-20 overflow-hidden rounded-lg bg-white/10 md:h-24">
+                    <div className="relative mt-3 h-14 overflow-hidden rounded-lg bg-white/10 md:mt-4 md:h-24">
                       {sample.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -304,7 +304,7 @@ export default function SampleGalleryCard() {
                         </div>
                       )}
                     </div>
-                    <div className="mt-3 flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-white/80">
+                    <div className="mt-2 flex items-center justify-between gap-1 text-[9px] font-medium uppercase tracking-[0.18em] text-white/80 md:mt-3 md:text-[10px]">
                       <span>{sample.shape}</span>
                       <span>{sample.carat}</span>
                     </div>
