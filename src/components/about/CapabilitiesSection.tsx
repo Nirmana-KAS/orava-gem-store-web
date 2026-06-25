@@ -128,9 +128,9 @@ function CapabilityViz({ viz }: { viz: Capability['viz'] }) {
       return (
         <div>
           <div className="relative h-20 overflow-hidden rounded-lg border border-line bg-primary-softer">
-            <div
-              className="absolute left-4 right-4 top-1/2 h-px bg-primary/60 animate-pulse"
+            <span
               aria-hidden
+              className="absolute left-0 right-0 top-0 h-0.5 animate-scan-bi [background:linear-gradient(90deg,transparent,#3c74ae_50%,transparent)] [box-shadow:0_0_10px_rgba(60,116,174,0.55)]"
             />
           </div>
           <div className="mt-2 flex justify-between text-[10px] uppercase tracking-widest text-muted">
@@ -198,6 +198,28 @@ export default function CapabilitiesSection() {
                 </div>
               ))}
             </div>
+            <svg
+              aria-hidden
+              viewBox="0 0 400 100"
+              preserveAspectRatio="none"
+              className="pointer-events-none absolute -inset-px h-[calc(100%+2px)] w-[calc(100%+2px)] overflow-visible"
+            >
+              <rect
+                x="1"
+                y="1"
+                width="398"
+                height="98"
+                rx="16"
+                ry="16"
+                pathLength={400}
+                fill="none"
+                stroke="#3c74ae"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeDasharray="60 340"
+                className="animate-dash-run [filter:drop-shadow(0_0_3px_rgba(60,116,174,0.6))]"
+              />
+            </svg>
           </div>
         </div>
 
