@@ -102,6 +102,18 @@ const config: Config = {
           "0%, 100%": { transform: "translateX(0)" },
           "50%": { transform: "translateX(4px)" },
         },
+        "dash-run": {
+          to: { strokeDashoffset: "-400" },
+        },
+        "scan-bi": {
+          "0%": { top: "0%", opacity: "0" },
+          "8%": { opacity: "1" },
+          "45%": { top: "100%", opacity: "1" },
+          "50%": { top: "100%", opacity: "0" },
+          "55%": { top: "100%", opacity: "1" },
+          "92%": { top: "0%", opacity: "1" },
+          "100%": { top: "0%", opacity: "0" },
+        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
@@ -115,6 +127,8 @@ const config: Config = {
         "pulse-dot": "pulse-dot 2s ease-in-out infinite",
         "gallery-tilt": "gallery-tilt 4.5s ease-in-out infinite",
         "arrow-slide": "arrow-slide 1.6s ease-in-out infinite",
+        "dash-run": "dash-run 3.6s linear infinite",
+        "scan-bi": "scan-bi 4.2s ease-in-out infinite",
       },
     },
   },
