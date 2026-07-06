@@ -198,29 +198,6 @@ export default function CapabilitiesSection() {
                 </div>
               ))}
             </div>
-
-            <svg
-              aria-hidden
-              viewBox="0 0 400 100"
-              preserveAspectRatio="none"
-              className="pointer-events-none absolute -inset-px h-[calc(100%+2px)] w-[calc(100%+2px)] overflow-visible"
-            >
-              <rect
-                x="1"
-                y="1"
-                width="398"
-                height="98"
-                rx="16"
-                ry="16"
-                pathLength={400}
-                fill="none"
-                stroke="#3c74ae"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeDasharray="60 340"
-                className="animate-dash-run [filter:drop-shadow(0_0_3px_rgba(60,116,174,0.6))]"
-              />
-            </svg>
           </div>
         </div>
 
