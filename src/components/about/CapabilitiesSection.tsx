@@ -70,7 +70,7 @@ function CapabilityViz({ viz }: { viz: Capability['viz'] }) {
   switch (viz) {
     case 'shapes':
       return (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {['round', 'cabochon', 'baguette', 'beads'].map((s) => (
             <div
               key={s}
@@ -126,17 +126,36 @@ function CapabilityViz({ viz }: { viz: Capability['viz'] }) {
 
     case 'scanner':
       return (
-        <div>
-          <div className="relative h-20 overflow-hidden rounded-lg border border-line bg-primary-softer">
-            <span
-              aria-hidden
-              className="absolute left-0 right-0 top-0 h-0.5 animate-scan-bi [background:linear-gradient(90deg,transparent,#3c74ae_50%,transparent)] [box-shadow:0_0_10px_rgba(60,116,174,0.55)]"
-            />
-          </div>
-          <div className="mt-2 flex justify-between text-[10px] uppercase tracking-widest text-muted">
-            <span>DIAMETER · 6.42mm</span>
-            <span>TOLERANCE · ±0.05mm</span>
-            <span>PASS RATE · 99.4%</span>
+        <div className="relative overflow-hidden rounded-xl border border-line bg-primary-softer px-[18px] py-4">
+          <span
+            aria-hidden
+            className="absolute left-0 right-0 top-0 h-0.5 animate-scan-bi [background:linear-gradient(90deg,transparent,#3c74ae_50%,transparent)] [box-shadow:0_0_10px_rgba(60,116,174,0.55)]"
+          />
+          <div className="grid grid-cols-3 gap-3.5 text-navy-2">
+            <div>
+              <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+                DIAMETER
+              </div>
+              <div className="mt-1 font-serif text-lg font-medium text-navy">
+                6.42<span className="text-primary">mm</span>
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+                TOLERANCE
+              </div>
+              <div className="mt-1 font-serif text-lg font-medium text-navy">
+                ±0.05<span className="text-primary">mm</span>
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+                PASS RATE
+              </div>
+              <div className="mt-1 font-serif text-lg font-medium text-navy">
+                99.4<span className="text-primary">%</span>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -173,31 +192,39 @@ export default function CapabilitiesSection() {
           in-house before it ships.
         </p>
 
-        {/* Pipeline strip */}
-        <div className="mt-12 overflow-hidden rounded-2xl border border-line bg-primary-softer md:mt-16">
-          <div className="relative">
-            <div
-              className="pointer-events-none absolute inset-y-0 left-0 z-0 w-1/4 -skew-x-12 animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent"
-              aria-hidden
-            />
-            <div className="relative z-10 flex snap-x snap-mandatory overflow-x-auto md:overflow-visible">
-              {pipeline.map((stage, i) => (
-                <div
-                  key={stage.step}
-                  className={`relative min-w-[160px] flex-shrink-0 snap-start px-5 py-6 transition-colors duration-300 hover:bg-white md:min-w-0 md:flex-1 md:py-7 ${
-                    i < pipeline.length - 1 ? 'border-line md:border-r' : ''
-                  }`}
-                >
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
-                    {stage.step}
-                  </span>
-                  <p className="mt-2 font-serif text-lg text-navy md:text-xl">
-                    {stage.label}
-                  </p>
-                  <p className="mt-1 text-xs text-muted">{stage.sub}</p>
-                </div>
-              ))}
-            </div>
+        {/* Pipeline strip — desktop only */}
+        <div className="relative mt-12 hidden md:mt-16 md:block">
+          {/* Animated conic-gradient border layer — comet rotates via --angle */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-[1.5px] animate-border-spin rounded-2xl"
+            style={{
+              background:
+                'conic-gradient(from var(--angle), transparent 0%, transparent 78%, #3c74ae 88%, #3c74ae 92%, transparent 100%)',
+            }}
+          />
+          {/* Mask covering the inside, leaving only the border stroke visible */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-2xl bg-primary-softer"
+          />
+          <div className="relative z-10 flex overflow-hidden rounded-2xl">
+            {pipeline.map((stage, i) => (
+              <div
+                key={stage.step}
+                className={`relative flex-1 px-5 py-6 transition-colors duration-300 hover:bg-white md:py-7 ${
+                  i < pipeline.length - 1 ? 'border-r border-line' : ''
+                }`}
+              >
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+                  {stage.step}
+                </span>
+                <p className="mt-2 font-serif text-lg text-navy md:text-xl">
+                  {stage.label}
+                </p>
+                <p className="mt-1 text-xs text-muted">{stage.sub}</p>
+              </div>
+            ))}
           </div>
         </div>
 

@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Registered so the border-spin animation can interpolate --angle smoothly. */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root {
   --brand-blue: #3c74ae;
   --brand-blue-dark: #2d5f96;

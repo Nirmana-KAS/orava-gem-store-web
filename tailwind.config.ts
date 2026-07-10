@@ -114,6 +114,10 @@ const config: Config = {
           "92%": { top: "0%", opacity: "1" },
           "100%": { top: "0%", opacity: "0" },
         },
+        "border-spin": {
+          "0%": { "--angle": "0deg" },
+          "100%": { "--angle": "360deg" },
+        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
@@ -129,6 +133,7 @@ const config: Config = {
         "arrow-slide": "arrow-slide 1.6s ease-in-out infinite",
         "dash-run": "dash-run 3.6s linear infinite",
         "scan-bi": "scan-bi 4.2s ease-in-out infinite",
+        "border-spin": "border-spin 3.6s linear infinite",
       },
     },
   },

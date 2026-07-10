@@ -236,8 +236,8 @@ export default function SampleGalleryCard() {
               </p>
             </div>
 
-            {/* RIGHT — visual */}
-            <div className="relative h-[360px] md:h-[440px]">
+            {/* RIGHT — visual (desktop only) */}
+            <div className="relative hidden md:block md:h-[440px]">
               {/* Decorative background anchor */}
               <div
                 className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/60 to-primary-soft/40 backdrop-blur-sm"
