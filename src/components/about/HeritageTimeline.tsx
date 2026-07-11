@@ -171,7 +171,7 @@ export default function HeritageTimeline() {
                         className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-white/10 blur-3xl"
                         aria-hidden
                       />
-                      <span className="absolute right-5 top-5 inline-flex items-center rounded-full border border-white/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                      <span className="absolute right-5 top-5 hidden items-center rounded-full border border-white/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white md:inline-flex">
                         Live Chapter
                       </span>
                     </>
@@ -197,6 +197,12 @@ export default function HeritageTimeline() {
                       {chapter.title}
                     </h3>
                   </div>
+
+                  {isLive && (
+                    <span className="mt-3 inline-flex w-fit items-center self-start rounded-full border border-white/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white md:hidden">
+                      Live Chapter
+                    </span>
+                  )}
 
                   <p
                     className={

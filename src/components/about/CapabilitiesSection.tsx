@@ -131,28 +131,28 @@ function CapabilityViz({ viz }: { viz: Capability['viz'] }) {
             aria-hidden
             className="absolute left-0 right-0 top-0 h-0.5 animate-scan-bi [background:linear-gradient(90deg,transparent,#3c74ae_50%,transparent)] [box-shadow:0_0_10px_rgba(60,116,174,0.55)]"
           />
-          <div className="grid grid-cols-3 gap-3.5 text-navy-2">
-            <div>
+          <div className="grid grid-cols-1 gap-2 text-navy-2 md:grid-cols-3 md:gap-3.5">
+            <div className="flex items-baseline justify-between gap-2 md:block">
               <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
                 DIAMETER
               </div>
-              <div className="mt-1 font-serif text-lg font-medium text-navy">
+              <div className="font-serif text-base font-medium text-navy md:mt-1 md:text-lg">
                 6.42<span className="text-primary">mm</span>
               </div>
             </div>
-            <div>
+            <div className="flex items-baseline justify-between gap-2 md:block">
               <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
                 TOLERANCE
               </div>
-              <div className="mt-1 font-serif text-lg font-medium text-navy">
+              <div className="font-serif text-base font-medium text-navy md:mt-1 md:text-lg">
                 ±0.05<span className="text-primary">mm</span>
               </div>
             </div>
-            <div>
+            <div className="flex items-baseline justify-between gap-2 md:block">
               <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
                 PASS RATE
               </div>
-              <div className="mt-1 font-serif text-lg font-medium text-navy">
+              <div className="font-serif text-base font-medium text-navy md:mt-1 md:text-lg">
                 99.4<span className="text-primary">%</span>
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function CapabilitiesSection() {
           end to end.
         </h2>
 
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-navy-2 md:text-lg">
+        <p className="mt-4 hidden max-w-2xl text-base leading-relaxed text-navy-2 md:block md:text-lg">
           Every stone moves through one continuous, controlled pipeline —
           sourced, cut, calibrated, colour-matched and verified entirely
           in-house before it ships.

@@ -231,7 +231,7 @@ export default function SampleGalleryCard() {
                 </Link>
               </div>
 
-              <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-muted">
+              <p className="mt-6 hidden text-xs font-medium uppercase tracking-[0.18em] text-muted md:block">
                 100+ SAMPLES · SAPPHIRE · RUBY · EMERALD · SEMI-PRECIOUS
               </p>
             </div>
